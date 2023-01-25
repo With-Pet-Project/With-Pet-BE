@@ -1,4 +1,4 @@
-package WebProject.withpet.domain.config;
+package WebProject.withpet.config;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
