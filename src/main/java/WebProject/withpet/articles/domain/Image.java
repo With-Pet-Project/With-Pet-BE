@@ -1,6 +1,6 @@
-package WebProject.withpet.image;
+package WebProject.withpet.articles.domain;
 
-import WebProject.withpet.articles.Article;
+import WebProject.withpet.articles.domain.Article;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;

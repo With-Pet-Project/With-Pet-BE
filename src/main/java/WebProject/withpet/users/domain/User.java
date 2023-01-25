@@ -1,4 +1,4 @@
-package WebProject.withpet.cities;
+package WebProject.withpet.users.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,14 +9,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "cities")
+@Table(name = "users")
 @Getter
 @NoArgsConstructor
-public class City {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String profileImg;
+    private String nickName;
+    private String email;
+    private String password;
+    private String provider;
+
 }
