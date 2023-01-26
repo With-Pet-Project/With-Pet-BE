@@ -1,7 +1,6 @@
 package WebProject.withpet.pets.domain;
 
 import WebProject.withpet.config.BaseEntity;
-import WebProject.withpet.pets.domain.Pet;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Getter;
@@ -39,4 +40,9 @@ public class Challenge extends BaseEntity {
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Min(value = 1, message = "챌린지는 일주일에 최소 1번 이상 수행해야 합니다.")
+    @Max(value = 7, message = "챌린지는 일주일에 최대 7번 수행할 수 있습니다.")
+    @Column(name = "target_cnt")
+    private int targetCnt;
 }
