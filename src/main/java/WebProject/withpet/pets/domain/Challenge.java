@@ -1,7 +1,9 @@
 package WebProject.withpet.pets.domain;
 
 import WebProject.withpet.config.BaseEntity;
-import WebProject.withpet.users.domain.User;
+import WebProject.withpet.pets.domain.Pet;
+import java.time.LocalDate;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -10,14 +12,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "consumptions")
+@Table(name = "challenges")
 @Getter
 @NoArgsConstructor
-public class Comsumption extends BaseEntity {
+public class Challenge extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,17 +30,13 @@ public class Comsumption extends BaseEntity {
     @JoinColumn(name = "pet_id")
     private Pet pet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Size(min = 1)
+    @NotNull(message = "챌린지 제목은 빈 칸으로 둘 수 없습니다.")
+    private String title;
 
-    private Long feed;
+    @Column(name = "start_date")
+    private LocalDate startDate;
 
-    private Long toy;
-
-    private Long hospital;
-
-    private Long beauty;
-
-    private Long etc;
+    @Column(name = "end_date")
+    private LocalDate endDate;
 }
