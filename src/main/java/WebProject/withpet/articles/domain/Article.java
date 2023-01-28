@@ -1,6 +1,7 @@
 package WebProject.withpet.articles.domain;
 
 
+import WebProject.withpet.config.BaseEntity;
 import WebProject.withpet.users.domain.User;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -27,7 +28,7 @@ import lombok.NoArgsConstructor;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @NoArgsConstructor
-public class Article {
+public class Article extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +42,7 @@ public class Article {
     private Tag tag;
 
     @Column(name = "date")
-    private LocalDateTime localDateTime;
+    private LocalDateTime date;
 
     private Integer likeCnt;
 
