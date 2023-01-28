@@ -1,4 +1,4 @@
-package WebProject.withpet.cities.domain;
+package WebProject.withpet.articles.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

@@ -1,6 +1,5 @@
 package WebProject.withpet.articles.domain;
 
-import WebProject.withpet.cities.domain.City;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
