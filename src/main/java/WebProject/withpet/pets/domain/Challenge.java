@@ -1,6 +1,6 @@
 package WebProject.withpet.pets.domain;
 
-import WebProject.withpet.config.BaseEntity;
+import WebProject.withpet.common.domain.BaseEntity;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
