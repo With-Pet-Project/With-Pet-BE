@@ -1,7 +1,7 @@
 package WebProject.withpet.comments.domain;
 
 import WebProject.withpet.articles.domain.Article;
-import WebProject.withpet.config.BaseEntity;
+import WebProject.withpet.common.domain.BaseEntity;
 import WebProject.withpet.users.domain.User;
 import java.util.ArrayList;
 import java.util.List;

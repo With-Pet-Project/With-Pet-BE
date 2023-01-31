@@ -1,6 +1,6 @@
 package WebProject.withpet.consumptions.domain;
 
-import WebProject.withpet.config.BaseEntity;
+import WebProject.withpet.common.domain.BaseEntity;
 import WebProject.withpet.pets.domain.Pet;
 import WebProject.withpet.users.domain.User;
 import javax.persistence.Entity;
