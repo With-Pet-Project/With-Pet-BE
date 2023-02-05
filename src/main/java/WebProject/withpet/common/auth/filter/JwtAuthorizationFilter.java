@@ -4,30 +4,35 @@ import WebProject.withpet.common.auth.application.JwtTokenProvider;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+@Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider tokenProvider;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
         super(authenticationManager);
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenProvider = tokenProvider;
     }
 
-    public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain)
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        String token = jwtTokenProvider.getToken((HttpServletRequest) request);
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        String header = request.getHeader(JwtTokenProvider.HEADER_STRING);
+        if (header == null || !header.startsWith(JwtTokenProvider.TOKEN_PREFIX)) {
+            chain.doFilter(request, response);
+            return;
         }
+        String token = request.getHeader(JwtTokenProvider.HEADER_STRING)
+                .replace(JwtTokenProvider.HEADER_STRING, "");
+        SecurityContextHolder.getContext().setAuthentication(tokenProvider.getAuthentication(token));
+
         chain.doFilter(request, response);
     }
 }
