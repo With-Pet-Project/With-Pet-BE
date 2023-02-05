@@ -18,6 +18,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
@@ -52,7 +53,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
 
         User userEntity = principalDetails.getUser();
-        String jwtToken = jwtTokenProvider.createToken(userEntity.getEmail(), userEntity.getRoles());
+        String jwtToken = jwtTokenProvider.createToken(userEntity);
+
+        Authentication authentication = jwtTokenProvider.getAuthentication(jwtToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Map<String, String> json = new HashMap<>();
         json.put("msg", "정상적으로 토큰이 발급되었습니다");

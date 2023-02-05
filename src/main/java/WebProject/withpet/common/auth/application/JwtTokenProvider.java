@@ -1,18 +1,15 @@
 package WebProject.withpet.common.auth.application;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import java.util.Base64;
+import WebProject.withpet.common.auth.PrincipalDetails;
+import WebProject.withpet.users.domain.User;
+import WebProject.withpet.users.repository.UserRepository;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import java.util.Date;
-import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
@@ -22,43 +19,48 @@ public class JwtTokenProvider {
 
     // TODO : 암호화하기
     private String secretKey = "secretKey";
-
+    public static final String HEADER_STRING = "Authorization";
     private long tokenValidTime = 30 * 60 * 1000L;
-
+    public static final String TOKEN_PREFIX = "Bearer ";
     private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
-    @PostConstruct
-    protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+    public String createToken(User user) {
+        String jwtToken = JWT.create()
+                .withSubject(user.getEmail())
+                .withExpiresAt(new Date(System.currentTimeMillis() + tokenValidTime))
+                .withClaim("id", user.getId())
+                .withClaim("nickname", user.getNickName())
+                .withClaim("email", user.getEmail())
+                .sign(Algorithm.HMAC512(secretKey));
+        return jwtToken;
     }
 
-    public String getUserPk(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-    }
+    /*
+		 Token에 담겨있는 정보를 이용해 Authentication 객체를 반환하는 메서드
+	 */
 
-    public String createToken(String userPk, List<String> roles) {
-        Claims claims = Jwts.claims().setSubject(userPk);
-        claims.put("roles", roles);
-        Date now = new Date();
-        return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(new Date(now.getTime() + tokenValidTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey).compact();
-    }
+    public Authentication getAuthentication(String JwtToken) {
+        String token = JwtToken.replace(TOKEN_PREFIX, "");
+        String email = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token)
+                .getClaim("email").asString();
 
-    public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
-    public String getToken(HttpServletRequest request) {
-        return request.getHeader("Authorization");
-    }
-
-    public boolean validateToken(String jwtToken) {
-        try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-            return !claims.getBody().getExpiration().before(new Date());
-        } catch (Exception e) {
-            return false;
+        if (email != null) {
+            Optional<User> userEntity = userRepository.findByEmail(email);
+            try {
+                User user = userEntity.get();
+                PrincipalDetails principalDetails = new PrincipalDetails(user);
+                return new UsernamePasswordAuthenticationToken(
+                        principalDetails,
+                        null,
+                        principalDetails.getAuthorities());
+            } catch (NullPointerException e) {
+            }
         }
+        return null;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
     }
 }
