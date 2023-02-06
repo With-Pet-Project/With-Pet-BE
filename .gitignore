@@ -45,4 +45,4 @@ out
 gen
 
 # Intellij properties#
-application-aws.properties
+application.properties
