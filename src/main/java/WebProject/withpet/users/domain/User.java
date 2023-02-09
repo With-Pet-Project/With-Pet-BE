@@ -52,4 +52,8 @@ public class User {
         this.provider = provider;
     }
 
+    public boolean isPossibleToAccessUserPet(Long userId) {
+        return this.id.equals(userId);
+    }
+
 }
