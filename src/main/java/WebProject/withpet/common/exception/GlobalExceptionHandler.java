@@ -29,4 +29,11 @@ public class GlobalExceptionHandler {
         return ApiErrorResponse.toResponseEntity(ErrorCode.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    protected ResponseEntity<ApiErrorResponse> handleUserNotFoundException(
+            UserNotFoundException e) {
+        logger.error("handleUserNotFoundException", e);
+
+        return ApiErrorResponse.toResponseEntity(ErrorCode.USER_NOT_FOUND);
+    }
 }
