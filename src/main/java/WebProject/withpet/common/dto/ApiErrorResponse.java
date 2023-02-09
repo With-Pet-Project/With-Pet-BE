@@ -1,7 +1,6 @@
 package WebProject.withpet.common.dto;
 
 import WebProject.withpet.common.constants.ErrorCode;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
