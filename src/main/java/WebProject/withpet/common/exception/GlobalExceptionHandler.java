@@ -5,6 +5,7 @@ import WebProject.withpet.common.dto.ApiErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -41,5 +42,12 @@ public class GlobalExceptionHandler {
         log.error("KakaoJsonParsingExcepion", e);
 
         return ApiErrorResponse.toResponseEntity(ErrorCode.KAKAO_JSON_OBJECT_ERROR);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponse> methodArgumentNotValidException(MethodArgumentNotValidException e){
+        log.error("MethodArgumentNotValidException", e);
+
+        return ApiErrorResponse.toResponseEntity(ErrorCode.DATA_NOT_GIVEN);
     }
 }
