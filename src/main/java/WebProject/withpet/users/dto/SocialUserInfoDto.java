@@ -1,5 +1,6 @@
 package WebProject.withpet.users.dto;
 
+import WebProject.withpet.users.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +16,14 @@ public class SocialUserInfoDto {
     public SocialUserInfoDto(String email, String nickname) {
         this.email = email;
         this.nickname = nickname;
+    }
+
+    public User toEntity(){
+
+        return User.builder()
+            .email(email)
+            .nickName(nickname)
+            .password("")
+            .build();
     }
 }
