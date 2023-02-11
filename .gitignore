@@ -44,5 +44,4 @@ out/
 out
 gen
 
-# Intellij properties#
-application.properties
+application-dev.properties

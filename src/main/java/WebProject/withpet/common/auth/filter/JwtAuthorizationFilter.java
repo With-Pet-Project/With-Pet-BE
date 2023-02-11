@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -14,7 +15,8 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private final JwtTokenProvider tokenProvider;
+    @Autowired
+    JwtTokenProvider tokenProvider;
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
         super(authenticationManager);
@@ -32,7 +34,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String token = request.getHeader(JwtTokenProvider.HEADER_STRING)
                 .replace(JwtTokenProvider.HEADER_STRING, "");
         SecurityContextHolder.getContext().setAuthentication(tokenProvider.getAuthentication(token));
-
         chain.doFilter(request, response);
     }
 }

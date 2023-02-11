@@ -2,18 +2,14 @@ package WebProject.withpet.common.config;
 
 import WebProject.withpet.common.auth.application.JwtTokenProvider;
 import WebProject.withpet.common.exception.UnauthorizedException;
-import WebProject.withpet.users.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class JwtAuthInterceptor implements HandlerInterceptor {
-    private JwtTokenProvider jwtTokenProvider;
-    private UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
