@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -39,4 +40,23 @@ public class Pet {
 
     @DateTimeFormat(pattern = "yyyy-MM-DD")
     private LocalDate birthday;
+
+    @Builder
+    public Pet(
+            User user,
+            String name,
+            double initWeight,
+            LocalDate birthday
+    ) {
+        this.user = user;
+        this.name = name;
+        this.initWeight = initWeight;
+        this.birthday = birthday;
+    }
+
+    public void update(Pet updatePet) {
+        this.name = updatePet.name;
+        this.initWeight = updatePet.initWeight;
+        this.birthday = updatePet.birthday;
+    }
 }

@@ -1,9 +1,11 @@
 package WebProject.withpet.common.auth.application;
 
 import WebProject.withpet.common.auth.PrincipalDetails;
+import WebProject.withpet.common.exception.UserNotFoundException;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.repository.UserRepository;
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import java.util.Date;
 import java.util.Optional;
@@ -26,12 +28,9 @@ public class JwtTokenProvider {
     private final UserRepository userRepository;
 
     public String createToken(User user) {
-        String jwtToken = JWT.create()
-                .withSubject(user.getEmail())
-                .withExpiresAt(new Date(System.currentTimeMillis() + tokenValidTime))
-                .withClaim("id", user.getId())
-                .withClaim("nickname", user.getNickName())
-                .withClaim("email", user.getEmail())
+        String jwtToken = JWT.create().withSubject(user.getEmail())
+                .withExpiresAt(new Date(System.currentTimeMillis() + tokenValidTime)).withClaim("id", user.getId())
+                .withClaim("nickname", user.getNickName()).withClaim("email", user.getEmail())
                 .sign(Algorithm.HMAC512(secretKey));
         return jwtToken;
     }
@@ -42,22 +41,25 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String JwtToken) {
         String token = JwtToken.replace(TOKEN_PREFIX, "");
-        String email = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token)
-                .getClaim("email").asString();
+        String email = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token).getClaim("email").asString();
 
         if (email != null) {
             Optional<User> userEntity = userRepository.findByEmail(email);
             try {
                 User user = userEntity.get();
                 PrincipalDetails principalDetails = new PrincipalDetails(user);
-                return new UsernamePasswordAuthenticationToken(
-                        principalDetails,
-                        null,
+                return new UsernamePasswordAuthenticationToken(principalDetails, null,
                         principalDetails.getAuthorities());
-            } catch (NullPointerException e) {
+            } catch (Exception e) {
+                throw new UserNotFoundException();
             }
         }
         return null;
+    }
+
+    public void verifyToken(String givenToken) {
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC512(secretKey)).build();
+        verifier.verify(givenToken);
     }
 
     public String getSecretKey() {
