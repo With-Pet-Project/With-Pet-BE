@@ -9,6 +9,7 @@ import WebProject.withpet.pets.service.PetService;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,39 +28,45 @@ public class PetController {
     private final PetService petService;
 
     @PostMapping
-    public ApiResponse<Void> registerPet(@AuthenticationPrincipal
-                                         PrincipalDetails principalDetails, @Valid @RequestBody PetRequestDto pet) {
+    public ResponseEntity<ApiResponse<Void>> registerPet(@AuthenticationPrincipal
+                                                         PrincipalDetails principalDetails,
+                                                         @Valid @RequestBody PetRequestDto pet) {
         petService.registerPet(pet, principalDetails.getUser());
-        return ResponseConstants.RESPONSE_SAVE_OK;
+        return ResponseEntity.ok(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
     @GetMapping("/{petId}")
-    public ApiResponse<PetResponseDto> findPet(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                               @PathVariable Long petId) throws Exception {
+    public ResponseEntity<ApiResponse<PetResponseDto>> findPet(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Long petId) throws Exception {
         PetResponseDto pet = petService.findPet(principalDetails.getUser(), petId);
-        return new ApiResponse<>(200, "정상적으로 조회되었습니다", pet);
+        ApiResponse<PetResponseDto> apiResponse = new ApiResponse<>(200, "정상적으로 조회되었습니다", pet);
+        return ResponseEntity.ok(apiResponse);
     }
 
     @PutMapping("/{petId}")
-    public ApiResponse<Void> updatePet(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                       @PathVariable Long petId, @Valid @RequestBody PetRequestDto petRequestDto)
+    public ResponseEntity<ApiResponse<Void>> updatePet(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                                       @PathVariable Long petId,
+                                                       @Valid @RequestBody PetRequestDto petRequestDto)
             throws Exception {
         petService.updatePet(petId, principalDetails.getUser(), petRequestDto);
-        return ResponseConstants.RESPONSE_UPDATE_OK;
+        return ResponseEntity.ok(ResponseConstants.RESPONSE_UPDATE_OK);
     }
 
     @DeleteMapping("/{petId}")
-    public ApiResponse<Void> deletePet(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                       @PathVariable Long petId) throws Exception {
+    public ResponseEntity<ApiResponse<Void>> deletePet(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                                       @PathVariable Long petId) throws Exception {
         petService.deletePet(petId, principalDetails.getUser());
-        return ResponseConstants.RESPONSE_DEL_OK;
+        return ResponseEntity.ok(ResponseConstants.RESPONSE_DEL_OK);
     }
 
     @GetMapping
-    public ApiResponse<List<PetResponseDto>> findPets(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<List<PetResponseDto>>> findPets(
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
         List<PetResponseDto> pets = petService.findPets(principalDetails.getUser());
-        return new ApiResponse<>(
+        ApiResponse<List<PetResponseDto>> apiResponse = new ApiResponse<>(
                 200, "정상적으로 조회되었습니다.", pets
         );
+        return ResponseEntity.ok(apiResponse);
     }
 }

@@ -7,6 +7,7 @@ import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.service.UserService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +23,8 @@ public class UserController {
 
 
     @PostMapping("/signup")
-    public ApiResponse<Void> signUp(@Valid @RequestBody UserRequestDto user) {
+    public ResponseEntity<ApiResponse<Void>> signUp(@Valid @RequestBody UserRequestDto user) {
         userService.register(user);
-        return ResponseConstants.RESPONSE_SAVE_OK;
+        return ResponseEntity.ok(ResponseConstants.RESPONSE_SAVE_OK);
     }
 }
