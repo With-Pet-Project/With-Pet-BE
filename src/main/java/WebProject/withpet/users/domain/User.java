@@ -56,4 +56,12 @@ public class User {
         return this.id.equals(userId);
     }
 
+    public void changeUserProfileImg(String img){
+        this.profileImg=img;
+    }
+
+    public void changeUserNickName(String nickName){
+        this.nickName=nickName;
+    }
+
 }
