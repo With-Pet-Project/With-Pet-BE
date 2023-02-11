@@ -5,6 +5,7 @@ import WebProject.withpet.common.dto.ApiResponse;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.dto.SocialLoginResponseDto;
 import WebProject.withpet.users.dto.SocialUserInfoDto;
+import WebProject.withpet.users.dto.UserChangeInfoRequestDto;
 import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.repository.UserRepository;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +39,7 @@ public class UserService {
 
         userRepository.save(user);
     }
-
+    @Transactional
     public SocialLoginResponseDto socialLogin(String code) throws JSONException {
 
         String accessToken = userSocialService.getAccessToken(code);
@@ -65,6 +67,15 @@ public class UserService {
             .builder()
             .token(createdToken)
             .build();
+    }
+
+    @Transactional
+    public void changeUserInfo(User user,UserChangeInfoRequestDto userChangeInfoRequestDto){
+
+        user.changeUserNickName(userChangeInfoRequestDto.getNickName());
+        user.changeUserProfileImg(userChangeInfoRequestDto.getProfilImg());
+
+
     }
 
     // TODO : 커스텀 Exception 만들기
