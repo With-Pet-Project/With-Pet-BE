@@ -46,5 +46,9 @@ public class Article extends BaseEntity {
 
     private Integer likeCnt;
 
+    private String title;
+
+    private String detailText;
+
 
 }
