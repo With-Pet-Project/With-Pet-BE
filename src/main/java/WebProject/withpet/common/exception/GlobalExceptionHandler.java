@@ -2,21 +2,18 @@ package WebProject.withpet.common.exception;
 
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.dto.ApiErrorResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     @ExceptionHandler(DataNotFoundException.class)
     protected ResponseEntity<ApiErrorResponse> handleDataNotFoundException(
             DataNotFoundException e) {
-        logger.error("handleDataNotFoundException", e);
+        log.error("handleDataNotFoundException", e);
 
         return ApiErrorResponse.toResponseEntity(ErrorCode.DATA_NOT_FOUND);
     }
@@ -24,7 +21,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     protected ResponseEntity<ApiErrorResponse> handleUnauthorizedException(
             UnauthorizedException e) {
-        logger.error("handleUnauthorizedException", e);
+        log.error("handleUnauthorizedException", e);
 
         return ApiErrorResponse.toResponseEntity(ErrorCode.UNAUTHORIZED);
     }
@@ -32,7 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     protected ResponseEntity<ApiErrorResponse> handleUserNotFoundException(
             UserNotFoundException e) {
-        logger.error("handleUserNotFoundException", e);
+        log.error("handleUserNotFoundException", e);
 
         return ApiErrorResponse.toResponseEntity(ErrorCode.USER_NOT_FOUND);
     }
