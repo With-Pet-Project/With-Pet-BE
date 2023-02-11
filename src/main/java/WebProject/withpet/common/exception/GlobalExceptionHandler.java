@@ -3,6 +3,7 @@ package WebProject.withpet.common.exception;
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.dto.ApiErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -32,5 +33,13 @@ public class GlobalExceptionHandler {
         log.error("handleUserNotFoundException", e);
 
         return ApiErrorResponse.toResponseEntity(ErrorCode.USER_NOT_FOUND);
+    }
+
+    @ExceptionHandler(JSONException.class)
+    public ResponseEntity<ApiErrorResponse> jsonException(JSONException e){
+
+        log.error("KakaoJsonParsingExcepion", e);
+
+        return ApiErrorResponse.toResponseEntity(ErrorCode.KAKAO_JSON_OBJECT_ERROR);
     }
 }
