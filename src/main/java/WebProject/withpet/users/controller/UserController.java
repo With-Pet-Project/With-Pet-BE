@@ -8,6 +8,8 @@ import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.service.UserService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,10 +33,11 @@ public class UserController {
     }
 
     @PostMapping("kakao/login")
-    public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(@RequestParam(name="code") String code) throws JSONException{
+    public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(@RequestParam(name = "code") String code)
+            throws JSONException {
 
         ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200, "카카오 로그인 성공",
-            userService.socialLogin(code));
+                userService.socialLogin(code));
 
         return ResponseEntity.status(HttpStatus.OK).body(socialLongResponse);
 
