@@ -45,9 +45,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrorResponse> methodArgumentNotValidException(MethodArgumentNotValidException e){
-        log.error("MethodArgumentNotValidException", e);
-
-        return ApiErrorResponse.toResponseEntity(ErrorCode.DATA_NOT_GIVEN);
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("handleMethodArgumentNotValidException", e);
+        return ApiErrorResponse.toResponseEntityWithErrors(ErrorCode.DATA_NOT_GIVEN, e.getBindingResult());
     }
 }
