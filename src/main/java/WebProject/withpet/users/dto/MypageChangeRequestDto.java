@@ -1,6 +1,5 @@
 package WebProject.withpet.users.dto;
 
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,11 +10,11 @@ import org.springframework.lang.Nullable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserChangeInfoRequestDto {
+public class MypageChangeRequestDto {
 
-    @NotNull
-    String profilImg;
+    @Nullable
+    String profileImg;
 
-    @NotNull
+    @Nullable
     String nickName;
 }

@@ -1,11 +1,9 @@
 package WebProject.withpet.users.service;
 
 import WebProject.withpet.common.auth.application.JwtTokenProvider;
-import WebProject.withpet.common.dto.ApiResponse;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.dto.SocialLoginResponseDto;
 import WebProject.withpet.users.dto.SocialUserInfoDto;
-import WebProject.withpet.users.dto.UserChangeInfoRequestDto;
 import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.repository.UserRepository;
 import java.util.Optional;
@@ -69,14 +67,6 @@ public class UserService {
             .build();
     }
 
-    @Transactional
-    public void changeUserInfo(User user,UserChangeInfoRequestDto userChangeInfoRequestDto){
-
-        user.changeUserNickName(userChangeInfoRequestDto.getNickName());
-        user.changeUserProfileImg(userChangeInfoRequestDto.getProfilImg());
-
-
-    }
 
     // TODO : 커스텀 Exception 만들기
     private void validateDuplicateEmail(String userEmail) {
