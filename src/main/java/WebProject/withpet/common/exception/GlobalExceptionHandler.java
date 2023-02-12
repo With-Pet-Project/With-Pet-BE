@@ -37,9 +37,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(JSONException.class)
-    public ResponseEntity<ApiErrorResponse> jsonException(JSONException e){
+    public ResponseEntity<ApiErrorResponse> handleJsonException(JSONException e) {
 
-        log.error("KakaoJsonParsingExcepion", e);
+        log.error("handleJsonException", e);
 
         return ApiErrorResponse.toResponseEntity(ErrorCode.KAKAO_JSON_OBJECT_ERROR);
     }
