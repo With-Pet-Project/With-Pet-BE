@@ -59,7 +59,8 @@ public class JwtTokenProvider {
 
     public void verifyToken(String givenToken) {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC512(secretKey)).build();
-        verifier.verify(givenToken);
+        String[] givenTokens = givenToken.split(TOKEN_PREFIX);
+        verifier.verify(givenTokens[1]);
     }
 
     public String getSecretKey() {
