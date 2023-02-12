@@ -13,15 +13,17 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/mypage")
 public class MypageController {
 
     private final MypageService mypageService;
 
-    @PatchMapping ("/mypage")
+    @PatchMapping ()
     public ResponseEntity<ApiResponse<Void>> changeUserInfo(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @Valid @RequestBody MypageChangeRequestDto mypageChangeRequestDto) {
