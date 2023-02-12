@@ -2,6 +2,7 @@ package WebProject.withpet.common.exception;
 
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.dto.ApiErrorResponse;
+import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.springframework.http.ResponseEntity;
@@ -48,5 +49,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("handleMethodArgumentNotValidException", e);
         return ApiErrorResponse.toResponseEntityWithErrors(ErrorCode.DATA_NOT_GIVEN, e.getBindingResult());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
+        log.error("handleMethodArgumentNotValidException", e);
+        return ApiErrorResponse.toResponseEntityWithConstraints(ErrorCode.INVALID_PARAMETER,
+                e.getConstraintViolations());
     }
 }
