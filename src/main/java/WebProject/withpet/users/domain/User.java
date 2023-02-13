@@ -52,16 +52,12 @@ public class User {
         this.provider = provider;
     }
 
-    public boolean isPossibleToAccessUserPet(Long userId) {
-        return this.id.equals(userId);
+    public void changeUserProfileImg(String img) {
+        this.profileImg = img;
     }
 
-    public void changeUserProfileImg(String img){
-        this.profileImg=img;
-    }
-
-    public void changeUserNickName(String nickName){
-        this.nickName=nickName;
+    public void changeUserNickName(String nickName) {
+        this.nickName = nickName;
     }
 
 }

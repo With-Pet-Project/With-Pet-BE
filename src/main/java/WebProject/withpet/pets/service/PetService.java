@@ -59,7 +59,7 @@ public class PetService {
     }
 
     private void checkPermission(User user, Pet pet) throws UnauthorizedException {
-        if (!user.isPossibleToAccessUserPet(pet.getUser().getId())) {
+        if (pet.getUser() != user) {
             throw new UnauthorizedException();
         }
     }
