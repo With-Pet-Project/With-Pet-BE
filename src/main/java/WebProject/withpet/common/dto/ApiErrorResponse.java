@@ -74,7 +74,7 @@ public class ApiErrorResponse {
 
         fieldErrors.forEach(error -> {
             customFieldErrors.add(new CustomFieldError(
-                    error.getCodes()[0],
+                    error.getField(),
                     error.getRejectedValue(),
                     error.getDefaultMessage()
             ));
