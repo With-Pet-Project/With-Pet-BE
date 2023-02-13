@@ -32,16 +32,17 @@ public class UserController {
 
 
     @PostMapping("/signup")
-    public ApiResponse<Void> signUp(@Valid @RequestBody UserRequestDto user) {
+    public ResponseEntity<ApiResponse<Void>> signUp(@Valid @RequestBody UserRequestDto user) {
         userService.register(user);
-        return ResponseConstants.RESPONSE_SAVE_OK;
+        return ResponseEntity.ok(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
     @PostMapping("kakao/login")
-    public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(@RequestParam(name="code") String code) throws JSONException{
+    public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(@RequestParam(name = "code") String code)
+            throws JSONException {
 
         ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200, "카카오 로그인 성공",
-            userService.socialLogin(code));
+                userService.socialLogin(code));
 
         return ResponseEntity.status(HttpStatus.OK).body(socialLongResponse);
 
