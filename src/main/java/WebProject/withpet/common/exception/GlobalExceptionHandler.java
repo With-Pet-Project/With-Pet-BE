@@ -2,6 +2,7 @@ package WebProject.withpet.common.exception;
 
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.dto.ApiErrorResponse;
+import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.springframework.http.ResponseEntity;
@@ -37,17 +38,23 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(JSONException.class)
-    public ResponseEntity<ApiErrorResponse> jsonException(JSONException e){
+    public ResponseEntity<ApiErrorResponse> handleJsonException(JSONException e) {
 
-        log.error("KakaoJsonParsingExcepion", e);
+        log.error("handleJsonException", e);
 
         return ApiErrorResponse.toResponseEntity(ErrorCode.KAKAO_JSON_OBJECT_ERROR);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrorResponse> methodArgumentNotValidException(MethodArgumentNotValidException e){
-        log.error("MethodArgumentNotValidException", e);
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("handleMethodArgumentNotValidException", e);
+        return ApiErrorResponse.toResponseEntityWithErrors(ErrorCode.DATA_NOT_GIVEN, e.getBindingResult());
+    }
 
-        return ApiErrorResponse.toResponseEntity(ErrorCode.DATA_NOT_GIVEN);
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
+        log.error("handleMethodArgumentNotValidException", e);
+        return ApiErrorResponse.toResponseEntityWithConstraints(ErrorCode.INVALID_PARAMETER,
+                e.getConstraintViolations());
     }
 }
