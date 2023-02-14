@@ -4,6 +4,7 @@ import WebProject.withpet.common.auth.application.JwtTokenProvider;
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.exception.DuplicateException;
 import WebProject.withpet.users.domain.User;
+import WebProject.withpet.users.dto.ChangePasswordDto;
 import WebProject.withpet.users.dto.SocialLoginResponseDto;
 import WebProject.withpet.users.dto.SocialUserInfoDto;
 import WebProject.withpet.users.dto.UserRequestDto;
@@ -91,5 +92,17 @@ public class UserService {
         if (findUser.isPresent()) {
             throw new DuplicateException(ErrorCode.DUPLICATE_NICK_NAME);
         }
+    }
+
+    @Transactional
+    public void changePassword(User user, ChangePasswordDto changePasswordDto) {
+
+        user.changeUserPassword(changePasswordDto.getPassword());
+    }
+
+    @Transactional
+    public void deleteUser(User user){
+
+        userRepository.deleteById(user.getId());
     }
 }
