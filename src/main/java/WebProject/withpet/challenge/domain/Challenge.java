@@ -1,6 +1,7 @@
-package WebProject.withpet.pets.domain;
+package WebProject.withpet.challenge.domain;
 
 import WebProject.withpet.common.domain.BaseEntity;
+import WebProject.withpet.pets.domain.Pet;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
