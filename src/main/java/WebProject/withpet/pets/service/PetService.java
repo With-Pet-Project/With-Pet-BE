@@ -8,12 +8,15 @@ import WebProject.withpet.pets.dto.PetRequestDto;
 import WebProject.withpet.pets.dto.PetResponseDto;
 import WebProject.withpet.users.domain.User;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PetService {
     private final PetRepository petRepository;
@@ -25,18 +28,13 @@ public class PetService {
 
     @Transactional
     public void updatePet(Long petId, User user, PetRequestDto petRequestDto) {
-        Pet pet = findPetById(petId);
-        checkPermission(user, pet);
-
-        Pet updatePet = petRequestDto.toEntity(user);
-        pet.update(updatePet);
+        Pet pet = accessPet(user, petId);
+        pet.update(petRequestDto.toEntity(user));
     }
 
     @Transactional
     public void deletePet(Long petId, User user) {
-        Pet pet = findPetById(petId);
-        checkPermission(user, pet);
-
+        Pet pet = accessPet(user, petId);
         petRepository.delete(pet);
     }
 
@@ -48,9 +46,7 @@ public class PetService {
 
     @Transactional(readOnly = true)
     public PetResponseDto findPet(User user, Long petId) {
-        Pet pet = findPetById(petId);
-        checkPermission(user, pet);
-
+        Pet pet = accessPet(user, petId);
         return new PetResponseDto(pet);
     }
 
@@ -62,5 +58,11 @@ public class PetService {
         if (!Objects.equals(pet.getUser().getId(), user.getId())) {
             throw new UnauthorizedException();
         }
+    }
+
+    public Pet accessPet(User user, Long id) {
+        Pet pet = findPetById(id);
+        checkPermission(user, pet);
+        return pet;
     }
 }
