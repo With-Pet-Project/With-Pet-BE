@@ -34,16 +34,16 @@ public class User {
     private String password;
     private String provider;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<String> roles = new ArrayList<>();
 
     @Builder
     public User(
-            String profileImg,
-            String nickName,
-            String email,
-            String password,
-            String provider
+        String profileImg,
+        String nickName,
+        String email,
+        String password,
+        String provider
     ) {
         this.profileImg = profileImg;
         this.nickName = nickName;
