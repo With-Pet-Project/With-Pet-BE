@@ -4,28 +4,22 @@ import WebProject.withpet.common.auth.PrincipalDetails;
 import WebProject.withpet.common.auth.application.JwtTokenProvider;
 import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.dto.ApiResponse;
+import WebProject.withpet.users.dto.ChangePasswordDto;
 import WebProject.withpet.users.dto.SocialLoginResponseDto;
-import WebProject.withpet.users.dto.UserChangeInfoRequestDto;
-import WebProject.withpet.users.dto.UserNickNameDuplicateCheckDto;
 import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.service.UserService;
-import java.util.HashMap;
-import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,7 +41,7 @@ public class UserController {
         return ResponseEntity.ok(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
-    @PostMapping("kakao/login")
+    @PostMapping("/kakao/login")
     public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(
         @RequestParam(name = "code") String code)
         throws JSONException {
@@ -68,4 +62,22 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.DUPLICATE_CHECK_OK);
     }
 
+    @PostMapping("/password")
+    public ResponseEntity<ApiResponse<Void>> changePassword(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @RequestBody @Valid ChangePasswordDto changePasswordDto){
+
+        userService.changePassword(principalDetails.getUser(),changePasswordDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_UPDATE_OK);
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<ApiResponse<Void>> deleteUser(
+        @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        userService.deleteUser(principalDetails.getUser());
+
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_DEL_OK);
+    }
 }
