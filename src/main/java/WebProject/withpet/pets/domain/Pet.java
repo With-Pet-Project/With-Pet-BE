@@ -32,7 +32,6 @@ public class Pet {
     private User user;
 
     @Size(min = 1)
-    @NotNull(message = "반려동물의 이름은 빈칸으로 둘 수 없습니다.")
     private String name;
 
     @Column(name = "init_weight")
