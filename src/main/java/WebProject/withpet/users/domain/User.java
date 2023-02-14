@@ -60,4 +60,8 @@ public class User {
         this.nickName = nickName;
     }
 
+    public void changeUserPassword(String password) {
+        this.password = password;
+    }
+
 }
