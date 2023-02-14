@@ -28,7 +28,13 @@ public class ChallengeLog {
     private Challenge challenge;
 
     // 달성 일자
+    private int year;
+    private int month;
+    private int day;
+    // 몇번째 주
+    private int week;
+
     @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-DD")
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDate date;
 }
