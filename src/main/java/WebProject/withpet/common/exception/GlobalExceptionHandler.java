@@ -7,15 +7,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(DataNotFoundException.class)
     protected ResponseEntity<ApiErrorResponse> handleDataNotFoundException(
-            DataNotFoundException e) {
+        DataNotFoundException e) {
         log.error("handleDataNotFoundException", e);
 
         return ApiErrorResponse.toResponseEntity(ErrorCode.DATA_NOT_FOUND);
@@ -23,7 +25,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
     protected ResponseEntity<ApiErrorResponse> handleUnauthorizedException(
-            UnauthorizedException e) {
+        UnauthorizedException e) {
         log.error("handleUnauthorizedException", e);
 
         return ApiErrorResponse.toResponseEntity(ErrorCode.UNAUTHORIZED);
@@ -31,7 +33,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     protected ResponseEntity<ApiErrorResponse> handleUserNotFoundException(
-            UserNotFoundException e) {
+        UserNotFoundException e) {
         log.error("handleUserNotFoundException", e);
 
         return ApiErrorResponse.toResponseEntity(ErrorCode.USER_NOT_FOUND);
@@ -46,15 +48,32 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValidException(
+        MethodArgumentNotValidException e) {
         log.error("handleMethodArgumentNotValidException", e);
-        return ApiErrorResponse.toResponseEntityWithErrors(ErrorCode.DATA_NOT_GIVEN, e.getBindingResult());
+        return ApiErrorResponse.toResponseEntityWithErrors(ErrorCode.INVALID_PARAMETER,
+            e.getBindingResult());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
-        log.error("handleMethodArgumentNotValidException", e);
+    public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(
+        ConstraintViolationException e) {
+        log.error("handleConstraintViolationException", e);
         return ApiErrorResponse.toResponseEntityWithConstraints(ErrorCode.INVALID_PARAMETER,
-                e.getConstraintViolations());
+            e.getConstraintViolations());
+    }
+
+    @ExceptionHandler(DuplicateException.class)
+    public ResponseEntity<ApiErrorResponse> handleDuplicateException(DuplicateException e) {
+        log.error("handleDuplicateException", e);
+        return ApiErrorResponse.toResponseEntity(ErrorCode.DUPLICATE_NICK_NAME);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ApiErrorResponse> handleMissingServletRequestParameterException(
+        MissingServletRequestParameterException e) {
+        log.error("handleMissingServletRequestParameterException", e);
+        return ApiErrorResponse.toResponseEntityWithRequestParameterException(
+            ErrorCode.INVALID_PARAMETER, e);
     }
 }
