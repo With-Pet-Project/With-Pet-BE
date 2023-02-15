@@ -81,7 +81,7 @@ public class UserService {
     public void validateDuplicateEmail(String userEmail) {
         Optional<User> findUser = userRepository.findByEmail(userEmail);
         if (findUser.isPresent()) {
-            throw new IllegalArgumentException("동일한 이메일을 사용하는 사용자가 이미 존재합니다.");
+            throw new DuplicateException(ErrorCode.DUPLICATE_EMAIL);
         }
     }
 
