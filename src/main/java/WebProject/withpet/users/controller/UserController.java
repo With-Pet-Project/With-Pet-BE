@@ -59,22 +59,22 @@ public class UserController {
         @RequestParam("nickName") @NotBlank(message = "닉네임을 입력하시오") String nickName
     ) {
         userService.validateDuplicateNickname(nickName);
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.DUPLICATE_CHECK_OK);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(200, "사용 가능한 닉네임입니다"));
     }
 
     @PostMapping("/password")
     public ResponseEntity<ApiResponse<Void>> changePassword(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody @Valid ChangePasswordDto changePasswordDto){
+        @RequestBody @Valid ChangePasswordDto changePasswordDto) {
 
-        userService.changePassword(principalDetails.getUser(),changePasswordDto);
+        userService.changePassword(principalDetails.getUser(), changePasswordDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_UPDATE_OK);
     }
 
     @DeleteMapping()
     public ResponseEntity<ApiResponse<Void>> deleteUser(
-        @AuthenticationPrincipal PrincipalDetails principalDetails){
+        @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         userService.deleteUser(principalDetails.getUser());
 
