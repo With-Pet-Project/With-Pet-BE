@@ -13,6 +13,4 @@ public class ResponseConstants {
     public static final ApiResponse<Void> RESPONSE_UPDATE_OK = new ApiResponse<>(200,
         "정상적으로 수정되었습니다.");
 
-    public static final ApiResponse<Void> DUPLICATE_CHECK_OK = new ApiResponse<>(200,
-        "사용 가능한 닉네임입니다");
 }
