@@ -12,8 +12,8 @@ public enum ErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "접근 권한이 없습니다."),
     KAKAO_JSON_OBJECT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "카카오 로그인 시 JsonObject 에러 발생"),
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "유효하지 않은 데이터가 존재합니다."),
-    DUPLICATE_NICK_NAME(HttpStatus.BAD_REQUEST, "해당 닉네임은 이미 존재합니다."),
-    DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "해당 이메일은 이미 존재합니다");
+    DUPLICATE_NICK_NAME(HttpStatus.CONFLICT, "해당 닉네임은 이미 존재합니다."),
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "해당 이메일은 이미 존재합니다");
 
     private final HttpStatus httpStatus;
     private final String message;
