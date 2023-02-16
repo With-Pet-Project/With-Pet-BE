@@ -1,6 +1,8 @@
 package WebProject.withpet.challenge.controller;
 
+import WebProject.withpet.challenge.dto.ChallengeLogRequestDto;
 import WebProject.withpet.challenge.dto.ChallengeRequestDto;
+import WebProject.withpet.challenge.service.ChallengeLogService;
 import WebProject.withpet.challenge.service.ChallengeService;
 import WebProject.withpet.common.auth.PrincipalDetails;
 import WebProject.withpet.common.constants.ResponseConstants;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/challenge")
 public class ChallengeController {
     private final ChallengeService challengeService;
+    private final ChallengeLogService challengeLogService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> registerChallenge(
@@ -48,6 +51,25 @@ public class ChallengeController {
             @PathVariable Long challengeId
     ) {
         challengeService.deleteChallenge(challengeId, principalDetails.getUser());
+        return ResponseEntity.ok(ResponseConstants.RESPONSE_DEL_OK);
+    }
+
+    @PostMapping("/{challengeId}/check")
+    public ResponseEntity<ApiResponse<Void>> registerChallengeLog(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Long challengeId,
+            @RequestBody @Valid ChallengeLogRequestDto requestDto
+    ) {
+        challengeLogService.registerChallengeLog(challengeId, principalDetails.getUser(), requestDto);
+        return ResponseEntity.ok(ResponseConstants.RESPONSE_SAVE_OK);
+    }
+
+    @DeleteMapping("/check/{challengeLogId}")
+    public ResponseEntity<ApiResponse<Void>> deleteChallengeLog(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Long challengeLogId
+    ) {
+        challengeLogService.deleteChallengeLog(challengeLogId, principalDetails.getUser());
         return ResponseEntity.ok(ResponseConstants.RESPONSE_DEL_OK);
     }
 }
