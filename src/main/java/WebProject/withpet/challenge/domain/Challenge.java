@@ -2,6 +2,9 @@ package WebProject.withpet.challenge.domain;
 
 import WebProject.withpet.common.domain.BaseEntity;
 import WebProject.withpet.pets.domain.Pet;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -41,6 +45,9 @@ public class Challenge extends BaseEntity {
     @Max(value = 7, message = "챌린지는 일주일에 최대 7번 수행할 수 있습니다.")
     @Column(name = "target_cnt")
     private int targetCnt;
+
+    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL)
+    private List<ChallengeLog> logs = new ArrayList<>();
 
     public void update(Challenge updateChallenge) {
         pet = updateChallenge.getPet();
