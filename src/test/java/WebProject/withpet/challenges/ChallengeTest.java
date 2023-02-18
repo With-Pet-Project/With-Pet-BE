@@ -1,7 +1,7 @@
 package WebProject.withpet.challenges;
 
-import WebProject.withpet.challenge.domain.Challenge;
-import WebProject.withpet.challenge.domain.ChallengeRepository;
+import WebProject.withpet.challenges.domain.Challenge;
+import WebProject.withpet.challenges.domain.ChallengeRepository;
 import WebProject.withpet.pets.domain.Pet;
 import WebProject.withpet.pets.domain.PetRepository;
 import WebProject.withpet.users.domain.User;

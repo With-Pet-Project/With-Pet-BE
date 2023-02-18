@@ -1,6 +1,6 @@
-package WebProject.withpet.challenge.dto;
+package WebProject.withpet.challenges.dto;
 
-import WebProject.withpet.challenge.domain.Challenge;
+import WebProject.withpet.challenges.domain.Challenge;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,23 +8,25 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class WeeklyChallengeResponseDto {
+public class DailyChallengeResponseDto {
     private Long challengeId;
-
+    private Long challengeLogId;
     private Long petId;
     private String title;
     private int targetCnt;
     private int achieveCnt;
+    private boolean isAchieved;
 
-    public WeeklyChallengeResponseDto(
+    public DailyChallengeResponseDto(
             Challenge challenge,
-            int achieveCnt,
-            Long petId
+            int achieveCnt, Long challengeLogId, Long petId
     ) {
         this.challengeId = challenge.getId();
         this.petId = petId;
         this.title = challenge.getTitle();
         this.targetCnt = challenge.getTargetCnt();
         this.achieveCnt = achieveCnt;
+        this.challengeLogId = challengeLogId;
+        this.isAchieved = challengeLogId != null;
     }
 }

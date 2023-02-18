@@ -1,6 +1,6 @@
 package WebProject.withpet.pets.domain;
 
-import WebProject.withpet.challenge.domain.Challenge;
+import WebProject.withpet.challenges.domain.Challenge;
 import WebProject.withpet.users.domain.User;
 import java.time.LocalDate;
 import java.util.ArrayList;

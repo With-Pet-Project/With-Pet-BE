@@ -1,4 +1,4 @@
-package WebProject.withpet.challenge.domain;
+package WebProject.withpet.challenges.domain;
 
 import WebProject.withpet.pets.domain.Pet;
 import java.util.List;

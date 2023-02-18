@@ -1,4 +1,4 @@
-package WebProject.withpet.challenge.domain;
+package WebProject.withpet.challenges.domain;
 
 import com.querydsl.core.Tuple;
 import java.util.List;

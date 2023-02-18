@@ -1,11 +1,11 @@
-package WebProject.withpet.challenge.controller;
+package WebProject.withpet.challenges.controller;
 
-import WebProject.withpet.challenge.dto.ChallengeLogRequestDto;
-import WebProject.withpet.challenge.dto.ChallengeRequestDto;
-import WebProject.withpet.challenge.dto.DailyChallengeResponseDto;
-import WebProject.withpet.challenge.dto.WeeklyChallengeResponseDto;
-import WebProject.withpet.challenge.service.ChallengeLogService;
-import WebProject.withpet.challenge.service.ChallengeService;
+import WebProject.withpet.challenges.dto.ChallengeLogRequestDto;
+import WebProject.withpet.challenges.dto.ChallengeRequestDto;
+import WebProject.withpet.challenges.dto.DailyChallengeResponseDto;
+import WebProject.withpet.challenges.dto.WeeklyChallengeResponseDto;
+import WebProject.withpet.challenges.service.ChallengeLogService;
+import WebProject.withpet.challenges.service.ChallengeService;
 import WebProject.withpet.common.auth.PrincipalDetails;
 import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.dto.ApiResponse;

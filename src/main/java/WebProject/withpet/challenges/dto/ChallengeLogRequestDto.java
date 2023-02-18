@@ -1,7 +1,7 @@
-package WebProject.withpet.challenge.dto;
+package WebProject.withpet.challenges.dto;
 
-import WebProject.withpet.challenge.domain.Challenge;
-import WebProject.withpet.challenge.domain.ChallengeLog;
+import WebProject.withpet.challenges.domain.Challenge;
+import WebProject.withpet.challenges.domain.ChallengeLog;
 import java.time.LocalDate;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

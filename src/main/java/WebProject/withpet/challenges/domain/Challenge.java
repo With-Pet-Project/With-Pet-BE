@@ -1,4 +1,4 @@
-package WebProject.withpet.challenge.domain;
+package WebProject.withpet.challenges.domain;
 
 import WebProject.withpet.common.domain.BaseEntity;
 import WebProject.withpet.pets.domain.Pet;

@@ -1,6 +1,6 @@
-package WebProject.withpet.challenge.dto;
+package WebProject.withpet.challenges.dto;
 
-import WebProject.withpet.challenge.domain.Challenge;
+import WebProject.withpet.challenges.domain.Challenge;
 import WebProject.withpet.pets.domain.Pet;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

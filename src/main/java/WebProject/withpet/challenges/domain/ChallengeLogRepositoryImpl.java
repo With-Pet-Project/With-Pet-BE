@@ -1,6 +1,6 @@
-package WebProject.withpet.challenge.domain;
+package WebProject.withpet.challenges.domain;
 
-import static WebProject.withpet.challenge.domain.QChallengeLog.challengeLog;
+import static WebProject.withpet.challenges.domain.QChallengeLog.challengeLog;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;

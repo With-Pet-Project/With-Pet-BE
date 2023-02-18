@@ -1,11 +1,11 @@
-package WebProject.withpet.challenge.service;
+package WebProject.withpet.challenges.service;
 
-import WebProject.withpet.challenge.domain.Challenge;
-import WebProject.withpet.challenge.domain.ChallengeLog;
-import WebProject.withpet.challenge.domain.ChallengeLogRepository;
-import WebProject.withpet.challenge.domain.ChallengeLogRepositoryImpl;
-import WebProject.withpet.challenge.domain.ChallengeRepository;
-import WebProject.withpet.challenge.dto.ChallengeLogRequestDto;
+import WebProject.withpet.challenges.domain.Challenge;
+import WebProject.withpet.challenges.domain.ChallengeLog;
+import WebProject.withpet.challenges.domain.ChallengeLogRepository;
+import WebProject.withpet.challenges.domain.ChallengeLogRepositoryImpl;
+import WebProject.withpet.challenges.domain.ChallengeRepository;
+import WebProject.withpet.challenges.dto.ChallengeLogRequestDto;
 import WebProject.withpet.common.exception.DataNotFoundException;
 import WebProject.withpet.pets.service.PetService;
 import WebProject.withpet.users.domain.User;

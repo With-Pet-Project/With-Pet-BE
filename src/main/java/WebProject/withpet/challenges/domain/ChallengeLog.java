@@ -1,4 +1,4 @@
-package WebProject.withpet.challenge.domain;
+package WebProject.withpet.challenges.domain;
 
 import java.time.LocalDate;
 import javax.persistence.Entity;
