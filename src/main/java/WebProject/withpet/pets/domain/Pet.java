@@ -1,7 +1,11 @@
 package WebProject.withpet.pets.domain;
 
+import WebProject.withpet.challenge.domain.Challenge;
 import WebProject.withpet.users.domain.User;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,8 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,6 +43,9 @@ public class Pet {
 
     @DateTimeFormat(pattern = "yyyy-MM-DD")
     private LocalDate birthday;
+
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
+    private List<Challenge> challenges = new ArrayList<>();
 
     @Builder
     public Pet(
