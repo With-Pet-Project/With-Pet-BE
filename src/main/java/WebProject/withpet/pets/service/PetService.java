@@ -1,6 +1,8 @@
 package WebProject.withpet.pets.service;
 
+import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.exception.DataNotFoundException;
+import WebProject.withpet.common.exception.DuplicateException;
 import WebProject.withpet.common.exception.UnauthorizedException;
 import WebProject.withpet.pets.domain.Pet;
 import WebProject.withpet.pets.domain.PetRepository;
@@ -23,13 +25,15 @@ public class PetService {
 
     @Transactional
     public void registerPet(final PetRequestDto petRequest, final User user) {
+        validateNameIsNotDuplicated(petRequest.getName());
         petRepository.save(petRequest.toEntity(user));
     }
 
     @Transactional
-    public void updatePet(Long petId, User user, PetRequestDto petRequestDto) {
+    public void updatePet(Long petId, User user, PetRequestDto petRequest) {
         Pet pet = accessPet(user, petId);
-        pet.update(petRequestDto.toEntity(user));
+        validateNameIsNotDuplicated(petRequest.getName());
+        pet.update(petRequest.toEntity(user));
     }
 
     @Transactional
@@ -48,6 +52,12 @@ public class PetService {
     public PetResponseDto findPet(User user, Long petId) {
         Pet pet = accessPet(user, petId);
         return new PetResponseDto(pet);
+    }
+
+    private void validateNameIsNotDuplicated(String name) {
+        if (petRepository.existsByName(name)) {
+            throw new DuplicateException(ErrorCode.DUPLICATE_PET);
+        }
     }
 
     private Pet findPetById(Long id) throws DataNotFoundException {
