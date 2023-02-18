@@ -83,9 +83,9 @@ public class ChallengeService {
 
     private Long getAchievedLogId(List<Tuple> logs, int year, int month, int week, int day) {
         for (Tuple tuple : logs) {
-            if (tuple.get(0, Integer.class).equals(year) && tuple.get(1, Integer.class).equals(month) && tuple.get(2,
-                    Integer.class).equals(week) && tuple.get(3, Integer.class).equals(day)) {
-                return tuple.get(4, Long.class);
+            if (tuple.get(challengeLog.year).equals(year) && tuple.get(challengeLog.month).equals(month) && tuple.get(
+                    challengeLog.week).equals(week) && tuple.get(challengeLog.day).equals(day)) {
+                return tuple.get(challengeLog.id);
             }
         }
         return null;
