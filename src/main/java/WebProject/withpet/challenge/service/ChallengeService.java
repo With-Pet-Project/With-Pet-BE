@@ -7,14 +7,12 @@ import WebProject.withpet.challenge.dto.ChallengeRequestDto;
 import WebProject.withpet.challenge.dto.DailyChallengeResponseDto;
 import WebProject.withpet.challenge.dto.WeeklyChallengeResponseDto;
 import WebProject.withpet.common.exception.DataNotFoundException;
-import WebProject.withpet.common.exception.UnauthorizedException;
 import WebProject.withpet.pets.domain.Pet;
 import WebProject.withpet.pets.service.PetService;
 import WebProject.withpet.users.domain.User;
 import com.querydsl.core.Tuple;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -28,22 +26,21 @@ public class ChallengeService {
     private final PetService petService;
 
     @Transactional
-    public void registerChallenge(User user, ChallengeRequestDto requestDto) {
-        Pet pet = petService.accessPet(user, requestDto.getPetId());
-        challengeRepository.save(requestDto.toEntity(user, pet));
+    public void registerChallenge(Long petId, User user, ChallengeRequestDto requestDto) {
+        Pet pet = petService.accessPet(user, petId);
+        challengeRepository.save(requestDto.toEntity(pet));
     }
 
     @Transactional
-    public void updateChallenge(Long challengeId, User user, ChallengeRequestDto requestDto) {
-        Challenge challenge = accessChallenge(challengeId, user);
-        Pet pet = petService.accessPet(user, requestDto.getPetId());
-        challenge.update(requestDto.toEntity(user, pet));
-
+    public void updateChallenge(Long petId, Long challengeId, User user, ChallengeRequestDto requestDto) {
+        Pet pet = petService.accessPet(user, petId);
+        Challenge challenge = accessChallenge(petId, challengeId, user);
+        challenge.update(requestDto.toEntity(pet));
     }
 
     @Transactional
-    public void deleteChallenge(Long challengeId, User user) {
-        Challenge challenge = accessChallenge(challengeId, user);
+    public void deleteChallenge(Long petId, Long challengeId, User user) {
+        Challenge challenge = accessChallenge(petId, challengeId, user);
         challengeRepository.delete(challenge);
     }
 
@@ -94,16 +91,8 @@ public class ChallengeService {
         return challengeRepository.findById(id).orElseThrow(DataNotFoundException::new);
     }
 
-    private void checkPermission(User user, Challenge challenge) {
-        if (!Objects.equals(challenge.getUser().getId(), user.getId())) {
-            throw new UnauthorizedException();
-        }
-    }
-
-    public Challenge accessChallenge(Long id, User user) {
-        Challenge challenge = findChallengeById(id);
-        checkPermission(user, challenge);
-
-        return challenge;
+    public Challenge accessChallenge(Long petId, Long challengeId, User user) {
+        petService.accessPet(user, petId);
+        return findChallengeById(challengeId);
     }
 }

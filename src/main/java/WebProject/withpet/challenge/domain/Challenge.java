@@ -2,7 +2,6 @@ package WebProject.withpet.challenge.domain;
 
 import WebProject.withpet.common.domain.BaseEntity;
 import WebProject.withpet.pets.domain.Pet;
-import WebProject.withpet.users.domain.User;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,11 +29,6 @@ public class Challenge extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @NotNull
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id")
     @NotNull
     private Pet pet;
@@ -55,13 +49,7 @@ public class Challenge extends BaseEntity {
     }
 
     @Builder
-    public Challenge(
-            User user,
-            Pet pet,
-            String title,
-            int targetCnt
-    ) {
-        this.user = user;
+    public Challenge(Pet pet, String title, int targetCnt) {
         this.pet = pet;
         this.title = title;
         this.targetCnt = targetCnt;

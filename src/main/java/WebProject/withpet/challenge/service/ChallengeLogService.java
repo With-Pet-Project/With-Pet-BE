@@ -7,10 +7,8 @@ import WebProject.withpet.challenge.domain.ChallengeLogRepositoryImpl;
 import WebProject.withpet.challenge.domain.ChallengeRepository;
 import WebProject.withpet.challenge.dto.ChallengeLogRequestDto;
 import WebProject.withpet.common.exception.DataNotFoundException;
-import WebProject.withpet.common.exception.UnauthorizedException;
 import WebProject.withpet.pets.service.PetService;
 import WebProject.withpet.users.domain.User;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +21,13 @@ public class ChallengeLogService {
     private final ChallengeService challengeService;
     private final PetService petService;
 
-    public void registerChallengeLog(Long challengeId, User user, ChallengeLogRequestDto requestDto) {
-        Challenge challenge = challengeService.accessChallenge(challengeId, user);
+    public void registerChallengeLog(Long petId, Long challengeId, User user, ChallengeLogRequestDto requestDto) {
+        Challenge challenge = challengeService.accessChallenge(petId, challengeId, user);
         challengeLogRepository.save(requestDto.toEntity(challenge));
     }
 
-    public void deleteChallengeLog(Long logId, User user) {
-        ChallengeLog challengeLog = accessChallengeLog(logId, user);
+    public void deleteChallengeLog(Long petId, Long logId, User user) {
+        ChallengeLog challengeLog = accessChallengeLog(logId, petId, user);
         challengeLogRepository.delete(challengeLog);
     }
 
@@ -37,15 +35,8 @@ public class ChallengeLogService {
         return challengeLogRepository.findById(id).orElseThrow(DataNotFoundException::new);
     }
 
-    private void checkPermission(User user, ChallengeLog challengeLog) {
-        if (!Objects.equals(challengeLog.getChallenge().getUser().getId(), user.getId())) {
-            throw new UnauthorizedException();
-        }
-    }
-
-    private ChallengeLog accessChallengeLog(Long id, User user) {
-        ChallengeLog challengeLog = findChallengeLogById(id);
-        checkPermission(user, challengeLog);
-        return challengeLog;
+    private ChallengeLog accessChallengeLog(Long id, Long petId, User user) {
+        petService.accessPet(user, petId);
+        return findChallengeLogById(id);
     }
 }

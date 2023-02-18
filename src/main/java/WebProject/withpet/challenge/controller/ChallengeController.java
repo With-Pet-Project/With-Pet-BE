@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/challenge")
+@RequestMapping("/{petId}/challenge")
 public class ChallengeController {
     private final ChallengeService challengeService;
     private final ChallengeLogService challengeLogService;
@@ -34,42 +34,43 @@ public class ChallengeController {
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> registerChallenge(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody @Valid ChallengeRequestDto requestDto) {
-        challengeService.registerChallenge(principalDetails.getUser(), requestDto);
+            @RequestBody @Valid ChallengeRequestDto requestDto, @PathVariable Long petId) {
+        challengeService.registerChallenge(petId, principalDetails.getUser(), requestDto);
         return ResponseEntity.ok(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
     @PutMapping("/{challengeId}")
     public ResponseEntity<ApiResponse<Void>> updateChallenge(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                                              @RequestBody @Valid ChallengeRequestDto requestDto,
-                                                             @PathVariable Long challengeId) {
-        challengeService.updateChallenge(challengeId, principalDetails.getUser(), requestDto);
+                                                             @PathVariable Long challengeId, @PathVariable Long petId) {
+        challengeService.updateChallenge(petId, challengeId, principalDetails.getUser(), requestDto);
         return ResponseEntity.ok(ResponseConstants.RESPONSE_UPDATE_OK);
     }
 
     @DeleteMapping("/{challengeId}")
     public ResponseEntity<ApiResponse<Void>> deleteChallenge(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                                             @PathVariable Long challengeId) {
-        challengeService.deleteChallenge(challengeId, principalDetails.getUser());
+                                                             @PathVariable Long challengeId, @PathVariable Long petId) {
+        challengeService.deleteChallenge(petId, challengeId, principalDetails.getUser());
         return ResponseEntity.ok(ResponseConstants.RESPONSE_DEL_OK);
     }
 
     @PostMapping("/{challengeId}/check")
     public ResponseEntity<ApiResponse<Void>> registerChallengeLog(
             @AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long challengeId,
-            @RequestBody @Valid ChallengeLogRequestDto requestDto) {
-        challengeLogService.registerChallengeLog(challengeId, principalDetails.getUser(), requestDto);
+            @RequestBody @Valid ChallengeLogRequestDto requestDto, @PathVariable Long petId) {
+        challengeLogService.registerChallengeLog(petId, challengeId, principalDetails.getUser(), requestDto);
         return ResponseEntity.ok(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
     @DeleteMapping("/check/{challengeLogId}")
     public ResponseEntity<ApiResponse<Void>> deleteChallengeLog(
-            @AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long challengeLogId) {
-        challengeLogService.deleteChallengeLog(challengeLogId, principalDetails.getUser());
+            @AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long challengeLogId,
+            @PathVariable Long petId) {
+        challengeLogService.deleteChallengeLog(petId, challengeLogId, principalDetails.getUser());
         return ResponseEntity.ok(ResponseConstants.RESPONSE_DEL_OK);
     }
 
-    @GetMapping("/{petId}/daily")
+    @GetMapping("/daily")
     public ResponseEntity<ApiResponse<List<DailyChallengeResponseDto>>> getDailyChallenges(
             @AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long petId,
             @RequestParam int year, @RequestParam int month, @RequestParam int week, @RequestParam int day) {
@@ -79,7 +80,7 @@ public class ChallengeController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{petId}/weekly")
+    @GetMapping("/weekly")
     public ResponseEntity<ApiResponse<List<WeeklyChallengeResponseDto>>> getWeeklyChallenges(
             @AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long petId,
             @RequestParam int year, @RequestParam int month, @RequestParam int week) {
