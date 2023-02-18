@@ -6,7 +6,9 @@ import WebProject.withpet.challenge.domain.ChallengeRepository;
 import WebProject.withpet.challenge.dto.ChallengeRequestDto;
 import WebProject.withpet.challenge.dto.DailyChallengeResponseDto;
 import WebProject.withpet.challenge.dto.WeeklyChallengeResponseDto;
+import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.exception.DataNotFoundException;
+import WebProject.withpet.common.exception.DuplicateException;
 import WebProject.withpet.pets.domain.Pet;
 import WebProject.withpet.pets.service.PetService;
 import WebProject.withpet.users.domain.User;
@@ -14,6 +16,7 @@ import com.querydsl.core.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +31,12 @@ public class ChallengeService {
     @Transactional
     public void registerChallenge(Long petId, User user, ChallengeRequestDto requestDto) {
         Pet pet = petService.accessPet(user, petId);
-        challengeRepository.save(requestDto.toEntity(pet));
+
+        try {
+            challengeRepository.save(requestDto.toEntity(pet));
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicateException(ErrorCode.DUPLICATE_CHALLENGE);
+        }
     }
 
     @Transactional
