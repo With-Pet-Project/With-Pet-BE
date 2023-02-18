@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,9 +24,15 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "pets")
 @Getter
 @NoArgsConstructor
+@Table(
+        name = "pets",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "unique_column_in_pet_name",
+                        columnNames = {"name", "user_id"}
+                )})
 public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
