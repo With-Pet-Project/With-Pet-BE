@@ -29,8 +29,8 @@ public class JwtTokenProvider {
     @Autowired
     private UserRepository userRepository;
 
-    public JwtTokenProvider(@Value("${TOKEN_SECRET_KEY}") String secretKey,
-                            @Value("${TOKEN_VALID_TIME}") long tokenValidTime) {
+    public JwtTokenProvider(@Value("${jwt.secret-key}") String secretKey,
+                            @Value("${jwt.valid-time}") long tokenValidTime) {
         this.secretKey = secretKey;
         this.tokenValidTime = tokenValidTime;
     }
