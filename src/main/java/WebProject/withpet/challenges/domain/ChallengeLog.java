@@ -1,4 +1,4 @@
-package WebProject.withpet.pets.domain;
+package WebProject.withpet.challenges.domain;
 
 import java.time.LocalDate;
 import javax.persistence.Entity;
@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,10 +26,38 @@ public class ChallengeLog {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "challenge_id")
+    @NotNull
     private Challenge challenge;
 
     // 달성 일자
     @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-DD")
+    private int year;
+    @NotNull
+    private int month;
+    @NotNull
+    private int day;
+    @NotNull
+    // 몇번째 주
+    private int week;
+
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDate date;
+
+    @Builder
+    public ChallengeLog(
+            Challenge challenge,
+            int year,
+            int month,
+            int day,
+            int week,
+            LocalDate date
+    ) {
+        this.challenge = challenge;
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.week = week;
+        this.date = date;
+    }
 }
