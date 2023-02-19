@@ -31,7 +31,6 @@ public class JwtTokenProvider {
     private final UserRepository userRepository;
 
     public String createToken(User user) {
-        System.out.println(30 * 60 * 1000L);
         String jwtToken = JWT.create().withSubject(user.getEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis() + Long.parseLong(tokenValidTime)))
                 .withClaim("id", user.getId())
