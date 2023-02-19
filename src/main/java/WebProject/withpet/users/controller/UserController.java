@@ -1,5 +1,6 @@
 package WebProject.withpet.users.controller;
 
+import WebProject.withpet.common.auth.PrincipalDetails;
 import WebProject.withpet.common.auth.application.JwtTokenProvider;
 import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.dto.ApiResponse;
