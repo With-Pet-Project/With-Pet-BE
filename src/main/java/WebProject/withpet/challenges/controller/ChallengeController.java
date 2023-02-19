@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/{petId}/challenge")
+@RequestMapping("/pet/{petId}/challenge")
 public class ChallengeController {
     private final ChallengeService challengeService;
     private final ChallengeLogService challengeLogService;
