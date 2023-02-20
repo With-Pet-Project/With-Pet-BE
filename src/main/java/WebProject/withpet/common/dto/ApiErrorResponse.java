@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 
@@ -45,12 +46,12 @@ public class ApiErrorResponse {
     }
 
     public static ResponseEntity<ApiErrorResponse> toResponseEntityWithErrors(ErrorCode e,
-        BindingResult bindingResult) {
+        Errors errors) {
         ApiErrorResponse apiErrorResponse = ApiErrorResponse.builder()
             .code(e.getHttpStatus().value())
             .message(e.getMessage())
             .build();
-        apiErrorResponse.setCustomFieldErrors(bindingResult.getFieldErrors());
+        apiErrorResponse.setCustomFieldErrors(errors.getFieldErrors());
 
         return ResponseEntity
             .status(e.getHttpStatus())
