@@ -35,11 +35,9 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "articles")
 @Getter
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name="DTYPE")
+@DiscriminatorColumn(name = "DTYPE")
 @NoArgsConstructor
-@AllArgsConstructor
 @DiscriminatorValue("Article")
-@Builder
 public class Article extends BaseEntity {
 
     @Id
@@ -53,7 +51,10 @@ public class Article extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Tag tag;
 
+
     private Integer likeCnt;
+
+    private Integer commentCnt;
 
     private String title;
 
@@ -62,14 +63,16 @@ public class Article extends BaseEntity {
     @OneToMany(mappedBy = "article")
     private List<Image> images = new ArrayList<>();
 
+
     @Builder
-    public Article(User user, Tag tag, Integer likeCnt, String title, String detailText,
-        List<Image> images) {
+    public Article(User user, Tag tag, Integer likeCnt, Integer commentCnt, String title,
+        String detailText) {
         this.user = user;
         this.tag = tag;
         this.likeCnt = likeCnt;
+        this.commentCnt = commentCnt;
         this.title = title;
         this.detailText = detailText;
-        this.images = images;
     }
+
 }
