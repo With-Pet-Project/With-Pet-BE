@@ -1,10 +1,15 @@
 package WebProject.withpet.articles.repository;
 
+import static WebProject.withpet.articles.domain.QArticle.*;
+import static WebProject.withpet.users.domain.QUser.user;
+
 import WebProject.withpet.articles.dto.MypageArticleDto;
+import WebProject.withpet.articles.dto.ViewUserAndArticleResponseDto;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.springframework.data.jpa.repository.Query;
 
 public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
@@ -21,6 +26,22 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             .getResultList();
 
         return result;
+    }
+
+    @Override
+    public ViewUserAndArticleResponseDto findSpecificArticle(Long articleId) {
+
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        return queryFactory
+            .select(Projections.constructor(ViewUserAndArticleResponseDto.class,
+                user.profileImg,
+                user.nickName,
+                article))
+            .from(article)
+            .leftJoin(article.user, user)
+            .where(article.id.eq(articleId))
+            .fetchOne();
     }
 
 }
