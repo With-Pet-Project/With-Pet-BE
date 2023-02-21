@@ -35,7 +35,7 @@ public class Image {
 
     @Builder
     public Image(Article article, String content) {
-        this.article=article;
+        setArticle(article);
         this.content = content;
     }
 
@@ -45,7 +45,7 @@ public class Image {
             this.article.getImages().remove(this);
 
         this.article=article;
-        article.getImages().add(this);
+        this.getArticle().getImages().add(this);
     }
 
 
