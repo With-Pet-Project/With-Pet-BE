@@ -28,9 +28,9 @@ public class SpecArticle extends Article {
 
     //부모 클래스 builder와 다른 이름으로 생성
     @Builder(builderMethodName = "SpecArticleBuilder")
-    public SpecArticle(User user, Tag tag, Integer likeCnt, String title,
-        String detailText, List<Image> images, String place1, String place2) {
-        super(user, tag, likeCnt, title, detailText, images);
+    public SpecArticle(User user, Tag tag, Integer likeCnt, Integer commentCnt, String title,
+        String detailText, String place1, String place2) {
+        super(user, tag, likeCnt, commentCnt, title, detailText);
         this.place1 = place1;
         this.place2 = place2;
     }
