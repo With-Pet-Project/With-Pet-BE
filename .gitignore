@@ -45,3 +45,4 @@ out
 gen
 
 application-dev.properties
+application.properties
