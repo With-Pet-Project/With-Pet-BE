@@ -38,4 +38,9 @@ public class HealthCare extends BaseEntity {
     private double feedAmount;
 
     private String diary;
+
+    private int year;
+    private int month;
+    private int week;
+    private int day;
 }
