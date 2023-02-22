@@ -26,8 +26,8 @@ public class UserSocialService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "앱 rest api 키 입력해야함");
-        body.add("redirect_uri", "인가 코드가 리다이렉트된 URI");
+        body.add("client_id", "b52140c9061cc85f0ff31b4d548e998d");
+        body.add("redirect_uri", "http://localhost:3000/login/oauth/callback");
         body.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, httpHeaders);
