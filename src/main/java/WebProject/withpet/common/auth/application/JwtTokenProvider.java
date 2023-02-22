@@ -10,7 +10,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import java.util.Date;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,24 +19,21 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
+    @Value("${jwt.secret-key}")
     private String secretKey;
-    public static final String HEADER_STRING = "Authorization";
-    private long tokenValidTime;
-    public static final String TOKEN_PREFIX = "Bearer ";
-    @Autowired
-    private UserDetailsService userDetailsService;
-    @Autowired
-    private UserRepository userRepository;
 
-    public JwtTokenProvider(@Value("${TOKEN_SECRET_KEY}") String secretKey,
-                            @Value("${TOKEN_VALID_TIME}") long tokenValidTime) {
-        this.secretKey = secretKey;
-        this.tokenValidTime = tokenValidTime;
-    }
+    public static final String HEADER_STRING = "Authorization";
+    @Value("${jwt.valid-time}")
+    private String tokenValidTime;
+    public static final String TOKEN_PREFIX = "Bearer ";
+
+    private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
     public String createToken(User user) {
         String jwtToken = JWT.create().withSubject(user.getEmail())
-                .withExpiresAt(new Date(System.currentTimeMillis() + tokenValidTime)).withClaim("id", user.getId())
+                .withExpiresAt(new Date(System.currentTimeMillis() + Long.parseLong(tokenValidTime)))
+                .withClaim("id", user.getId())
                 .withClaim("nickname", user.getNickName()).withClaim("email", user.getEmail())
                 .sign(Algorithm.HMAC512(secretKey));
         return jwtToken;

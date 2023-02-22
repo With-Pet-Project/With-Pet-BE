@@ -27,11 +27,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(uniqueConstraints = {
-        @UniqueConstraint(
-                name = "unique_column_in_challenge_title",
-                columnNames = {"title", "pet_id"}
-        )})
+@Table(name = "challenges",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "unique_column_in_challenge_title",
+                        columnNames = {"title", "pet_id"}
+                )})
 public class Challenge extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
