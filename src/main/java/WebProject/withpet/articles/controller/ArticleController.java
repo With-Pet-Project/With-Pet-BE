@@ -65,7 +65,7 @@ public class ArticleController {
 
     @GetMapping("/{articleId}")
     public ResponseEntity<ApiResponse<ViewUserAndArticleResponseDto>> viewSpecificArticle(
-        @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 한다.") Long articleId) {
+        @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 합니다.") Long articleId) {
 
         ApiResponse response = new ApiResponse<>(200, "게시물 상세 조회 성공",
             articleService.viewSpecificArticle(articleId));
