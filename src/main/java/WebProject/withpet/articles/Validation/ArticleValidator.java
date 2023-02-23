@@ -35,10 +35,10 @@ public class ArticleValidator implements Validator {
             || request.getTag().equals(Tag.WALK)) {
 
             if (request.getPlace1() == null) {
-                errors.rejectValue("place1", "INVALID_PARAMETER", "해당 태그에서 장소1은 필수 값");
+                errors.rejectValue("place1", "INVALID_PARAMETER", "해당 태그에서 장소1은 필수 값입니다.");
             }
             if (request.getPlace2() == null) {
-                errors.rejectValue("place2", "INVALID_PARAMETER", "해당 태그에서 장소1은 필수 값");
+                errors.rejectValue("place2", "INVALID_PARAMETER", "해당 태그에서 장소1은 필수 값입니다.");
             }
 
         }
