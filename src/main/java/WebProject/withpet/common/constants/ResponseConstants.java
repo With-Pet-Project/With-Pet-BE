@@ -5,12 +5,12 @@ import WebProject.withpet.common.dto.ApiResponse;
 public class ResponseConstants {
 
     public static final ApiResponse<Void> RESPONSE_SAVE_OK = new ApiResponse<>(201,
-        "정상적으로 저장되었습니다.");
+            ResponseMessages.SAVE_MESSAGE.getContent());
     public static final ApiResponse<Void> RESPONSE_VIEW_OK = new ApiResponse<>(200,
-        "정상적으로 조회되었습니다.");
+            ResponseMessages.VIEW_MESSAGE.getContent());
     public static final ApiResponse<Void> RESPONSE_DEL_OK = new ApiResponse<>(200,
-        "정상적으로 삭제되었습니다.");
+            ResponseMessages.DEL_MESSAGE.getContent());
     public static final ApiResponse<Void> RESPONSE_UPDATE_OK = new ApiResponse<>(200,
-        "정상적으로 수정되었습니다.");
+            ResponseMessages.UPDATE_MESSAGE.getContent());
 
 }

@@ -8,6 +8,7 @@ import WebProject.withpet.challenges.service.ChallengeLogService;
 import WebProject.withpet.challenges.service.ChallengeService;
 import WebProject.withpet.common.auth.PrincipalDetails;
 import WebProject.withpet.common.constants.ResponseConstants;
+import WebProject.withpet.common.constants.ResponseMessages;
 import WebProject.withpet.common.dto.ApiResponse;
 import java.util.List;
 import javax.validation.Valid;
@@ -76,7 +77,8 @@ public class ChallengeController {
             @RequestParam int year, @RequestParam int month, @RequestParam int week, @RequestParam int day) {
         List<DailyChallengeResponseDto> result = challengeService.getDailyChallenges(petId, principalDetails.getUser(),
                 year, month, week, day);
-        ApiResponse<List<DailyChallengeResponseDto>> response = new ApiResponse<>(200, "정상적으로 조회되었습니다", result);
+        ApiResponse<List<DailyChallengeResponseDto>> response = new ApiResponse<>(200,
+                ResponseMessages.VIEW_MESSAGE.getContent(), result);
         return ResponseEntity.ok(response);
     }
 
@@ -86,7 +88,8 @@ public class ChallengeController {
             @RequestParam int year, @RequestParam int month, @RequestParam int week) {
         List<WeeklyChallengeResponseDto> result = challengeService.getWeeklyChallenges(petId,
                 principalDetails.getUser(), year, month, week);
-        ApiResponse<List<WeeklyChallengeResponseDto>> response = new ApiResponse<>(200, "정상적으로 조회되었습니다", result);
+        ApiResponse<List<WeeklyChallengeResponseDto>> response = new ApiResponse<>(200,
+                ResponseMessages.VIEW_MESSAGE.getContent(), result);
         return ResponseEntity.ok(response);
     }
 }
