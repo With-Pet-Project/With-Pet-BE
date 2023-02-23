@@ -46,3 +46,4 @@ gen
 
 application-dev.properties
 application.properties
+application-API-KEY.properties
