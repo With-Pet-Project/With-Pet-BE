@@ -34,6 +34,7 @@ dependencies {
     //json 라이브러리 관련
     implementation group: 'org.json', name: 'json', version: '20090211'
 
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.6'
 
     // 시큐리티 관련
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -45,6 +46,9 @@ dependencies {
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
 	implementation 'mysql:mysql-connector-java'
+
+	//s3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

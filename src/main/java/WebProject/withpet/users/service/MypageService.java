@@ -8,11 +8,12 @@ import WebProject.withpet.users.dto.ViewMypageResponseDto;
 import WebProject.withpet.users.repository.UserRepository;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MypageService {
 
     private final UserRepository userRepository;
