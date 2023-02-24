@@ -46,7 +46,7 @@ public class ArticleController {
     public ResponseEntity<ApiResponse<Void>> createArticle(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestPart ArticleCreateRequestDto request,
-        @RequestPart List<MultipartFile> images) {
+        @RequestPart(required = false)List<MultipartFile> images) {
 
         Errors errors = new BeanPropertyBindingResult(request,
             "articleCreateRequestDto");
@@ -63,6 +63,7 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
+    //댓글 구현 후에 추가로 구현해야함
     @GetMapping("/{articleId}")
     public ResponseEntity<ApiResponse<ViewUserAndArticleResponseDto>> viewSpecificArticle(
         @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 합니다.") Long articleId) {
@@ -72,4 +73,6 @@ public class ArticleController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    //
 }
