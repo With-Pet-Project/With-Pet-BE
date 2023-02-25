@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .addFilter(new JwtAuthorizationFilter(authentication, jwtTokenProvider))
                 .authorizeRequests();
 
-        http.authorizeRequests().antMatchers("/user/**").permitAll()
+        http.authorizeRequests().antMatchers("/user/**","/mypage/**").permitAll()
                 .and()
                 .headers()
                 .addHeaderWriter(new XFrameOptionsHeaderWriter(
