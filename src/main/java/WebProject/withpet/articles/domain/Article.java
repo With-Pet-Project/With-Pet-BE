@@ -1,15 +1,13 @@
 package WebProject.withpet.articles.domain;
 
 
+import WebProject.withpet.comments.domain.Comment;
 import WebProject.withpet.common.domain.BaseEntity;
 import WebProject.withpet.users.domain.User;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -23,12 +21,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 
 @Entity
@@ -62,6 +57,8 @@ public class Article extends BaseEntity {
     @OneToMany(mappedBy = "article")
     private List<Image> images = new ArrayList<>();
 
+    @OneToMany(mappedBy = "article", orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Article(User user, Tag tag, Integer likeCnt, String title,
@@ -71,6 +68,16 @@ public class Article extends BaseEntity {
         this.likeCnt = likeCnt;
         this.title = title;
         this.detailText = detailText;
+    }
+
+    public Boolean isSpecArticle() {
+
+        if (this.getTag().equals(Tag.LOST) || this.getTag().equals(Tag.HOSPITAL)
+            || this.getTag().equals(Tag.WALK)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
