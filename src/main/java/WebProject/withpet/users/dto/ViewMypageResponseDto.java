@@ -21,4 +21,6 @@ public class ViewMypageResponseDto {
     private String nickName;
 
     private List<MypageArticleDto> articleList;
+
+    private String email;
 }
