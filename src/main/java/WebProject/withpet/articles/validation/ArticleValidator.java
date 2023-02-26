@@ -1,4 +1,4 @@
-package WebProject.withpet.articles.Validation;
+package WebProject.withpet.articles.validation;
 
 
 import WebProject.withpet.articles.domain.Tag;
