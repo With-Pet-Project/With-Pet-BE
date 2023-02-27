@@ -5,11 +5,11 @@ import WebProject.withpet.common.exception.UserNotFoundException;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.repository.UserRepository;
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import java.util.Date;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtTokenProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -33,9 +34,8 @@ public class JwtTokenProvider {
     public String createToken(User user) {
         String jwtToken = JWT.create().withSubject(user.getEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis() + Long.parseLong(tokenValidTime)))
-                .withClaim("id", user.getId())
-                .withClaim("nickname", user.getNickName()).withClaim("email", user.getEmail())
-                .sign(Algorithm.HMAC512(secretKey));
+                .withClaim("id", user.getId()).withClaim("nickname", user.getNickName())
+                .withClaim("email", user.getEmail()).sign(Algorithm.HMAC512(secretKey));
         return jwtToken;
     }
 
@@ -59,12 +59,6 @@ public class JwtTokenProvider {
             }
         }
         return null;
-    }
-
-    public void verifyToken(String givenToken) {
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC512(secretKey)).build();
-        String[] givenTokens = givenToken.split(TOKEN_PREFIX);
-        verifier.verify(givenTokens[1]);
     }
 
     public String getSecretKey() {

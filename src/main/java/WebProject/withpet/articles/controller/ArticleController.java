@@ -39,9 +39,10 @@ public class ArticleController {
     private final ArticleValidator articleValidator;
 
     @PostMapping()
-    public ResponseEntity<ApiResponse<Void>> createArticle(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                                           @RequestPart ArticleCreateRequestDto request,
-                                                           @RequestPart List<MultipartFile> images) {
+    public ResponseEntity<ApiResponse<Void>> createArticle(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @RequestPart ArticleCreateRequestDto request,
+        @RequestPart(required = false)List<MultipartFile> images) {
 
         Errors errors = new BeanPropertyBindingResult(request, "articleCreateRequestDto");
 
@@ -57,13 +58,16 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
+    //댓글 구현 후에 추가로 구현해야함
     @GetMapping("/{articleId}")
     public ResponseEntity<ApiResponse<ViewUserAndArticleResponseDto>> viewSpecificArticle(
-            @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 한다.") Long articleId) {
+        @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 합니다.") Long articleId) {
 
         ApiResponse response = new ApiResponse<>(200, ResponseMessages.VIEW_MESSAGE.getContent(),
                 articleService.viewSpecificArticle(articleId));
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    //
 }

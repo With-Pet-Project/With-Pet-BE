@@ -3,6 +3,7 @@ package WebProject.withpet.users.service;
 import WebProject.withpet.users.dto.SocialUserInfoDto;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,7 +16,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class UserSocialService {
 
-    // TODO: 예외처리 하기
+    @Value("${social-key}")
+    private String adminKey;
 
     public String getAccessToken(String code) throws JSONException {
 
@@ -28,7 +30,7 @@ public class UserSocialService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "b52140c9061cc85f0ff31b4d548e998d");
+        body.add("client_id", adminKey);
         body.add("redirect_uri", "http://localhost:3000/login/oauth/callback");
         body.add("code", code);
 

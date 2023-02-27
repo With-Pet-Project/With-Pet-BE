@@ -10,12 +10,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "health_cares")
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class HealthCare extends BaseEntity {
     @Id
@@ -38,4 +42,18 @@ public class HealthCare extends BaseEntity {
     private double feedAmount;
 
     private String diary;
+
+    private int year;
+    private int month;
+    private int week;
+    private int day;
+
+    public void update(HealthCare updateHealthCare) {
+        pet = updateHealthCare.pet;
+        walkDistance = updateHealthCare.walkDistance;
+        weight = updateHealthCare.weight;
+        drinkAmount = updateHealthCare.drinkAmount;
+        feedAmount = updateHealthCare.feedAmount;
+        diary = updateHealthCare.diary;
+    }
 }

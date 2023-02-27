@@ -54,7 +54,6 @@ public class Article extends BaseEntity {
 
     private Integer likeCnt;
 
-    private Integer commentCnt;
 
     private String title;
 
@@ -65,12 +64,11 @@ public class Article extends BaseEntity {
 
 
     @Builder
-    public Article(User user, Tag tag, Integer likeCnt, Integer commentCnt, String title,
+    public Article(User user, Tag tag, Integer likeCnt, String title,
         String detailText) {
         this.user = user;
         this.tag = tag;
         this.likeCnt = likeCnt;
-        this.commentCnt = commentCnt;
         this.title = title;
         this.detailText = detailText;
     }
