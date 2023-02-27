@@ -1,7 +1,6 @@
 package WebProject.withpet.pets.domain;
 
 import WebProject.withpet.common.domain.BaseEntity;
-import WebProject.withpet.pets.domain.Pet;
 import WebProject.withpet.users.domain.User;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "consumptions")
 @Getter
 @NoArgsConstructor
-public class Comsumption extends BaseEntity {
+public class Consumption extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
