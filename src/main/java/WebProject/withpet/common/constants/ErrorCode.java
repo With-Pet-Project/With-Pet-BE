@@ -13,8 +13,8 @@ public enum ErrorCode {
     KAKAO_JSON_OBJECT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "카카오 로그인 시 JsonObject 에러 발생"),
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "유효하지 않은 데이터가 존재합니다."),
     DUPLICATE_NICK_NAME(HttpStatus.CONFLICT, "해당 닉네임은 이미 존재합니다."),
-    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "해당 이메일은 이미 존재합니다"),
-    DUPLICATE_CHALLENGE(HttpStatus.CONFLICT, "반려동물의 해당 챌린지명은 이미 존재합니다");
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "해당 이메일은 이미 존재합니다."),
+    DUPLICATE_CHALLENGE(HttpStatus.CONFLICT, "반려동물의 해당 챌린지명은 이미 존재합니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
