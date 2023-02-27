@@ -20,5 +20,7 @@ public class ViewCommentList {
 
     private LocalDateTime createdTime;
 
+    private LocalDateTime modifiedTime;
+
     private String content;
 }
