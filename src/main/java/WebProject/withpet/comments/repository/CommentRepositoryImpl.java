@@ -33,10 +33,12 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 
         List<ViewCommentList> commentList = queryFactory
             .select(Projections.constructor(ViewCommentList.class,
-                comment.id, user.profileImg, user.nickName, comment.createdTime, comment.content))
+                comment.id, user.profileImg, user.nickName, comment.createdTime,
+                comment.modifiedTime, comment.content))
             .from(comment)
             .leftJoin(comment.user, user)
-            .where(comment.article.id.eq(articleId), comment.id.gt(lastCommentId))
+            .where(comment.article.id.eq(articleId), comment.id.gt(lastCommentId),
+                comment.parent.isNull())
             .orderBy(comment.id.asc())
             .limit(pageable.getPageSize() + 1)
             .fetch();
@@ -49,8 +51,8 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
-        QComment child= new QComment("child");
-        QComment parent= new QComment("parent");
+        QComment child = new QComment("child");
+        QComment parent = new QComment("parent");
 
         return queryFactory
             .select(child)
