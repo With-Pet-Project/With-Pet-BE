@@ -1,4 +1,4 @@
-package WebProject.withpet.consumptions.domain;
+package WebProject.withpet.pets.domain;
 
 import WebProject.withpet.common.domain.BaseEntity;
 import WebProject.withpet.pets.domain.Pet;
