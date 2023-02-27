@@ -1,6 +1,7 @@
 package WebProject.withpet.articles.controller;
 
 
+import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
 import WebProject.withpet.articles.dto.ViewUserAndArticleResponseDto;
 import WebProject.withpet.articles.service.ArticleService;
 import WebProject.withpet.articles.dto.ArticleCreateRequestDto;
@@ -65,7 +66,7 @@ public class ArticleController {
 
     //댓글 구현 후에 추가로 구현해야함
     @GetMapping("/{articleId}")
-    public ResponseEntity<ApiResponse<ViewUserAndArticleResponseDto>> viewSpecificArticle(
+    public ResponseEntity<ApiResponse<ViewSpecificArticleResponseDto>> viewSpecificArticle(
         @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 합니다.") Long articleId) {
 
         ApiResponse response = new ApiResponse<>(200, "게시물 상세 조회 성공",
