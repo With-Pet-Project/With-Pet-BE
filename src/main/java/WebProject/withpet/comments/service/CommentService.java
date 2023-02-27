@@ -87,6 +87,7 @@ public class CommentService {
                     .profileImg(child.getUser().getProfileImg())
                     .nickName(child.getUser().getNickName())
                     .createdTime(child.getCreatedTime())
+                    .modifiedTime(child.getModifiedTime())
                     .content(child.getContent())
                     .build());
         });
