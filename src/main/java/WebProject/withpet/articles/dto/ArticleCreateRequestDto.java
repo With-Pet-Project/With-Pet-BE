@@ -56,7 +56,6 @@ public class ArticleCreateRequestDto {
             .detailText(detailText)
             .title(title)
             .likeCnt(0)
-            .commentCnt(0)
             .build();
     }
 
@@ -69,7 +68,6 @@ public class ArticleCreateRequestDto {
             .place1(place1)
             .place2(place2)
             .likeCnt(0)
-            .commentCnt(0)
             .build();
     }
 
