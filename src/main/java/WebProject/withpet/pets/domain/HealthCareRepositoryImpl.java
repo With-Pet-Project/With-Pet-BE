@@ -20,11 +20,10 @@ public class HealthCareRepositoryImpl implements HealthCareRepositoryCustom {
     public List<HealthCareResponseDto> findMonthlyHealthCares(Pet pet, int year, int month) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
-        return queryFactory.select(Projections.fields(HealthCareResponseDto.class, healthCare.id,
-                        healthCare.walkDistance, healthCare.weight, healthCare.drinkAmount, healthCare.feedAmount,
-                        healthCare.diary, healthCare.year, healthCare.month, healthCare.week, healthCare.day))
-                .from(healthCare)
-                .where(healthCare.pet.eq(pet), healthCare.year.eq(year), healthCare.month.eq(month))
-                .fetch();
+        return queryFactory.select(
+                        Projections.fields(HealthCareResponseDto.class, healthCare.id, healthCare.walkDistance,
+                                healthCare.weight, healthCare.drinkAmount, healthCare.feedAmount, healthCare.diary,
+                                healthCare.year, healthCare.month, healthCare.week, healthCare.day)).from(healthCare)
+                .where(healthCare.pet.eq(pet), healthCare.year.eq(year), healthCare.month.eq(month)).fetch();
     }
 }
