@@ -5,7 +5,8 @@ import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.constants.ResponseMessages;
 import WebProject.withpet.common.dto.ApiResponse;
 import WebProject.withpet.pets.dto.ConsumptionRequestDto;
-import WebProject.withpet.pets.dto.ConsumptionResponseDto;
+import WebProject.withpet.pets.dto.MonthlyConsumptionByPetResponseDto;
+import WebProject.withpet.pets.dto.MonthlyConsumptionByUserResponseDto;
 import WebProject.withpet.pets.service.ConsumptionService;
 import java.util.List;
 import javax.validation.Valid;
@@ -18,17 +19,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pet/{petId}/consumption")
 public class ConsumptionController {
     private final ConsumptionService consumptionService;
 
-    @PostMapping
+    @PostMapping("/pet/{petId}/consumption")
     public ResponseEntity<ApiResponse<Void>> saveConsumption(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                                              @Valid @RequestBody ConsumptionRequestDto request,
                                                              @PathVariable Long petId) {
@@ -36,7 +35,7 @@ public class ConsumptionController {
         return ResponseEntity.ok(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
-    @PutMapping("/{consumptionId}")
+    @PutMapping("/pet/{petId}/consumption/{consumptionId}")
     public ResponseEntity<ApiResponse<Void>> updateConsumption(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @Valid @RequestBody ConsumptionRequestDto request, @PathVariable Long petId,
@@ -45,7 +44,7 @@ public class ConsumptionController {
         return ResponseEntity.ok(ResponseConstants.RESPONSE_UPDATE_OK);
     }
 
-    @DeleteMapping("/{consumptionId}")
+    @DeleteMapping("/pet/{petId}/consumption/{consumptionId}")
     public ResponseEntity<ApiResponse<Void>> deleteConsumption(
             @AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long petId,
             @PathVariable Long consumptionId) {
@@ -53,13 +52,23 @@ public class ConsumptionController {
         return ResponseEntity.ok(ResponseConstants.RESPONSE_DEL_OK);
     }
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<ConsumptionResponseDto>>> getMonthlyConsumptions(
+    @GetMapping("/pet/{petId}/consumption")
+    public ResponseEntity<ApiResponse<List<MonthlyConsumptionByPetResponseDto>>> getMonthlyConsumptionsByPet(
             @AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long petId,
             @RequestParam int year, @RequestParam int month) {
-        ApiResponse<List<ConsumptionResponseDto>> response = new ApiResponse<>(200,
+        ApiResponse<List<MonthlyConsumptionByPetResponseDto>> response = new ApiResponse<>(200,
                 ResponseMessages.VIEW_MESSAGE.getContent(),
-                consumptionService.getMonthlyConsumptions(petId, principalDetails.getUser(), year, month));
+                consumptionService.getMonthlyConsumptionsByPet(petId, principalDetails.getUser(), year, month));
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/pet/consumption")
+    public ResponseEntity<ApiResponse<List<MonthlyConsumptionByUserResponseDto>>> getMonthlyConsumptionsByUser(
+            @AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam int year,
+            @RequestParam int month) {
+        ApiResponse<List<MonthlyConsumptionByUserResponseDto>> response = new ApiResponse<>(200,
+                ResponseMessages.VIEW_MESSAGE.getContent(),
+                consumptionService.getMonthlyConsumptionsByUser(principalDetails.getUser(), year, month));
         return ResponseEntity.ok(response);
     }
 }

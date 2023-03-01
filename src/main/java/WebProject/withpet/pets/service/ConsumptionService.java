@@ -4,9 +4,13 @@ import WebProject.withpet.common.exception.DataNotFoundException;
 import WebProject.withpet.pets.domain.Consumption;
 import WebProject.withpet.pets.domain.ConsumptionRepository;
 import WebProject.withpet.pets.domain.Pet;
+import WebProject.withpet.pets.domain.PetRepository;
 import WebProject.withpet.pets.dto.ConsumptionRequestDto;
 import WebProject.withpet.pets.dto.ConsumptionResponseDto;
+import WebProject.withpet.pets.dto.MonthlyConsumptionByPetResponseDto;
+import WebProject.withpet.pets.dto.MonthlyConsumptionByUserResponseDto;
 import WebProject.withpet.users.domain.User;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ConsumptionService {
     private final ConsumptionRepository consumptionRepository;
     private final PetService petService;
+    private final PetRepository petRepository;
 
     @Transactional
     public void saveConsumption(Long petId, User user, ConsumptionRequestDto request) {
@@ -38,9 +43,20 @@ public class ConsumptionService {
     }
 
     @Transactional(readOnly = true)
-    public List<ConsumptionResponseDto> getMonthlyConsumptions(Long petId, User user, int year, int month) {
+    public List<MonthlyConsumptionByPetResponseDto> getMonthlyConsumptionsByPet(Long petId, User user, int year,
+                                                                                int month) {
         Pet pet = petService.accessPet(user, petId);
-        return consumptionRepository.findMonthlyConsumptions(pet, year, month);
+        List<ConsumptionResponseDto> consumptions = consumptionRepository.findMonthlyConsumptionsByPet(pet, year,
+                month);
+
+        List<MonthlyConsumptionByPetResponseDto> response = new ArrayList<>();
+        consumptions.forEach(consumption -> response.add(new MonthlyConsumptionByPetResponseDto(consumption)));
+        return response;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MonthlyConsumptionByUserResponseDto> getMonthlyConsumptionsByUser(User user, int year, int month) {
+        return consumptionRepository.getDailyConsumptionsByUser(user, year, month);
     }
 
     private Consumption findConsumptionById(Long id) {
