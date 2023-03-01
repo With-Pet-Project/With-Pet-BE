@@ -1,6 +1,5 @@
 package WebProject.withpet.pets.dto;
 
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,8 +17,5 @@ public class ConsumptionResponseDto {
     private Long beauty;
     private Long etc;
 
-    private int year;
-    private int month;
-    private int week;
     private int day;
 }
