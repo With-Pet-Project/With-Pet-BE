@@ -5,7 +5,6 @@ import WebProject.withpet.users.domain.User;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -44,8 +43,14 @@ public class Pet {
     @DateTimeFormat(pattern = "yyyy-MM-DD")
     private LocalDate birthday;
 
-    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pet", orphanRemoval = true)
     private List<Challenge> challenges = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pet", orphanRemoval = true)
+    private List<HealthCare> healthCares = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pet", orphanRemoval = true)
+    private List<Consumption> consumptions = new ArrayList<>();
 
     @Builder
     public Pet(
