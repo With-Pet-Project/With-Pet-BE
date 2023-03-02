@@ -3,7 +3,6 @@ package WebProject.withpet.pets.service;
 import WebProject.withpet.common.exception.DataNotFoundException;
 import WebProject.withpet.pets.domain.HealthCare;
 import WebProject.withpet.pets.domain.HealthCareRepository;
-import WebProject.withpet.pets.domain.HealthCareRepositoryCustom;
 import WebProject.withpet.pets.domain.Pet;
 import WebProject.withpet.pets.dto.HealthCareRequestDto;
 import WebProject.withpet.pets.dto.HealthCareResponseDto;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class HealthCareService {
     private final HealthCareRepository healthCareRepository;
-    private final HealthCareRepositoryCustom healthCareRepositoryCustom;
     private final PetService petService;
 
     @Transactional
@@ -41,7 +39,7 @@ public class HealthCareService {
     @Transactional(readOnly = true)
     public List<HealthCareResponseDto> getMonthlyHealthCares(Long petId, User user, int year, int month) {
         Pet pet = petService.accessPet(user, petId);
-        return healthCareRepositoryCustom.findMonthlyHealthCares(pet, year, month);
+        return healthCareRepository.findMonthlyHealthCares(pet, year, month);
     }
 
     private HealthCare findHealthCareById(Long id) {
