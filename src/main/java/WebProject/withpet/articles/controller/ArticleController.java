@@ -1,6 +1,7 @@
 package WebProject.withpet.articles.controller;
 
 
+import WebProject.withpet.articles.dto.ImageDto;
 import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
 import WebProject.withpet.articles.dto.ViewUserAndArticleResponseDto;
 import WebProject.withpet.articles.service.ArticleService;
@@ -46,8 +47,7 @@ public class ArticleController {
     @PostMapping()
     public ResponseEntity<ApiResponse<Void>> createArticle(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestPart ArticleCreateRequestDto request,
-        @RequestPart(required = false)List<MultipartFile> images) {
+        @RequestBody ArticleCreateRequestDto request) {
 
         Errors errors = new BeanPropertyBindingResult(request,
             "articleCreateRequestDto");
@@ -58,7 +58,7 @@ public class ArticleController {
         if (errors.hasErrors()) {
             throw new ArticleCreateException(ErrorCode.INVALID_PARAMETER, errors);
         } else {
-            articleService.createArticle(principalDetails.getUser(), request, images);
+            articleService.createArticle(principalDetails.getUser(), request);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseConstants.RESPONSE_SAVE_OK);
