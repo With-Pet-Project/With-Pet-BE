@@ -39,6 +39,7 @@ public class MypageService {
             user.getId());
 
         return ViewMypageResponseDto.builder()
+            .email(user.getEmail())
             .profileImg(user.getProfileImg())
             .nickName(user.getNickName())
             .articleList(articlesList)

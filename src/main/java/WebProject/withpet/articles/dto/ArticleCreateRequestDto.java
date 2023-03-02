@@ -2,6 +2,7 @@ package WebProject.withpet.articles.dto;
 
 
 import WebProject.withpet.articles.domain.Article;
+import WebProject.withpet.articles.domain.Image;
 import WebProject.withpet.articles.domain.SpecArticle;
 import WebProject.withpet.articles.domain.Tag;
 import WebProject.withpet.users.domain.User;
@@ -33,20 +34,24 @@ public class ArticleCreateRequestDto {
     private String detailText;
 
 
+    private List<ImageDto> images=new ArrayList<>();
+
+
     @JsonCreator
     public ArticleCreateRequestDto(
         @JsonProperty("tag") Tag tag,
         @JsonProperty("place1") String place1,
         @JsonProperty("place2") String place2,
         @JsonProperty("title") String title,
-        @JsonProperty("detailText") String detailText) {
+        @JsonProperty("detailText") String detailText,
+        @JsonProperty("images") List<ImageDto> images) {
 
         this.tag = tag;
         this.place1 = place1;
         this.place2 = place2;
         this.title = title;
         this.detailText = detailText;
-
+        this.images=images;
     }
 
     public Article toArticleEntity(User user) {

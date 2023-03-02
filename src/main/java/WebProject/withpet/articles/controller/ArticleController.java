@@ -1,10 +1,13 @@
 package WebProject.withpet.articles.controller;
 
 
-import WebProject.withpet.articles.Validation.ArticleValidator;
-import WebProject.withpet.articles.dto.ArticleCreateRequestDto;
+
+import WebProject.withpet.articles.dto.ImageDto;
+import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
 import WebProject.withpet.articles.dto.ViewUserAndArticleResponseDto;
 import WebProject.withpet.articles.service.ArticleService;
+import WebProject.withpet.articles.dto.ArticleCreateRequestDto;
+import WebProject.withpet.articles.validation.ArticleValidator;
 import WebProject.withpet.common.auth.PrincipalDetails;
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.constants.ResponseConstants;
@@ -41,8 +44,7 @@ public class ArticleController {
     @PostMapping()
     public ResponseEntity<ApiResponse<Void>> createArticle(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestPart ArticleCreateRequestDto request,
-        @RequestPart(required = false)List<MultipartFile> images) {
+        @RequestBody ArticleCreateRequestDto request) {
 
         Errors errors = new BeanPropertyBindingResult(request, "articleCreateRequestDto");
 
@@ -52,7 +54,7 @@ public class ArticleController {
         if (errors.hasErrors()) {
             throw new ArticleCreateException(ErrorCode.INVALID_PARAMETER, errors);
         } else {
-            articleService.createArticle(principalDetails.getUser(), request, images);
+            articleService.createArticle(principalDetails.getUser(), request);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseConstants.RESPONSE_SAVE_OK);
@@ -60,7 +62,7 @@ public class ArticleController {
 
     //댓글 구현 후에 추가로 구현해야함
     @GetMapping("/{articleId}")
-    public ResponseEntity<ApiResponse<ViewUserAndArticleResponseDto>> viewSpecificArticle(
+    public ResponseEntity<ApiResponse<ViewSpecificArticleResponseDto>> viewSpecificArticle(
         @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 합니다.") Long articleId) {
 
         ApiResponse response = new ApiResponse<>(200, ResponseMessages.VIEW_MESSAGE.getContent(),
