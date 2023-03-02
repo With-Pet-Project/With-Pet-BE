@@ -42,8 +42,7 @@ public class ArticleService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public void createArticle(User user, ArticleCreateRequestDto articleCreateRequestDto,
-        List<MultipartFile> files) {
+    public void createArticle(User user, ArticleCreateRequestDto articleCreateRequestDto) {
 
         if (articleCreateRequestDto.getTag().equals(Tag.LOST) || articleCreateRequestDto.getTag()
             .equals(Tag.HOSPITAL) || articleCreateRequestDto.getTag().equals(Tag.WALK)) {
@@ -51,19 +50,15 @@ public class ArticleService {
             SpecArticle specArticle = articleCreateRequestDto.toSpecArticleEntity(user);
             specArticleRepository.save(specArticle);
 
-            if (files != null) {
-                createImgAndInjectAwsImgUrl(specArticle, files);
-            }
-
+            createImgAndInjectAwsImgUrl(specArticle,articleCreateRequestDto.getImages());
 
         } else {
 
             Article article = articleCreateRequestDto.toArticleEntity(user);
             articleRepository.save(article);
 
-            if (files != null) {
-                createImgAndInjectAwsImgUrl(article, files);
-            }
+            createImgAndInjectAwsImgUrl(article,articleCreateRequestDto.getImages());
+
         }
     }
 
@@ -74,28 +69,27 @@ public class ArticleService {
         ViewSpecificArticleResponseDto response = articleRepository.findSpecificArticle(
             articleId);
 
-        imageRepository.findAllByArticleId(articleId).forEach(image ->{
+        imageRepository.findAllByArticleId(articleId).forEach(image -> {
             response.getImages().add(ImageDto.builder().content(image.getContent()).build());
         });
 
         List<ViewCommentList> content = commentRepository.getCommentsList(0L, articleId,
             Pageable.ofSize(10)).getContent();
 
-        response.setCommentListAndCommentCnt(content,response.getCommentCnt());
+        response.setCommentListAndCommentCnt(content, response.getCommentCnt());
 
         return response;
     }
 
 
     @Transactional
-    public void createImgAndInjectAwsImgUrl(Article article, List<MultipartFile> multipartFiles) {
-        List<String> AwsImgUrl = awsS3Service.uploadImage(multipartFiles);
+    public void createImgAndInjectAwsImgUrl(Article article, List<ImageDto> images) {
 
-        AwsImgUrl.forEach(url -> {
+        images.forEach(dto -> {
 
             imageRepository.save(Image.builder()
                 .article(article)
-                .content(url)
+                .content(dto.getContent())
                 .build());
         });
     }
