@@ -16,5 +16,5 @@ public class ViewCommentListResponseDto {
     private Boolean hasNext;
 
     @Builder.Default
-    private List<ViewCommentList> commentsList = new ArrayList<>();
+    private List<ViewCommentListDto> commentsList = new ArrayList<>();
 }
