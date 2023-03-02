@@ -5,7 +5,7 @@ import WebProject.withpet.comments.domain.Comment;
 import WebProject.withpet.articles.domain.SpecArticle;
 import WebProject.withpet.articles.dto.CreateCommentRequestDto;
 import WebProject.withpet.articles.repository.ArticleRepository;
-import WebProject.withpet.comments.dto.ViewCommentList;
+import WebProject.withpet.comments.dto.ViewCommentListDto;
 import WebProject.withpet.comments.dto.ViewCommentListResponseDto;
 import WebProject.withpet.comments.repository.CommentRepository;
 import WebProject.withpet.common.exception.DataNotFoundException;
@@ -65,7 +65,7 @@ public class CommentService {
     public ViewCommentListResponseDto scrollDownComments(Long lastCommentId, Long articleId,
         Integer size) {
 
-        Slice<ViewCommentList> commentsList = commentRepository.getCommentsList(lastCommentId,
+        Slice<ViewCommentListDto> commentsList = commentRepository.getCommentsList(lastCommentId,
             articleId, PageRequest.ofSize(size));
 
         return ViewCommentListResponseDto.builder()
@@ -76,13 +76,13 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<ViewCommentList> viewChildrenComments(Long commentId) {
+    public List<ViewCommentListDto> viewChildrenComments(Long commentId) {
 
-        List<ViewCommentList> response = new ArrayList<>();
+        List<ViewCommentListDto> response = new ArrayList<>();
 
         commentRepository.getChildrenListById(commentId).forEach(child -> {
             response.add(
-                ViewCommentList.builder()
+                ViewCommentListDto.builder()
                     .commentId(child.getId())
                     .profileImg(child.getUser().getProfileImg())
                     .nickName(child.getUser().getNickName())
@@ -98,9 +98,7 @@ public class CommentService {
     @Transactional
     public void updateComment(User user, Long commentId, String content) {
 
-        if (checkUserAuthorization(user, commentId)) {
-            throw new UnauthorizedException();
-        }
+       checkUserAuthorization(user, commentId);
 
         commentRepository.findById(commentId)
             .orElseThrow(() -> new DataNotFoundException()).update(content);
@@ -109,9 +107,7 @@ public class CommentService {
     @Transactional
     public void deleteComment(User user, Long commentId) {
 
-        if (checkUserAuthorization(user, commentId)) {
-            throw new UnauthorizedException();
-        }
+       checkUserAuthorization(user, commentId);
 
         Comment findComment = commentRepository.findById(commentId)
             .orElseThrow(() -> new DataNotFoundException());
@@ -123,16 +119,14 @@ public class CommentService {
 
     }
 
-    public Boolean checkUserAuthorization(User user, Long commentId) {
+    public void checkUserAuthorization(User user, Long commentId) {
 
         Comment findComment = commentRepository.findById(commentId)
             .orElseThrow(() -> new DataNotFoundException());
 
-        if (user.getId() != findComment.getUser().getId()) {
-            return true;
-        } else {
-            return false;
-        }
+        if (user.getId() != findComment.getUser().getId())
+            throw new UnauthorizedException();
+
     }
 
 }
