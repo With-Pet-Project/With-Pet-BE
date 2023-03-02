@@ -6,14 +6,11 @@ import WebProject.withpet.articles.domain.Image;
 import WebProject.withpet.articles.domain.SpecArticle;
 import WebProject.withpet.articles.domain.Tag;
 import WebProject.withpet.articles.dto.ArticleCreateRequestDto;
-import WebProject.withpet.articles.dto.FileDto;
 import WebProject.withpet.articles.dto.ImageDto;
 import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
-import WebProject.withpet.articles.dto.ViewUserAndArticleResponseDto;
 import WebProject.withpet.articles.repository.ArticleRepository;
 import WebProject.withpet.articles.repository.ImageRepository;
-import WebProject.withpet.comments.domain.Comment;
-import WebProject.withpet.comments.dto.ViewCommentList;
+import WebProject.withpet.comments.dto.ViewCommentListDto;
 import WebProject.withpet.comments.repository.CommentRepository;
 import WebProject.withpet.common.file.AwsS3Service;
 import WebProject.withpet.users.domain.User;
@@ -21,10 +18,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -50,14 +45,14 @@ public class ArticleService {
             SpecArticle specArticle = articleCreateRequestDto.toSpecArticleEntity(user);
             specArticleRepository.save(specArticle);
 
-            createImgAndInjectAwsImgUrl(specArticle,articleCreateRequestDto.getImages());
+            createImgAndInjectAwsImgUrl(specArticle, articleCreateRequestDto.getImages());
 
         } else {
 
             Article article = articleCreateRequestDto.toArticleEntity(user);
             articleRepository.save(article);
 
-            createImgAndInjectAwsImgUrl(article,articleCreateRequestDto.getImages());
+            createImgAndInjectAwsImgUrl(article, articleCreateRequestDto.getImages());
 
         }
     }
@@ -73,10 +68,10 @@ public class ArticleService {
             response.getImages().add(ImageDto.builder().content(image.getContent()).build());
         });
 
-        List<ViewCommentList> content = commentRepository.getCommentsList(0L, articleId,
+        List<ViewCommentListDto> content = commentRepository.getCommentsList(0L, articleId,
             Pageable.ofSize(10)).getContent();
 
-        response.setCommentListAndCommentCnt(content, response.getCommentCnt());
+        response.setCommentList(content);
 
         return response;
     }
