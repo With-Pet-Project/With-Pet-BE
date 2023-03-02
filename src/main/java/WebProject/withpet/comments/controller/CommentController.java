@@ -1,7 +1,7 @@
 package WebProject.withpet.comments.controller;
 
 import WebProject.withpet.articles.dto.CreateCommentRequestDto;
-import WebProject.withpet.comments.dto.ViewCommentList;
+import WebProject.withpet.comments.dto.ViewCommentListDto;
 import WebProject.withpet.comments.dto.ViewCommentListResponseDto;
 import WebProject.withpet.comments.service.CommentService;
 import WebProject.withpet.common.auth.PrincipalDetails;
@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,10 +55,10 @@ public class CommentController {
     }
 
     @GetMapping("/comments/{commentId}")
-    public ResponseEntity<ApiResponse<List<ViewCommentList>>> viewChildrenComments(
+    public ResponseEntity<ApiResponse<List<ViewCommentListDto>>> viewChildrenComments(
         @PathVariable("commentId") @NotNull(message = "부모 댓글 id는 필수 값입니다.") Long commentId) {
 
-        ApiResponse<List<ViewCommentList>> response = new ApiResponse<>(200, "대댓글 조회 성공",
+        ApiResponse<List<ViewCommentListDto>> response = new ApiResponse<>(200, "대댓글 조회 성공",
             commentService.viewChildrenComments(commentId));
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
