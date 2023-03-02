@@ -1,6 +1,7 @@
 package WebProject.withpet.articles.controller;
 
 
+
 import WebProject.withpet.articles.dto.ImageDto;
 import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
 import WebProject.withpet.articles.dto.ViewUserAndArticleResponseDto;
@@ -10,15 +11,12 @@ import WebProject.withpet.articles.validation.ArticleValidator;
 import WebProject.withpet.common.auth.PrincipalDetails;
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.constants.ResponseConstants;
+import WebProject.withpet.common.constants.ResponseMessages;
 import WebProject.withpet.common.dto.ApiResponse;
 import WebProject.withpet.common.exception.ArticleCreateException;
-
 import java.util.List;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,7 +26,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,8 +46,7 @@ public class ArticleController {
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody ArticleCreateRequestDto request) {
 
-        Errors errors = new BeanPropertyBindingResult(request,
-            "articleCreateRequestDto");
+        Errors errors = new BeanPropertyBindingResult(request, "articleCreateRequestDto");
 
         //커스텀 검증
         articleValidator.validate(request, errors);
@@ -69,8 +65,8 @@ public class ArticleController {
     public ResponseEntity<ApiResponse<ViewSpecificArticleResponseDto>> viewSpecificArticle(
         @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 합니다.") Long articleId) {
 
-        ApiResponse response = new ApiResponse<>(200, "게시물 상세 조회 성공",
-            articleService.viewSpecificArticle(articleId));
+        ApiResponse response = new ApiResponse<>(200, ResponseMessages.VIEW_MESSAGE.getContent(),
+                articleService.viewSpecificArticle(articleId));
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

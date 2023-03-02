@@ -2,6 +2,7 @@ package WebProject.withpet.pets.controller;
 
 import WebProject.withpet.common.auth.PrincipalDetails;
 import WebProject.withpet.common.constants.ResponseConstants;
+import WebProject.withpet.common.constants.ResponseMessages;
 import WebProject.withpet.common.dto.ApiResponse;
 import WebProject.withpet.pets.dto.PetRequestDto;
 import WebProject.withpet.pets.dto.PetResponseDto;
@@ -40,7 +41,8 @@ public class PetController {
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long petId) throws Exception {
         PetResponseDto pet = petService.findPet(principalDetails.getUser(), petId);
-        ApiResponse<PetResponseDto> apiResponse = new ApiResponse<>(200, "정상적으로 조회되었습니다", pet);
+        ApiResponse<PetResponseDto> apiResponse = new ApiResponse<>(200, ResponseMessages.VIEW_MESSAGE.getContent(),
+                pet);
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -65,7 +67,7 @@ public class PetController {
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
         List<PetResponseDto> pets = petService.findPets(principalDetails.getUser());
         ApiResponse<List<PetResponseDto>> apiResponse = new ApiResponse<>(
-                200, "정상적으로 조회되었습니다.", pets
+                200, ResponseMessages.VIEW_MESSAGE.getContent(), pets
         );
         return ResponseEntity.ok(apiResponse);
     }

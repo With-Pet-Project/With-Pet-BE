@@ -17,8 +17,10 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JwtAuthInterceptor(jwtTokenProvider))
 
+
             .addPathPatterns("/pet/**", "/mypage/**", "/{petId}/challenge/**", "/article/**",
                 "/image/**", "/comment/**", "/comments/**");
+
 
     }
 
@@ -28,6 +30,5 @@ public class WebConfig implements WebMvcConfigurer {
             .allowedOrigins("*", "http://localhost:3000")
             .allowedHeaders("*")
             .allowedMethods("*");
-
     }
 }
