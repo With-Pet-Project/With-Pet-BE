@@ -17,18 +17,13 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JwtAuthInterceptor(jwtTokenProvider))
 
-
-            .addPathPatterns("/pet/**", "/mypage/**", "/{petId}/challenge/**", "/article/**",
-                "/image/**", "/comment/**", "/comments/**");
+                .addPathPatterns("/pet/**", "/mypage/**", "/article/**", "/image/**", "/comment/**", "/comments/**");
 
 
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-            .allowedOrigins("*", "http://localhost:3000")
-            .allowedHeaders("*")
-            .allowedMethods("*");
+        registry.addMapping("/**").allowedOrigins("*", "http://localhost:3000").allowedHeaders("*").allowedMethods("*");
     }
 }
