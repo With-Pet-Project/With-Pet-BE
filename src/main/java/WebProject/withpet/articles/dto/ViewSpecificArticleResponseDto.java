@@ -1,7 +1,6 @@
 package WebProject.withpet.articles.dto;
 
-import WebProject.withpet.comments.domain.Comment;
-import WebProject.withpet.comments.dto.ViewCommentList;
+import WebProject.withpet.comments.dto.ViewCommentListDto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,26 +29,25 @@ public class ViewSpecificArticleResponseDto {
     private Integer commentCnt;
 
 
-    private List<ImageDto> images= new ArrayList<>();
+    private List<ImageDto> images = new ArrayList<>();
 
-    private List<ViewCommentList> commentList = new ArrayList<>();
+    private List<ViewCommentListDto> commentList = new ArrayList<>();
 
     @Builder
     public ViewSpecificArticleResponseDto(String profileImg, String nickName,
         LocalDateTime createdTime,
-        LocalDateTime modifiedTime, String detailText, Integer likeCnt,Integer commentCnt) {
+        LocalDateTime modifiedTime, String detailText, Integer likeCnt, Integer commentCnt) {
         this.profileImg = profileImg;
         this.nickName = nickName;
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
         this.detailText = detailText;
         this.likeCnt = likeCnt;
-        this.commentCnt=commentCnt;
+        this.commentCnt = commentCnt;
     }
 
-    public void setCommentListAndCommentCnt(List<ViewCommentList> commentList, Integer commentCnt) {
+    public void setCommentList(List<ViewCommentListDto> commentList) {
         this.commentList = commentList;
-        this.commentCnt=commentCnt;
     }
 
 }
