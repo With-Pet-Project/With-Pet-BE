@@ -1,4 +1,4 @@
-package WebProject.withpet.auth.dto;
+package WebProject.withpet.auth.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.validation.constraints.NotBlank;
