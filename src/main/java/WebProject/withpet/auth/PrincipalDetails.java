@@ -1,4 +1,4 @@
-package WebProject.withpet.common.auth;
+package WebProject.withpet.auth;
 
 import WebProject.withpet.users.domain.User;
 import java.util.ArrayList;

@@ -2,19 +2,16 @@ package WebProject.withpet.articles.controller;
 
 
 
-import WebProject.withpet.articles.dto.ImageDto;
 import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
-import WebProject.withpet.articles.dto.ViewUserAndArticleResponseDto;
 import WebProject.withpet.articles.service.ArticleService;
 import WebProject.withpet.articles.dto.ArticleCreateRequestDto;
 import WebProject.withpet.articles.validation.ArticleValidator;
-import WebProject.withpet.common.auth.PrincipalDetails;
+import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.constants.ResponseMessages;
 import WebProject.withpet.common.dto.ApiResponse;
 import WebProject.withpet.common.exception.ArticleCreateException;
-import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,9 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor

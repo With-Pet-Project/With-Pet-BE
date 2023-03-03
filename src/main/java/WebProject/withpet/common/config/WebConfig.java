@@ -1,6 +1,6 @@
 package WebProject.withpet.common.config;
 
-import WebProject.withpet.common.auth.application.JwtTokenProvider;
+import WebProject.withpet.auth.application.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

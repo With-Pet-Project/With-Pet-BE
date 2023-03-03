@@ -1,10 +1,9 @@
-package WebProject.withpet.common.auth.filter;
+package WebProject.withpet.auth.filter;
 
-import WebProject.withpet.common.auth.PrincipalDetails;
-import WebProject.withpet.common.auth.application.JwtTokenProvider;
+import WebProject.withpet.auth.PrincipalDetails;
+import WebProject.withpet.auth.application.JwtTokenProvider;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.dto.LoginVo;
-import WebProject.withpet.users.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,7 +24,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper mapper = new ObjectMapper();
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserRepository userRepository;
 
     // 유효한 사용자인지 확인
     @Override

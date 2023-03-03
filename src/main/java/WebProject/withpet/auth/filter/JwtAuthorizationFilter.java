@@ -1,6 +1,6 @@
-package WebProject.withpet.common.auth.filter;
+package WebProject.withpet.auth.filter;
 
-import WebProject.withpet.common.auth.application.JwtTokenProvider;
+import WebProject.withpet.auth.application.JwtTokenProvider;
 import WebProject.withpet.common.util.JwtUtil;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import java.io.IOException;
@@ -41,6 +41,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         Authentication authentication = null;
         String token = JwtUtil.getToken(header);
 
+        // TODO : expired Exception catch 해서 refresh token 으로 넘기기
         try {
             JwtUtil.verify(token, tokenProvider.getSecretKey());
         } catch (TokenExpiredException e) {
