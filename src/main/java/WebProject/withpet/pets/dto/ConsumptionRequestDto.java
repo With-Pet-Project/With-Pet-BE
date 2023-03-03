@@ -11,7 +11,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class ConsumptionRequestDto {
-    private final Long feed;
+    private Long feed;
 
     private Long toy;
 
