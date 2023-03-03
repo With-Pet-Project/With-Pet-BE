@@ -13,7 +13,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -59,9 +58,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Map<String, String> json = new HashMap<>();
-        json.put("msg", "정상적으로 토큰이 발급되었습니다");
-        json.put("token", jwtToken);
-        String jsonResponse = mapper.writeValueAsString(ResponseEntity.status(200).body(json));
+        json.put("code", "200");
+        json.put("message", "정상적으로 토큰이 발급되었습니다");
+        json.put("data", jwtToken);
+        String jsonResponse = mapper.writeValueAsString(json);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
