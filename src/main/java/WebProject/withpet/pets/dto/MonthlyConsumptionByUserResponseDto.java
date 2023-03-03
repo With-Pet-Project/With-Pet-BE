@@ -10,4 +10,5 @@ public class MonthlyConsumptionByUserResponseDto {
     private Long hospitalSum;
     private Long beautySum;
     private Long etcSum;
+    private Long feedSum;
 }
