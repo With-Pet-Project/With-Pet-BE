@@ -1,4 +1,4 @@
-package WebProject.withpet.articles.dto;
+package WebProject.withpet.comments.dto;
 
 import WebProject.withpet.articles.domain.Article;
 import WebProject.withpet.comments.domain.Comment;
