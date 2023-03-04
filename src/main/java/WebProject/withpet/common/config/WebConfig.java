@@ -19,7 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 
             .addPathPatterns("/pet/**", "/mypage/**", "/{petId}/challenge/**", "/article/**",
-                "/image/**", "/comment/**", "/comments/**");
+                "/image/**", "/comment/**", "/comments/**","article_like/**");
 
 
     }
