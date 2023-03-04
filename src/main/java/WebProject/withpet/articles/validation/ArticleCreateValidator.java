@@ -3,15 +3,13 @@ package WebProject.withpet.articles.validation;
 
 import WebProject.withpet.articles.domain.Tag;
 import WebProject.withpet.articles.dto.ArticleCreateRequestDto;
-import WebProject.withpet.common.constants.ErrorCode;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component
-public class ArticleValidator implements Validator {
+public class ArticleCreateValidator implements Validator {
 
 
     @Override
