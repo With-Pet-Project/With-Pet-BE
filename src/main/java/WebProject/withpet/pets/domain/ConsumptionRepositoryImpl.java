@@ -23,7 +23,7 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
 
         return queryFactory.select(
                         Projections.fields(ConsumptionResponseDto.class, consumption.id, consumption.toy, consumption.hospital,
-                                consumption.beauty, consumption.etc, consumption.day)).from(consumption)
+                                consumption.beauty, consumption.etc, consumption.feed, consumption.day)).from(consumption)
                 .where(consumption.pet.eq(pet), consumption.year.eq(year), consumption.month.eq(month)).fetch();
     }
 
@@ -33,7 +33,8 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
 
         return queryFactory.select(Projections.fields(MonthlyConsumptionByUserResponseDto.class, consumption.day,
                         consumption.toy.sum().as("toySum"), consumption.hospital.sum().as("hospitalSum"),
-                        consumption.beauty.sum().as("beautySum"), consumption.etc.sum().as("etcSum"))).from(consumption)
+                        consumption.beauty.sum().as("beautySum"), consumption.etc.sum().as("etcSum"),
+                        consumption.feed.sum().as("feedSum"))).from(consumption)
                 .where(consumption.pet.user.eq(user), consumption.year.eq(year), consumption.month.eq(month))
                 .groupBy(consumption.day).fetch();
     }

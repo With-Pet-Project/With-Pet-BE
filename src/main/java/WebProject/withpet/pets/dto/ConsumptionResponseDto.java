@@ -16,6 +16,7 @@ public class ConsumptionResponseDto {
     private Long hospital;
     private Long beauty;
     private Long etc;
+    private Long feed;
 
     private int day;
 }
