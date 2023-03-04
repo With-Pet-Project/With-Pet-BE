@@ -34,4 +34,8 @@ public class SpecArticle extends Article {
         this.place1 = place1;
         this.place2 = place2;
     }
+
+    public void update(SpecArticle specArticle) {
+
+    }
 }

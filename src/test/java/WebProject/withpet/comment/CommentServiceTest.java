@@ -2,7 +2,7 @@ package WebProject.withpet.comment;
 
 import WebProject.withpet.articles.domain.Article;
 import WebProject.withpet.comments.domain.Comment;
-import WebProject.withpet.articles.dto.CreateCommentRequestDto;
+import WebProject.withpet.comments.dto.CreateCommentRequestDto;
 import WebProject.withpet.articles.repository.ArticleRepository;
 import WebProject.withpet.comments.repository.CommentRepository;
 import WebProject.withpet.users.domain.User;

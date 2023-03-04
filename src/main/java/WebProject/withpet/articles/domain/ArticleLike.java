@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +20,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "article_likes")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ArticleLike {
 
     @Id
@@ -32,6 +36,4 @@ public class ArticleLike {
     @JoinColumn(name = "article_id")
     private Article article;
 
-    @Column(name = "date")
-    private LocalDateTime localDateTime;
 }

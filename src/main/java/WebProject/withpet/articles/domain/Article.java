@@ -6,6 +6,7 @@ import WebProject.withpet.common.domain.BaseEntity;
 import WebProject.withpet.users.domain.User;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -57,8 +58,11 @@ public class Article extends BaseEntity {
     @OneToMany(mappedBy = "article")
     private List<Image> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article", orphanRemoval = true)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ArticleLike> articleLikes = new ArrayList<>();
 
     @Builder
     public Article(User user, Tag tag, Integer likeCnt, String title,
@@ -78,6 +82,11 @@ public class Article extends BaseEntity {
         } else {
             return false;
         }
+    }
+
+    public void update(Article article) {
+        this.title = article.getTitle();
+        this.detailText = article.getDetailText();
     }
 
 }

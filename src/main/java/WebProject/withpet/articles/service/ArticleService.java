@@ -6,12 +6,15 @@ import WebProject.withpet.articles.domain.Image;
 import WebProject.withpet.articles.domain.SpecArticle;
 import WebProject.withpet.articles.domain.Tag;
 import WebProject.withpet.articles.dto.ArticleCreateRequestDto;
+import WebProject.withpet.articles.dto.ArticleUpdateRequestDto;
 import WebProject.withpet.articles.dto.ImageDto;
+import WebProject.withpet.articles.dto.ViewArticleListRequestDto;
 import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
 import WebProject.withpet.articles.repository.ArticleRepository;
 import WebProject.withpet.articles.repository.ImageRepository;
 import WebProject.withpet.comments.dto.ViewCommentListDto;
 import WebProject.withpet.comments.repository.CommentRepository;
+import WebProject.withpet.common.exception.DataNotFoundException;
 import WebProject.withpet.common.file.AwsS3Service;
 import WebProject.withpet.users.domain.User;
 import java.util.List;
@@ -76,6 +79,18 @@ public class ArticleService {
         return response;
     }
 
+    @Transactional
+    public void updateArticlle(Long articleId, ArticleUpdateRequestDto dto) {
+
+        Article findArticle = findArticleById(articleId);
+        // if(findArticle.isSpecArticle())
+    }
+
+    @Transactional
+    public void scrollDownArticle(ViewArticleListRequestDto dto) {
+
+    }
+
 
     @Transactional
     public void createImgAndInjectAwsImgUrl(Article article, List<ImageDto> images) {
@@ -87,6 +102,12 @@ public class ArticleService {
                 .content(dto.getContent())
                 .build());
         });
+    }
+
+    @Transactional
+    public Article findArticleById(Long articleId) {
+        return articleRepository.findById(articleId)
+            .orElseThrow(() -> new DataNotFoundException());
     }
 }
 

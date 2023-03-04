@@ -3,6 +3,7 @@ package WebProject.withpet.users.service;
 import WebProject.withpet.common.auth.application.JwtTokenProvider;
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.exception.DuplicateException;
+import WebProject.withpet.common.exception.UserNotFoundException;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.dto.ChangePasswordDto;
 import WebProject.withpet.users.dto.SocialLoginResponseDto;
@@ -101,8 +102,14 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(User user){
+    public void deleteUser(User user) {
 
         userRepository.deleteById(user.getId());
+    }
+
+
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException());
     }
 }
