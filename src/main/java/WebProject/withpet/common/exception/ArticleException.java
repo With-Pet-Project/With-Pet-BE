@@ -7,7 +7,7 @@ import org.springframework.validation.Errors;
 
 @Getter
 @AllArgsConstructor
-public class ArticleCreateException extends RuntimeException{
+public class ArticleException extends RuntimeException{
 
     ErrorCode errorCode;
 
