@@ -1,6 +1,6 @@
 package WebProject.withpet.comments.controller;
 
-import WebProject.withpet.articles.dto.CreateCommentRequestDto;
+import WebProject.withpet.comments.dto.CreateCommentRequestDto;
 import WebProject.withpet.comments.dto.ViewCommentListDto;
 import WebProject.withpet.comments.dto.ViewCommentListResponseDto;
 import WebProject.withpet.comments.service.CommentService;
