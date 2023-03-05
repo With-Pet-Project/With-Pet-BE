@@ -17,8 +17,4 @@ public interface ArticleRepositoryCustom {
 
     ViewSpecificArticleResponseDto findSpecificArticle(Long articleId);
 
-    Slice<ViewArticleListDto> getArticlesList(ViewArticleListRequestDto dto, Pageable pageable);
-
-    Slice<ViewArticleListDto> getSpecArticleList(ViewArticleListRequestDto dto, Pageable pageable);
-
 }

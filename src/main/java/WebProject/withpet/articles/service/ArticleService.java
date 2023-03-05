@@ -8,7 +8,9 @@ import WebProject.withpet.articles.domain.Tag;
 import WebProject.withpet.articles.dto.ArticleCreateRequestDto;
 import WebProject.withpet.articles.dto.ArticleUpdateRequestDto;
 import WebProject.withpet.articles.dto.ImageDto;
+import WebProject.withpet.articles.dto.ViewArticleListDto;
 import WebProject.withpet.articles.dto.ViewArticleListRequestDto;
+import WebProject.withpet.articles.dto.ViewArticleListResponseDto;
 import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
 import WebProject.withpet.articles.repository.ArticleRepository;
 import WebProject.withpet.articles.repository.ImageRepository;
@@ -21,12 +23,12 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ArticleService {
 
     private final ArticleRepository<Article> articleRepository;
@@ -87,7 +89,17 @@ public class ArticleService {
     }
 
     @Transactional
-    public void scrollDownArticle(ViewArticleListRequestDto dto) {
+    public ViewArticleListResponseDto scrollDownArticle(ViewArticleListRequestDto dto) {
+
+        Article lastArticle = articleRepository.findById(dto.getLastArticleId()).orElse(null);
+
+        Slice<ViewArticleListDto> response = articleRepository.getArticleList(lastArticle, dto,
+            Pageable.ofSize(dto.getSize()));
+
+        return ViewArticleListResponseDto.builder()
+            .hasNext(response.hasNext())
+            .viewArticleListDtoList(response.getContent())
+            .build();
 
     }
 
@@ -96,11 +108,14 @@ public class ArticleService {
     public void createImgAndInjectAwsImgUrl(Article article, List<ImageDto> images) {
 
         images.forEach(dto -> {
-
-            imageRepository.save(Image.builder()
-                .article(article)
-                .content(dto.getContent())
-                .build());
+            if (dto.getExistence() == true) {
+                imageRepository.save(Image.builder()
+                    .article(article)
+                    .content(dto.getContent())
+                    .build());
+            } else {
+                awsS3Service.deleteImage(dto.getContent());
+            }
         });
     }
 

@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ViewArticleListDto {
 
     private Long articleId;
@@ -25,11 +23,26 @@ public class ViewArticleListDto {
 
     private String detailText;
 
-    private Long likeCnt;
+    private Integer likeCnt;
 
-    private Long commentCnt;
+    private Integer commentCnt;
 
     private Tag tag;
 
-    private Long articleLike;
+    private Long articleLikeId;
+
+    public ViewArticleListDto(Long articleId, String profileImg, String nickName,
+        LocalDateTime createdTime, LocalDateTime modifiedTime, String detailText, Integer likeCnt,
+        Integer commentCnt, Tag tag, Long articleLikeId) {
+        this.articleId = articleId;
+        this.profileImg = profileImg;
+        this.nickName = nickName;
+        this.createdTime = createdTime;
+        this.modifiedTime = modifiedTime;
+        this.detailText = detailText;
+        this.likeCnt = likeCnt;
+        this.commentCnt = commentCnt;
+        this.tag = tag;
+        this.articleLikeId = articleLikeId;
+    }
 }
