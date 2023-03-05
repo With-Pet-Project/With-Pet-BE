@@ -5,6 +5,7 @@ import WebProject.withpet.articles.domain.Filter;
 import WebProject.withpet.articles.domain.Tag;
 import WebProject.withpet.articles.dto.ArticleUpdateRequestDto;
 import WebProject.withpet.articles.dto.ViewArticleListRequestDto;
+import WebProject.withpet.articles.dto.ViewArticleListResponseDto;
 import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
 import WebProject.withpet.articles.service.ArticleService;
 import WebProject.withpet.articles.dto.ArticleCreateRequestDto;
@@ -36,7 +37,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/article")
 @Validated
 @Slf4j
 public class ArticleController {
@@ -47,7 +47,7 @@ public class ArticleController {
 
     private final ArticleScrollDownValidator articleScrollDownValidator;
 
-    @PostMapping()
+    @PostMapping("/article")
     public ResponseEntity<ApiResponse<Void>> createArticle(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody ArticleCreateRequestDto request) {
@@ -66,7 +66,7 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
-    @GetMapping("/{articleId}")
+    @GetMapping("/article/{articleId}")
     public ResponseEntity<ApiResponse<ViewSpecificArticleResponseDto>> viewSpecificArticle(
         @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 합니다.") Long articleId) {
 
@@ -77,7 +77,7 @@ public class ArticleController {
     }
 
     //추가 구현필요함
-    @PutMapping("/{articleId}")
+    @PutMapping("/article/{articleId}")
     public ResponseEntity<ApiResponse<Void>> updateArticle(
         @PathVariable("articleId") Long articleId, @RequestBody ArticleUpdateRequestDto dto) {
 
@@ -87,15 +87,14 @@ public class ArticleController {
     }
 
     //TODO : custom annotation으로 검증해보기??
-    @GetMapping()
-    public ResponseEntity<ApiResponse<Void>> scrollDownArticle(
+    @GetMapping("/articles")
+    public ResponseEntity<ApiResponse<ViewArticleListResponseDto>> scrollDownArticle(
         @RequestParam(name = "tag", required = false) Tag tag,
-        @RequestParam(name = "filter") @NotNull(message = "필터 값은 필수입니다.") Filter filter,
+        @RequestParam(name = "filter") Filter filter,
         @RequestParam(name = "place1", required = false) String place1,
         @RequestParam(name = "place2", required = false) String place2,
-        @RequestParam(name = "lastArticleId") @NotNull(message = "마지막 조회 게시글 id값은 필수입니다.") Long lastArticleId,
-        @RequestParam(name = "size") @NotNull(message = "조회할 게시글 갯수는 필수입니다.") Integer size) {
-
+        @RequestParam(name = "lastArticleId") Long lastArticleId,
+        @RequestParam(name = "size") Integer size) {
 
         ViewArticleListRequestDto dto = ViewArticleListRequestDto.builder()
             .tag(tag)
@@ -106,14 +105,17 @@ public class ArticleController {
             .size(size)
             .build();
 
-        Errors errors = new BeanPropertyBindingResult(dto,"ViewArticleListRequestDto");
-        articleScrollDownValidator.validate(dto,errors);
+         Errors errors = new BeanPropertyBindingResult(dto, "ViewArticleListRequestDto");
+        articleScrollDownValidator.validate(dto, errors);
 
-        if(errors.hasErrors())
-            throw new ArticleException(ErrorCode.INVALID_PARAMETER,errors);
-        else
-            articleService.scrollDownArticle(dto);
+         if (errors.hasErrors()) {
+          throw new ArticleException(ErrorCode.INVALID_PARAMETER, errors);
+          } else {
+        ApiResponse<ViewArticleListResponseDto> response = new ApiResponse<>(
+            200, ResponseMessages.VIEW_MESSAGE.getContent(),
+            articleService.scrollDownArticle(dto));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+         }
 
-        return null;
     }
 }
