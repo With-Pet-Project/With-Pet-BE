@@ -91,7 +91,9 @@ public class ArticleService {
     @Transactional
     public ViewArticleListResponseDto scrollDownArticle(ViewArticleListRequestDto dto) {
 
-        Slice<ViewArticleListDto> response = articleRepository.getArticleList(dto,
+        Article lastArticle = articleRepository.findById(dto.getLastArticleId()).orElse(null);
+
+        Slice<ViewArticleListDto> response = articleRepository.getArticleList(lastArticle, dto,
             Pageable.ofSize(dto.getSize()));
 
         return ViewArticleListResponseDto.builder()
