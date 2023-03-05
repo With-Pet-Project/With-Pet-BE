@@ -37,12 +37,4 @@ public class ImageController {
 
     }
 
-    @DeleteMapping("/image")
-    public ResponseEntity<ApiResponse<Void>> deleteImage(@RequestBody ImageDto imageDto) {
-
-        imageService.deleteImage(imageDto);
-
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_DEL_OK);
-
-    }
 }

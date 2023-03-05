@@ -16,6 +16,7 @@ import WebProject.withpet.users.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -111,6 +112,13 @@ public class CommentService {
 
         Comment findComment = findCommentById(commentId);
         findComment.deleteConnectionWithUser(userService.findUserById(user.getId()));
+
+
+        if(!findComment.getChildren().isEmpty()){
+
+            List<Comment> childrenComment = commentRepository.findAllByParent(findComment);
+            childrenComment.forEach(c->commentRepository.delete(c));
+        }
 
         commentRepository.delete(findComment);
 

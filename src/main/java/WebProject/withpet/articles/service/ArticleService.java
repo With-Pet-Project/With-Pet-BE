@@ -16,6 +16,7 @@ import WebProject.withpet.articles.repository.ArticleRepository;
 import WebProject.withpet.articles.repository.ImageRepository;
 import WebProject.withpet.comments.dto.ViewCommentListDto;
 import WebProject.withpet.comments.repository.CommentRepository;
+import WebProject.withpet.common.exception.ArticleException;
 import WebProject.withpet.common.exception.DataNotFoundException;
 import WebProject.withpet.common.file.AwsS3Service;
 import WebProject.withpet.users.domain.User;
@@ -85,7 +86,13 @@ public class ArticleService {
     public void updateArticlle(Long articleId, ArticleUpdateRequestDto dto) {
 
         Article findArticle = findArticleById(articleId);
-        // if(findArticle.isSpecArticle())
+        findArticle.update(dto.getTitle(), dto.getDetailText());
+
+        if (!findArticle.isSpecArticle() && (dto.getPlace1() != null || dto.getPlacce2() != null)) {
+
+        }
+
+
     }
 
     @Transactional
