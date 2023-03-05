@@ -1,6 +1,7 @@
 package WebProject.withpet.articles.domain;
 
 
+import WebProject.withpet.articles.dto.ArticleUpdateRequestDto;
 import WebProject.withpet.comments.domain.Comment;
 import WebProject.withpet.common.domain.BaseEntity;
 import WebProject.withpet.users.domain.User;
@@ -84,9 +85,16 @@ public class Article extends BaseEntity {
         }
     }
 
-    public void update(Article article) {
-        this.title = article.getTitle();
-        this.detailText = article.getDetailText();
+    public void update(String title,String detailText) {
+
+        if (title != null) {
+            this.title = title;
+        }
+
+        if (title != null) {
+            this.detailText = detailText;
+        }
+
     }
 
 }
