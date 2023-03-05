@@ -41,5 +41,16 @@ public class ArticleCreateValidator implements Validator {
 
         }
 
+        if (request.getTag().equals(Tag.GOODS) || request.getTag().equals(Tag.PLACE)
+            || request.getTag().equals(Tag.ETC)) {
+            if (request.getPlace1() != null) {
+                errors.rejectValue("place1", "INVALID_PARAMETER", "해당 태그에서는 지역1이 존재하지 않습니다.");
+            }
+            if (request.getPlace2() != null) {
+                errors.rejectValue("place2", "INVALID_PARAMETER", "해당 태그에서는 지역2가 존재하지 않습니다");
+            }
+        }
+
+
     }
 }
