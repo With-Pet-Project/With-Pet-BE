@@ -24,13 +24,16 @@ public class ArticleScrollDownValidator implements Validator {
             "필터는 필수 값입니다.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastArticleId", "INVALID_PARAMETER",
             "마지막 조회 게시글 id값은 필수입니다.");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "tag", "INVALID_PARAMETER",
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "size", "INVALID_PARAMETER",
             "조회할 게시글 갯수는 필수입니다.");
 
-        if (request.getTag().equals(Tag.GOODS) || request.getTag().equals(Tag.PLACE)
-            || request.getTag().equals(Tag.ETC)) {
-            if (request.getPlace1() != null || request.getPlace2() != null) {
-                errors.reject("INVALID_PARAMETER", "해당 태그에서는 지역이 존재하지 않습니다.");
+        if (request.getTag() != null) {
+            if (request.getTag().equals(Tag.GOODS) || request.getTag().equals(Tag.PLACE)
+                || request.getTag().equals(Tag.ETC)) {
+                if (request.getPlace1() != null)
+                    errors.rejectValue("place1", "INVALID_PARAMETER", "해당 태그에서는 지역1이 존재하지 않습니다.");
+                if(request.getPlace2() != null)
+                    errors.rejectValue("place2","INVALID_PARAMETER","해당 태그에서는 지역2가 존재하지 않습니다");
             }
         }
     }
