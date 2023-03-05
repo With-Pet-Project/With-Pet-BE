@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,9 @@ public class AwsS3Service {
     }
 
     public void deleteImage(String fileName) {
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        int index = fileName.indexOf(".com/");
+        String result = fileName.substring(index + 5, fileName.length());
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, result));
     }
 
     private String createFileName(String fileName) {
