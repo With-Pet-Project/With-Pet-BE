@@ -122,14 +122,15 @@ public class ArticleService {
         Slice<ViewArticleListDto> response = articleRepository.getArticleList(lastArticle, dto,
             Pageable.ofSize(dto.getSize()));
 
-        response.getContent().forEach(viewArticleListDto->{
-            if( user.getId()==viewArticleListDto.getArticleLikeUserId())
-                viewArticleListDto.setWhetherLike(true);
-            else
-                viewArticleListDto.setWhetherLike(false);
+        response.getContent().forEach(viewArticleListDto -> {
+            if (user != null) {
+                if (user.getId() == viewArticleListDto.getArticleLikeUserId())
+                    viewArticleListDto.setWhetherLike(true);
+            }
+            viewArticleListDto.setWhetherLike(false);
         });
         return ViewArticleListResponseDto.builder()
-            .lastArticleId(response.getContent().get(dto.getSize() - 1).getArticleId())
+            .lastArticleId(response.getContent().get(response.getContent().size()- 1).getArticleId())
             .hasNext(response.hasNext())
             .viewArticleListDtoList(response.getContent())
             .build();
