@@ -111,17 +111,24 @@ public class CommentService {
         checkUserAuthorization(user, commentId);
 
         Comment findComment = findCommentById(commentId);
-        findComment.deleteConnectionWithUser(userService.findUserById(user.getId()));
+        User findUser = userService.findUserById(user.getId());
+        findComment.deleteConnectionWithUser(findUser);
 
+        List<Comment> commentsArticleHas = findComment.getArticle().getComments();
 
         if(!findComment.getChildren().isEmpty()){
 
             List<Comment> childrenComment = commentRepository.findAllByParent(findComment);
-            childrenComment.forEach(c->commentRepository.delete(c));
+
+            childrenComment.forEach(comment->{
+                commentsArticleHas.remove(comment);
+                comment.deleteConnectionWithUser(findUser);
+                commentRepository.deleteById(comment.getId());
+            });
         }
 
+        commentsArticleHas.remove(findComment);
         commentRepository.delete(findComment);
-
 
     }
 
