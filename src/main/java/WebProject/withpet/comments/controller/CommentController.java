@@ -64,7 +64,7 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PatchMapping("/comments/{commentId}")
+    @PatchMapping("/comment/{commentId}")
     public ResponseEntity<ApiResponse<Void>> updateComment(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("commentId") @NotNull(message = "변경할 댓글 id는 필수 값입니다.") Long commentId,
@@ -75,7 +75,7 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_UPDATE_OK);
     }
 
-    @DeleteMapping("/comments/{commentId}")
+    @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<ApiResponse<Void>> deleteComment(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("commentId") Long commentId) {
