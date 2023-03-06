@@ -8,7 +8,7 @@ import WebProject.withpet.pets.domain.PetRepository;
 import WebProject.withpet.pets.dto.ConsumptionRequestDto;
 import WebProject.withpet.pets.dto.ConsumptionResponseDto;
 import WebProject.withpet.pets.dto.MonthlyConsumptionByPetResponseDto;
-import WebProject.withpet.pets.dto.MonthlyConsumptionByUserResponseDto;
+import WebProject.withpet.pets.dto.MonthlyConsumptionsByUserResponseDto;
 import WebProject.withpet.users.domain.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,8 @@ public class ConsumptionService {
     private final ConsumptionRepository consumptionRepository;
     private final PetService petService;
     private final PetRepository petRepository;
+    private static final int MAXIMUM_NUMBER_OF_DAYS = 31;
+    private static final int START_NUMBER_OF_DAY = 1;
 
     @Transactional
     public void saveConsumption(Long petId, User user, ConsumptionRequestDto request) {
@@ -55,8 +57,16 @@ public class ConsumptionService {
     }
 
     @Transactional(readOnly = true)
-    public List<MonthlyConsumptionByUserResponseDto> getMonthlyConsumptionsByUser(User user, int year, int month) {
-        return consumptionRepository.getDailyConsumptionsByUser(user, year, month);
+    public List<MonthlyConsumptionsByUserResponseDto> getMonthlyConsumptionsByUser(
+            User user, int year, int month
+    ) {
+        List<MonthlyConsumptionsByUserResponseDto> response = new ArrayList<>();
+        for (int day = START_NUMBER_OF_DAY; day <= MAXIMUM_NUMBER_OF_DAYS; day++) {
+            MonthlyConsumptionsByUserResponseDto responseDto = new MonthlyConsumptionsByUserResponseDto(day);
+            responseDto.setConsumptions(consumptionRepository.findMonthlyConsumptionsByUser(user, year, month, day));
+            response.add(responseDto);
+        }
+        return response;
     }
 
     private Consumption findConsumptionById(Long id) {
