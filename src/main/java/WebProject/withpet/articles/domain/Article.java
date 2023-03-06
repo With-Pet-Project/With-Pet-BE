@@ -51,18 +51,17 @@ public class Article extends BaseEntity {
 
     private Integer likeCnt;
 
-
     private String title;
 
     private String detailText;
 
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<Image> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<ArticleLike> articleLikes = new ArrayList<>();
 
     @Builder
@@ -85,16 +84,24 @@ public class Article extends BaseEntity {
         }
     }
 
-    public void update(String title,String detailText) {
+    public void update(String title, String detailText) {
 
         if (title != null) {
             this.title = title;
         }
 
-        if (title != null) {
+        if (detailText != null) {
             this.detailText = detailText;
         }
 
+    }
+
+    public void plusLikeCnt(){
+        this.likeCnt+=1;
+    }
+
+    public void minusLikeCnt(){
+        this.likeCnt-=1;
     }
 
 }
