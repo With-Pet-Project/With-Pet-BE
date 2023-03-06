@@ -15,6 +15,8 @@ public class ViewArticleListResponseDto {
 
     private Boolean hasNext;
 
+    private Long lastArticleId;
+
     @Builder.Default
     private List<ViewArticleListDto> viewArticleListDtoList = new ArrayList<>();
 }
