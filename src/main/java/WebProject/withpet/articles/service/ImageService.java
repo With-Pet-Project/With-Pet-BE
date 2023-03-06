@@ -34,6 +34,16 @@ public class ImageService {
         return response;
     }
 
+    @Transactional
+    public void deleteImage(ImageDto dto){
+
+        Image findImage = imageRepository.findByContent(dto.getContent())
+            .orElseThrow(() -> new DataNotFoundException());
+
+        findImage.getArticle().getImages().remove(findImage);
+        awsS3Service.deleteImage(dto.getContent());
+        imageRepository.delete(findImage);
+    }
 
 
 }
