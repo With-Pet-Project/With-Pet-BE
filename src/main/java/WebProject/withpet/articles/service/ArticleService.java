@@ -124,14 +124,10 @@ public class ArticleService {
 
         response.getContent().forEach(viewArticleListDto -> {
             if (user != null) {
-                if (user.getId() == viewArticleListDto.getArticleLikeUserId()) {
+                if (user.getId() == viewArticleListDto.getArticleLikeUserId())
                     viewArticleListDto.setWhetherLike(true);
-                } else {
-                    viewArticleListDto.setWhetherLike(false);
-                }
-            }else{
-                viewArticleListDto.setWhetherLike(false);
             }
+            viewArticleListDto.setWhetherLike(false);
         });
         return ViewArticleListResponseDto.builder()
             .lastArticleId(response.getContent().get(dto.getSize() - 1).getArticleId())
