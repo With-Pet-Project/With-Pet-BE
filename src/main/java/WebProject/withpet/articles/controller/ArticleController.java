@@ -27,6 +27,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,7 +69,7 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
-    @GetMapping("/article/{articleId}")
+    @GetMapping("/articles/{articleId}")
     public ResponseEntity<ApiResponse<ViewSpecificArticleResponseDto>> viewSpecificArticle(
         @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 합니다.") Long articleId) {
 
@@ -78,24 +79,28 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    //추가 구현필요함
-    @PutMapping("/article/{articleId}")
+
+    @PatchMapping("/article/{articleId}")
     public ResponseEntity<ApiResponse<Void>> updateArticle(
-        @PathVariable("articleId") Long articleId, @RequestBody ArticleUpdateRequestDto dto) {
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @PathVariable("articleId") Long articleId,
+        @RequestBody ArticleUpdateRequestDto dto) {
 
-        articleService.updateArticlle(articleId, dto);
+        articleService.updateArticle(principalDetails.getUser(), articleId, dto);
 
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_UPDATE_OK);
     }
 
     @GetMapping("/articles")
     public ResponseEntity<ApiResponse<ViewArticleListResponseDto>> scrollDownArticle(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestParam(name = "tag", required = false) Tag tag,
         @RequestParam(name = "filter") Filter filter,
         @RequestParam(name = "place1", required = false) String place1,
         @RequestParam(name = "place2", required = false) String place2,
         @RequestParam(name = "lastArticleId") Long lastArticleId,
-        @RequestParam(name = "size") Integer size) {
+        @RequestParam(name = "size") Integer size,
+        @RequestParam(name = "param", required = false) String param) {
 
         ViewArticleListRequestDto dto = ViewArticleListRequestDto.builder()
             .tag(tag)
@@ -104,19 +109,30 @@ public class ArticleController {
             .place2(place2)
             .lastArticleId(lastArticleId)
             .size(size)
+            .param(param)
             .build();
 
-         Errors errors = new BeanPropertyBindingResult(dto, "ViewArticleListRequestDto");
+        Errors errors = new BeanPropertyBindingResult(dto, "ViewArticleListRequestDto");
         articleScrollDownValidator.validate(dto, errors);
 
-         if (errors.hasErrors()) {
-          throw new ArticleException(ErrorCode.INVALID_PARAMETER, errors);
-          } else {
-        ApiResponse<ViewArticleListResponseDto> response = new ApiResponse<>(
-            200, ResponseMessages.VIEW_MESSAGE.getContent(),
-            articleService.scrollDownArticle(dto));
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-         }
+        if (errors.hasErrors()) {
+            throw new ArticleException(ErrorCode.INVALID_PARAMETER, errors);
+        } else {
+            ApiResponse<ViewArticleListResponseDto> response = new ApiResponse<>(
+                200, ResponseMessages.VIEW_MESSAGE.getContent(),
+                articleService.scrollDownArticle(principalDetails.getUser(),dto));
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
 
     }
+
+    @DeleteMapping("/article/{articleId}")
+    public ResponseEntity<ApiResponse<Void>> deleteArticle(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @PathVariable("articleId") Long articleId) {
+
+        articleService.deleteArticle(principalDetails.getUser(), articleId);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_DEL_OK);
+    }
+
 }
