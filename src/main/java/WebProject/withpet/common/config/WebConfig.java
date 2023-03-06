@@ -18,7 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new JwtAuthInterceptor(jwtTokenProvider))
 
             .addPathPatterns("/pet/**", "/mypage/**", "/{petId}/challenge/**", "/article/**",
-                "/image/**", "/comment/**","article_like/**","/user/duplicate","/user/password");
+                "/image/**", "/comment/**","/article_like/**","/user/duplicate","/user/password");
 
 
     }
