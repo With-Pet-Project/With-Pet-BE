@@ -112,16 +112,31 @@ public class ArticleController {
             .param(param)
             .build();
 
+        //유효성 검증
         Errors errors = new BeanPropertyBindingResult(dto, "ViewArticleListRequestDto");
         articleScrollDownValidator.validate(dto, errors);
+
+        ViewArticleListResponseDto response = null;
 
         if (errors.hasErrors()) {
             throw new ArticleException(ErrorCode.INVALID_PARAMETER, errors);
         } else {
-            ApiResponse<ViewArticleListResponseDto> response = new ApiResponse<>(
+            try {
+                //로그인 한 사용자
+                response = articleService.scrollDownArticle(
+                    principalDetails.getUser(), dto);
+
+            } catch (NullPointerException e) {
+                //로그인 하지 않은 사용자
+                response = articleService.scrollDownArticle(
+                    null, dto);
+
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(
                 200, ResponseMessages.VIEW_MESSAGE.getContent(),
-                articleService.scrollDownArticle(principalDetails.getUser(),dto));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+                response));
+
         }
 
     }
