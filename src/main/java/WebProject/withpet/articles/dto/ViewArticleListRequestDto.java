@@ -25,4 +25,6 @@ public class ViewArticleListRequestDto {
 
     private Integer size;
 
+    private String param;
+
 }

@@ -61,16 +61,16 @@ public class ArticleRepositoryPagingCustomImpl implements ArticleRepositoryPagin
 
         List<ViewArticleListDto> response = queryFactory
             .select(Projections.constructor(ViewArticleListDto.class,
-                article.id, user.profileImg,
-                user.nickName, article.createdTime, article.modifiedTime, article.detailText,
-                article.likeCnt, article.comments.size(), article.tag, articleLike.id
+                article.id, user.profileImg, user.nickName, article.title, article.createdTime,
+                article.modifiedTime, article.detailText, article.likeCnt, article.comments.size(),
+                article.tag, articleLike.user.id
             ))
             .from(article)
             .leftJoin(article.user, user)
             .leftJoin(article.articleLikes, articleLike)
             .leftJoin(specArticle).on(article.id.eq(specArticle.id))
             .where(tagEq(dto.getTag(), dto.getPlace1(), dto.getPlace2()),
-                lastIdGtOrLt(lastArticle, dto))
+                lastIdGtOrLt(lastArticle, dto), paramContain(dto.getParam()))
             .orderBy(filterEq(dto.getFilter()))
             .limit(pageable.getPageSize() + 1)
             .fetch();
@@ -78,6 +78,7 @@ public class ArticleRepositoryPagingCustomImpl implements ArticleRepositoryPagin
         return checkLastPage(response, pageable);
 
     }
+
 
     private Slice<ViewArticleListDto> checkLastPage(List<ViewArticleListDto> articleList,
         Pageable pageable) {
@@ -94,12 +95,12 @@ public class ArticleRepositoryPagingCustomImpl implements ArticleRepositoryPagin
 
     //동적 쿼리를 위해 사용되었습니다.(tag,place1,place2 동적 조건에 따른 필터링)
     private BooleanExpression tagEq(Tag tag, String place1, String place2) {
-            //전체 조회
-        if (tag == null && place1==null) {
+        //전체 조회
+        if (tag == null && place1 == null) {
             return null;
 
             //지역1로 전체 조회(ex.태크 상관 없이 서울시 전체)
-        } else if (tag ==null && place1 != null) {
+        } else if (tag == null && place1 != null) {
             return specArticle.place1.eq(place1);
 
             //특정 태그(lost,walk,hospital)와 장소 1,2 모두 조건에 있는 경우
@@ -133,6 +134,15 @@ public class ArticleRepositoryPagingCustomImpl implements ArticleRepositoryPagin
             return article.modifiedTime.before(lastArticle.getModifiedTime());
         }
 
+    }
+
+    //검색어 필터링을 위해 사용되었습니다.
+    private BooleanExpression paramContain(String param) {
+        if (param == null) {
+            return null;
+        } else {
+            return article.title.contains(param);
+        }
     }
 
     //동적 쿼리를 위해 사용되었습니다.(filter의 동적 조건에 따른 오름.내림차순 필터링)

@@ -17,6 +17,8 @@ public class ViewArticleListDto {
 
     private String nickName;
 
+    private String title;
+
     private LocalDateTime createdTime;
 
     private LocalDateTime modifiedTime;
@@ -29,20 +31,27 @@ public class ViewArticleListDto {
 
     private Tag tag;
 
-    private Long articleLikeId;
+    private Long articleLikeUserId;
 
-    public ViewArticleListDto(Long articleId, String profileImg, String nickName,
+    private Boolean whetherLike;
+
+    public ViewArticleListDto(Long articleId, String profileImg, String nickName, String title,
         LocalDateTime createdTime, LocalDateTime modifiedTime, String detailText, Integer likeCnt,
-        Integer commentCnt, Tag tag, Long articleLikeId) {
+        Integer commentCnt, Tag tag, Long articleLikeUserId) {
         this.articleId = articleId;
         this.profileImg = profileImg;
         this.nickName = nickName;
+        this.title = title;
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
         this.detailText = detailText;
         this.likeCnt = likeCnt;
         this.commentCnt = commentCnt;
         this.tag = tag;
-        this.articleLikeId = articleLikeId;
+        this.articleLikeUserId = articleLikeUserId;
+    }
+
+    public void setWhetherLike(Boolean b){
+        whetherLike=b;
     }
 }
