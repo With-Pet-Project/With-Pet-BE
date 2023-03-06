@@ -18,6 +18,7 @@ import WebProject.withpet.comments.dto.ViewCommentListDto;
 import WebProject.withpet.comments.repository.CommentRepository;
 import WebProject.withpet.common.exception.ArticleException;
 import WebProject.withpet.common.exception.DataNotFoundException;
+import WebProject.withpet.common.exception.UnauthorizedException;
 import WebProject.withpet.common.file.AwsS3Service;
 import WebProject.withpet.users.domain.User;
 import java.util.List;
@@ -41,6 +42,8 @@ public class ArticleService {
     private final AwsS3Service awsS3Service;
 
     private final CommentRepository commentRepository;
+
+    private final ImageService imageService;
 
     @Transactional
     public void createArticle(User user, ArticleCreateRequestDto articleCreateRequestDto) {
@@ -83,33 +86,69 @@ public class ArticleService {
     }
 
     @Transactional
-    public void updateArticlle(Long articleId, ArticleUpdateRequestDto dto) {
+    public void updateArticle(User user, Long articleId, ArticleUpdateRequestDto dto) {
 
         Article findArticle = findArticleById(articleId);
-        findArticle.update(dto.getTitle(), dto.getDetailText());
+        checkUserAuthorization(user, findArticle);
 
-        if (!findArticle.isSpecArticle() && (dto.getPlace1() != null || dto.getPlacce2() != null)) {
-
+        if (findArticle.isSpecArticle()) {
+            findSpecArticleById(articleId).update(dto.getTitle(), dto.getDetailText(),
+                dto.getPlace1(), dto.getPlacce2());
         }
 
+        if (!dto.getImages().isEmpty()) {
+            dto.getImages().forEach(imageDto -> {
+                if (imageDto.getExistence() == false) {
+                    imageService.deleteImage(imageDto);
+                } else {
+                    Image image = imageRepository.findByContent(imageDto.getContent())
+                        .orElseGet(() ->
+                            Image.builder()
+                                .article(findArticle)
+                                .content(imageDto.getContent())
+                                .build());
 
+                    imageRepository.save(image);
+                }
+            });
+        }
     }
 
     @Transactional
-    public ViewArticleListResponseDto scrollDownArticle(ViewArticleListRequestDto dto) {
+    public ViewArticleListResponseDto scrollDownArticle(User user, ViewArticleListRequestDto dto) {
 
         Article lastArticle = articleRepository.findById(dto.getLastArticleId()).orElse(null);
 
         Slice<ViewArticleListDto> response = articleRepository.getArticleList(lastArticle, dto,
             Pageable.ofSize(dto.getSize()));
 
+        response.getContent().forEach(viewArticleListDto->{
+            if( user.getId()==viewArticleListDto.getArticleLikeUserId())
+                viewArticleListDto.setWhetherLike(true);
+            else
+                viewArticleListDto.setWhetherLike(false);
+        });
         return ViewArticleListResponseDto.builder()
+            .lastArticleId(response.getContent().get(dto.getSize() - 1).getArticleId())
             .hasNext(response.hasNext())
             .viewArticleListDtoList(response.getContent())
             .build();
 
     }
 
+    @Transactional
+    public void deleteArticle(User user, Long articleId) {
+
+        Article findArticle = findArticleById(articleId);
+        checkUserAuthorization(user, findArticle);
+
+        if (findArticle.isSpecArticle()) {
+            SpecArticle findSpecArticle = findSpecArticleById(articleId);
+            specArticleRepository.delete(findSpecArticle);
+        } else {
+            articleRepository.delete(findArticle);
+        }
+    }
 
     @Transactional
     public void createImgAndInjectAwsImgUrl(Article article, List<ImageDto> images) {
@@ -130,6 +169,20 @@ public class ArticleService {
     public Article findArticleById(Long articleId) {
         return articleRepository.findById(articleId)
             .orElseThrow(() -> new DataNotFoundException());
+    }
+
+    @Transactional
+    public SpecArticle findSpecArticleById(Long articleId) {
+        return specArticleRepository.findById(articleId)
+            .orElseThrow(() -> new DataNotFoundException());
+    }
+
+    @Transactional
+    public void checkUserAuthorization(User user, Article article) {
+
+        if (user.getId() != article.getUser().getId()) {
+            throw new UnauthorizedException();
+        }
     }
 }
 
