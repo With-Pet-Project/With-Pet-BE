@@ -130,7 +130,7 @@ public class ArticleService {
             viewArticleListDto.setWhetherLike(false);
         });
         return ViewArticleListResponseDto.builder()
-            .lastArticleId(response.getContent().get(dto.getSize() - 1).getArticleId())
+            .lastArticleId(response.getContent().get(response.getContent().size()- 1).getArticleId())
             .hasNext(response.hasNext())
             .viewArticleListDtoList(response.getContent())
             .build();
