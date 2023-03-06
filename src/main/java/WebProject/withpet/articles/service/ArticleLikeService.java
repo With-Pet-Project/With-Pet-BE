@@ -38,6 +38,7 @@ public class ArticleLikeService {
 
         ArticleLike createArticleLike = dto.toEntity(findUser, findArticle);
         findArticle.getArticleLikes().add(createArticleLike);
+        findArticle.plusLikeCnt();
         articleLikeRepository.save(createArticleLike);
 
     }
@@ -53,6 +54,8 @@ public class ArticleLikeService {
             .orElseThrow(() -> new UnauthorizedException(ErrorCode.ARTICLE_LIKE_UNAUTHORIZED));
 
         findArticle.getArticleLikes().remove(findArticleLike);
+        findArticle.minusLikeCnt();
+        articleLikeRepository.delete(findArticleLike);
 
     }
 
