@@ -2,14 +2,12 @@ package WebProject.withpet.articles.dto;
 
 import WebProject.withpet.articles.domain.Tag;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ViewArticleListDto {
+public class ViewArticleDto {
 
     private Long articleId;
 
@@ -35,7 +33,7 @@ public class ViewArticleListDto {
 
     private Boolean whetherLike;
 
-    public ViewArticleListDto(Long articleId, String profileImg, String nickName, String title,
+    public ViewArticleDto(Long articleId, String profileImg, String nickName, String title,
         LocalDateTime createdTime, LocalDateTime modifiedTime, String detailText, Integer likeCnt,
         Integer commentCnt, Tag tag, Long articleLikeUserId) {
         this.articleId = articleId;
@@ -51,7 +49,22 @@ public class ViewArticleListDto {
         this.articleLikeUserId = articleLikeUserId;
     }
 
-    public void setWhetherLike(Boolean b){
-        whetherLike=b;
+    public void setWhetherLike(Boolean b) {
+        whetherLike = b;
+    }
+
+    public ViewSpecificArticleResponseDto toResponseDto() {
+
+        return ViewSpecificArticleResponseDto.builder()
+            .profileImg(this.profileImg)
+            .nickName(this.nickName)
+            .title(this.title)
+            .tag(this.tag)
+            .createdTime(this.createdTime)
+            .modifiedTime(this.modifiedTime)
+            .detailText(this.detailText)
+            .likeCnt(this.likeCnt)
+            .articleLikeUserId(this.articleLikeUserId)
+            .build();
     }
 }
