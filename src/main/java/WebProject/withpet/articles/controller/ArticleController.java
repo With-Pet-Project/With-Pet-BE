@@ -131,16 +131,15 @@ public class ArticleController {
         if (errors.hasErrors()) {
             throw new ArticleException(ErrorCode.INVALID_PARAMETER, errors);
         } else {
-            try {
+            if (principalDetails != null) {
                 //로그인 한 사용자
                 response = articleService.scrollDownArticle(
                     principalDetails.getUser(), dto);
 
-            } catch (NullPointerException e) {
+            } else {
                 //로그인 하지 않은 사용자
                 response = articleService.scrollDownArticle(
                     null, dto);
-
             }
 
             return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(
