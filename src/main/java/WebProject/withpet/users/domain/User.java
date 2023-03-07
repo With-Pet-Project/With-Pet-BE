@@ -62,12 +62,16 @@ public class User {
         this.profileImg = img;
     }
 
-    public void changeUserNickName(String nickName) {
+    public void updateUserNickName(String nickName) {
         this.nickName = nickName;
     }
 
     public void changeUserPassword(String password) {
         this.password = password;
+    }
+
+    public void updateUserprofileImg(String image){
+        this.profileImg=image;
     }
 
 }
