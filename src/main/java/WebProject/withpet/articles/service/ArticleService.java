@@ -8,7 +8,7 @@ import WebProject.withpet.articles.domain.Tag;
 import WebProject.withpet.articles.dto.ArticleCreateRequestDto;
 import WebProject.withpet.articles.dto.ArticleUpdateRequestDto;
 import WebProject.withpet.articles.dto.ImageDto;
-import WebProject.withpet.articles.dto.ViewArticleListDto;
+import WebProject.withpet.articles.dto.ViewArticleDto;
 import WebProject.withpet.articles.dto.ViewArticleListRequestDto;
 import WebProject.withpet.articles.dto.ViewArticleListResponseDto;
 import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
@@ -16,7 +16,6 @@ import WebProject.withpet.articles.repository.ArticleRepository;
 import WebProject.withpet.articles.repository.ImageRepository;
 import WebProject.withpet.comments.dto.ViewCommentListDto;
 import WebProject.withpet.comments.repository.CommentRepository;
-import WebProject.withpet.common.exception.ArticleException;
 import WebProject.withpet.common.exception.DataNotFoundException;
 import WebProject.withpet.common.exception.UnauthorizedException;
 import WebProject.withpet.common.file.AwsS3Service;
@@ -68,21 +67,25 @@ public class ArticleService {
 
 
     @Transactional
-    public ViewSpecificArticleResponseDto viewSpecificArticle(Long articleId) {
+    public ViewSpecificArticleResponseDto viewSpecificArticle(User user, Long articleId) {
 
-        ViewSpecificArticleResponseDto response = articleRepository.findSpecificArticle(
+        ViewArticleDto dto = articleRepository.findSpecificArticle(
             articleId);
 
+        whetherUserLikeArticle(user, dto);
+
+        ViewSpecificArticleResponseDto responseDto = dto.toResponseDto();
+
         imageRepository.findAllByArticleId(articleId).forEach(image -> {
-            response.getImages().add(ImageDto.builder().content(image.getContent()).build());
+            responseDto.getImages().add(ImageDto.builder().content(image.getContent()).build());
         });
 
         List<ViewCommentListDto> content = commentRepository.getCommentsList(0L, articleId,
             Pageable.ofSize(10)).getContent();
 
-        response.setCommentList(content);
+        responseDto.setCommentListAndCommentCnt(content, content.size());
 
-        return response;
+        return responseDto;
     }
 
     @Transactional
@@ -119,20 +122,24 @@ public class ArticleService {
 
         Article lastArticle = articleRepository.findById(dto.getLastArticleId()).orElse(null);
 
-        Slice<ViewArticleListDto> response = articleRepository.getArticleList(lastArticle, dto,
+        Slice<ViewArticleDto> response = articleRepository.getArticleList(lastArticle, dto,
             Pageable.ofSize(dto.getSize()));
 
-        response.getContent().forEach(viewArticleListDto -> {
-            if (user != null) {
-                if (user.getId() == viewArticleListDto.getArticleLikeUserId())
-                    viewArticleListDto.setWhetherLike(true);
-            }
-            viewArticleListDto.setWhetherLike(false);
+        if (response.isEmpty()) {
+            throw new DataNotFoundException();
+        }
+
+        List<ViewArticleDto> responseDto = response.getContent();
+
+        responseDto.forEach(viewArticleListDto -> {
+            whetherUserLikeArticle(user, viewArticleListDto);
         });
+
         return ViewArticleListResponseDto.builder()
-            .lastArticleId(response.getContent().get(response.getContent().size()- 1).getArticleId())
+            .lastArticleId(
+                responseDto.get(responseDto.size() - 1).getArticleId())
             .hasNext(response.hasNext())
-            .viewArticleListDtoList(response.getContent())
+            .viewArticleListDto(responseDto)
             .build();
 
     }
@@ -183,6 +190,20 @@ public class ArticleService {
 
         if (user.getId() != article.getUser().getId()) {
             throw new UnauthorizedException();
+        }
+    }
+
+    @Transactional
+    public void whetherUserLikeArticle(User user, ViewArticleDto dto) {
+
+        if (user != null) {
+            if (user.getId() == dto.getArticleLikeUserId()) {
+                dto.setWhetherLike(true);
+            } else {
+                dto.setWhetherLike(false);
+            }
+        } else {
+            dto.setWhetherLike(false);
         }
     }
 }
