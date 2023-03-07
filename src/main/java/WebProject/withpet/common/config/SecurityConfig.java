@@ -35,7 +35,7 @@ public class SecurityConfig {
         JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(authentication,
             jwtTokenProvider,
             userRepository);
-        authenticationFilter.setFilterProcessesUrl("/user");
+        authenticationFilter.setFilterProcessesUrl("/user/login/**");
 
         http.cors().configurationSource(corsConfigurationSource())
             .and()
@@ -51,7 +51,7 @@ public class SecurityConfig {
             .addFilter(new JwtAuthorizationFilter(authentication, jwtTokenProvider))
             .authorizeRequests();
 
-        http.authorizeRequests().antMatchers("/user/**", "/articles/**","/comments").permitAll()
+        http.authorizeRequests().antMatchers("/user/login/**","/user/signup","/articles/**","/comments").permitAll()
             .and()
             .headers()
             .addHeaderWriter(new XFrameOptionsHeaderWriter(
