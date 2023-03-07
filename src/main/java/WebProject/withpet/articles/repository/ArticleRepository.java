@@ -16,4 +16,6 @@ public interface ArticleRepository<T extends Article> extends JpaRepository<T, L
     ArticleRepositoryCustom, ArticleRepositoryPagingCustom {
 
     Optional<Article> findByUser(User user);
+
+    void deleteByUser(User user);
 }
