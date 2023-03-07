@@ -8,7 +8,6 @@ import static WebProject.withpet.users.domain.QUser.user;
 import WebProject.withpet.articles.dto.MypageArticleDto;
 import WebProject.withpet.articles.dto.ViewArticleDto;
 import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
-import WebProject.withpet.articles.dto.ViewUserAndArticleResponseDto;
 import WebProject.withpet.comments.domain.Comment;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
