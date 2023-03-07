@@ -1,5 +1,6 @@
 package WebProject.withpet.users.service;
 
+import WebProject.withpet.articles.repository.ArticleRepository;
 import WebProject.withpet.common.auth.application.JwtTokenProvider;
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.exception.DuplicateException;
@@ -32,6 +33,8 @@ public class UserService {
     private final UserSocialService userSocialService;
 
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final ArticleRepository articleRepository;
 
     public void register(@Valid UserRequestDto userRequestDto) {
         validateDuplicateEmail(userRequestDto.getEmail());
@@ -104,7 +107,9 @@ public class UserService {
     @Transactional
     public void deleteUser(User user) {
 
-        userRepository.deleteById(user.getId());
+        User findUser = findUserById(user.getId());
+        articleRepository.deleteByUser(findUser);
+        userRepository.delete(findUser);
     }
 
 
