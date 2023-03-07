@@ -1,6 +1,8 @@
 package WebProject.withpet.articles.dto;
 
 import WebProject.withpet.articles.domain.Article;
+import WebProject.withpet.articles.domain.Tag;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,19 @@ public class ViewUserAndArticleResponseDto {
 
     private String nickName;
 
-    private Article article;
+    private String titile;
+
+    private Tag tag;
+
+    private LocalDateTime createdTime;
+
+    private LocalDateTime modifiedTime;
+
+    private String detailText;
+
+    private Integer likeCnt;
+
+    private Long articleLikeId;
 
 
 }
