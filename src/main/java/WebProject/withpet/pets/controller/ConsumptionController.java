@@ -5,8 +5,8 @@ import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.constants.ResponseMessages;
 import WebProject.withpet.common.dto.ApiResponse;
 import WebProject.withpet.pets.dto.ConsumptionRequestDto;
+import WebProject.withpet.pets.dto.ConsumptionResponseDto;
 import WebProject.withpet.pets.dto.MonthlyConsumptionByPetResponseDto;
-import WebProject.withpet.pets.dto.MonthlyConsumptionsByUserResponseDto;
 import WebProject.withpet.pets.service.ConsumptionService;
 import java.util.List;
 import javax.validation.Valid;
@@ -64,14 +64,13 @@ public class ConsumptionController {
 
 
     @GetMapping("/pet/consumption")
-    public ResponseEntity<ApiResponse<List<MonthlyConsumptionsByUserResponseDto>>> getMonthlyConsumptionsByUser(
-            @AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam int year, @RequestParam int month
-    ) {
-        List<MonthlyConsumptionsByUserResponseDto> consumptions = consumptionService.getMonthlyConsumptionsByUser(
+    public ResponseEntity<ApiResponse<List<ConsumptionResponseDto>>> getMonthlyConsumptionsByUser(
+            @AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam int year,
+            @RequestParam int month) {
+        List<ConsumptionResponseDto> consumptions = consumptionService.getMonthlyConsumptionsByUser(
                 principalDetails.getUser(), year, month);
-        ApiResponse<List<MonthlyConsumptionsByUserResponseDto>> response = new ApiResponse<>(
-                200, ResponseMessages.VIEW_MESSAGE.getContent(), consumptions
-        );
+        ApiResponse<List<ConsumptionResponseDto>> response = new ApiResponse<>(200,
+                ResponseMessages.VIEW_MESSAGE.getContent(), consumptions);
         return ResponseEntity.ok(response);
     }
 }

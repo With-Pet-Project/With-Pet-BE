@@ -4,11 +4,9 @@ import WebProject.withpet.common.exception.DataNotFoundException;
 import WebProject.withpet.pets.domain.Consumption;
 import WebProject.withpet.pets.domain.ConsumptionRepository;
 import WebProject.withpet.pets.domain.Pet;
-import WebProject.withpet.pets.domain.PetRepository;
 import WebProject.withpet.pets.dto.ConsumptionRequestDto;
 import WebProject.withpet.pets.dto.ConsumptionResponseDto;
 import WebProject.withpet.pets.dto.MonthlyConsumptionByPetResponseDto;
-import WebProject.withpet.pets.dto.MonthlyConsumptionsByUserResponseDto;
 import WebProject.withpet.users.domain.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ConsumptionService {
     private final ConsumptionRepository consumptionRepository;
     private final PetService petService;
-    private final PetRepository petRepository;
-    private static final int MAXIMUM_NUMBER_OF_DAYS = 31;
-    private static final int START_NUMBER_OF_DAY = 1;
 
     @Transactional
     public void saveConsumption(Long petId, User user, ConsumptionRequestDto request) {
@@ -57,16 +52,8 @@ public class ConsumptionService {
     }
 
     @Transactional(readOnly = true)
-    public List<MonthlyConsumptionsByUserResponseDto> getMonthlyConsumptionsByUser(
-            User user, int year, int month
-    ) {
-        List<MonthlyConsumptionsByUserResponseDto> response = new ArrayList<>();
-        for (int day = START_NUMBER_OF_DAY; day <= MAXIMUM_NUMBER_OF_DAYS; day++) {
-            MonthlyConsumptionsByUserResponseDto responseDto = new MonthlyConsumptionsByUserResponseDto(day);
-            responseDto.setConsumptions(consumptionRepository.findMonthlyConsumptionsByUser(user, year, month, day));
-            response.add(responseDto);
-        }
-        return response;
+    public List<ConsumptionResponseDto> getMonthlyConsumptionsByUser(User user, int year, int month) {
+        return consumptionRepository.findMonthlyConsumptionsByUser(user, year, month);
     }
 
     private Consumption findConsumptionById(Long id) {
