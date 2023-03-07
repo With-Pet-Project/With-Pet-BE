@@ -71,10 +71,20 @@ public class ArticleController {
 
     @GetMapping("/articles/{articleId}")
     public ResponseEntity<ApiResponse<ViewSpecificArticleResponseDto>> viewSpecificArticle(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 합니다.") Long articleId) {
 
-        ApiResponse response = new ApiResponse<>(200, ResponseMessages.VIEW_MESSAGE.getContent(),
-            articleService.viewSpecificArticle(articleId));
+        ApiResponse response = null;
+
+        if (principalDetails != null) {
+            //로그인 하지 않은 유저
+            response = new ApiResponse<>(200, ResponseMessages.VIEW_MESSAGE.getContent(),
+                articleService.viewSpecificArticle(principalDetails.getUser(), articleId));
+        } else {
+            //로그인 한 유저
+            response = new ApiResponse<>(200, ResponseMessages.VIEW_MESSAGE.getContent(),
+                articleService.viewSpecificArticle(null, articleId));
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
