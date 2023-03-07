@@ -129,6 +129,11 @@ public class UserService {
         return confirmationTokenService.createOrChangeConfirmationToken(email, requestedAt);
     }
 
+    @Transactional
+    public void permissionCheckByConfirmationToken(String requestEmail, String key, LocalDateTime requestedAt) {
+        confirmationTokenService.isRightKey(requestEmail, key, requestedAt);
+    }
+
     private PrincipalDetails loadUserByEmail(String email) {
         User user = findUserByEmail(email);
         return new PrincipalDetails(user);
