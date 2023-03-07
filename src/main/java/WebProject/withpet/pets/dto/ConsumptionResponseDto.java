@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 public class ConsumptionResponseDto {
     private Long id;
 
+    private Long petId;
+
     private Long toy;
     private Long hospital;
     private Long beauty;
