@@ -41,7 +41,7 @@ public class UserController {
         return ResponseEntity.ok(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
-    @PostMapping("/kakao/login")
+    @PostMapping("/login/kakao")
     public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(
         @RequestParam(name = "code") String code)
         throws JSONException {
