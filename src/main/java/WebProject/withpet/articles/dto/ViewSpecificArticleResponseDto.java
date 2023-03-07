@@ -1,5 +1,6 @@
 package WebProject.withpet.articles.dto;
 
+import WebProject.withpet.articles.domain.Tag;
 import WebProject.withpet.comments.dto.ViewCommentListDto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,9 +15,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ViewSpecificArticleResponseDto {
 
+
     private String profileImg;
 
     private String nickName;
+
+    private String titile;
+
+    private Tag tag;
 
     private LocalDateTime createdTime;
 
@@ -33,21 +39,34 @@ public class ViewSpecificArticleResponseDto {
 
     private List<ViewCommentListDto> commentList = new ArrayList<>();
 
+    private Long articleLikeUserId;
+
+    private Boolean whetherLike;
+
     @Builder
-    public ViewSpecificArticleResponseDto(String profileImg, String nickName,
-        LocalDateTime createdTime,
-        LocalDateTime modifiedTime, String detailText, Integer likeCnt, Integer commentCnt) {
+    public ViewSpecificArticleResponseDto(String profileImg, String nickName, String title, Tag tag,
+        LocalDateTime createdTime, LocalDateTime modifiedTime, String detailText, Integer likeCnt,
+        Integer commentCnt, Long articleLikeUserId) {
         this.profileImg = profileImg;
         this.nickName = nickName;
+        this.titile = title;
+        this.tag = tag;
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
         this.detailText = detailText;
         this.likeCnt = likeCnt;
         this.commentCnt = commentCnt;
+        this.articleLikeUserId = articleLikeUserId;
     }
 
-    public void setCommentList(List<ViewCommentListDto> commentList) {
+    public void setCommentListAndCommentCnt(List<ViewCommentListDto> commentList,
+        Integer commentCnt) {
         this.commentList = commentList;
+        this.commentCnt = commentCnt;
+    }
+
+    public void setWhetherLike(Boolean b) {
+        this.whetherLike = b;
     }
 
 }
