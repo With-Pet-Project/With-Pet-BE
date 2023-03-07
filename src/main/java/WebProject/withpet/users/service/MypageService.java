@@ -31,8 +31,9 @@ public class MypageService {
 
         User findUser = userService.findUserById(user.getId());
 
-        if(mypageChangeRequestDto.getProfileImg()!=null)
-        user.changeUserProfileImg(mypageChangeRequestDto.getProfileImg());
+        if (nickName != null) {
+            findUser.updateUserNickName(nickName);
+        }
 
         if (images != null) {
             List<String> imageUrl = awsS3Service.uploadImage(images);
