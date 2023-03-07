@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface ConsumptionRepositoryCustom {
     List<ConsumptionResponseDto> findMonthlyConsumptionsByPet(Pet pet, int year, int month);
 
-    List<ConsumptionResponseDto> findMonthlyConsumptionsByUser(User user, int year, int month, int day);
+    List<ConsumptionResponseDto> findMonthlyConsumptionsByUser(User user, int year, int month);
 }
