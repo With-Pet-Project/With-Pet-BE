@@ -30,7 +30,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         AuthenticationManager authentication = authenticationManager(authenticationConfiguration);
         JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(authentication, jwtTokenProvider);
-        authenticationFilter.setFilterProcessesUrl("/user");
 
         http.cors().configurationSource(corsConfigurationSource()).and().csrf().disable().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
