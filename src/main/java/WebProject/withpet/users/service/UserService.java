@@ -3,6 +3,7 @@ package WebProject.withpet.users.service;
 import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.auth.application.JwtTokenProvider;
 import WebProject.withpet.auth.dto.TokenResponseDto;
+import WebProject.withpet.auth.service.ConfirmationTokenService;
 import WebProject.withpet.auth.service.RefreshTokenService;
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.exception.DuplicateException;
@@ -13,6 +14,7 @@ import WebProject.withpet.users.dto.SocialLoginResponseDto;
 import WebProject.withpet.users.dto.SocialUserInfoDto;
 import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class UserService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
+    private final ConfirmationTokenService confirmationTokenService;
 
     public void register(@Valid UserRequestDto userRequestDto) {
         validateDuplicateEmail(userRequestDto.getEmail());
@@ -120,8 +123,23 @@ public class UserService {
         return new TokenResponseDto(refreshToken, accessToken);
     }
 
+    @Transactional
+    public String generateConfirmationToken(String email, LocalDateTime requestedAt) {
+        findUserByEmail(email);
+        return confirmationTokenService.createOrChangeConfirmationToken(email, requestedAt);
+    }
+
+    @Transactional
+    public void permissionCheckByConfirmationToken(String requestEmail, String key, LocalDateTime requestedAt) {
+        confirmationTokenService.isRightKey(requestEmail, key, requestedAt);
+    }
+
     private PrincipalDetails loadUserByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        User user = findUserByEmail(email);
         return new PrincipalDetails(user);
+    }
+
+    private User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     }
 }

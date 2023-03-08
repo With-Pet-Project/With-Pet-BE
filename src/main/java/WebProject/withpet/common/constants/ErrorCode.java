@@ -14,7 +14,8 @@ public enum ErrorCode {
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "유효하지 않은 데이터가 존재합니다."),
     DUPLICATE_NICK_NAME(HttpStatus.CONFLICT, "해당 닉네임은 이미 존재합니다."),
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "해당 이메일은 이미 존재합니다."),
-    DUPLICATE_CHALLENGE(HttpStatus.CONFLICT, "반려동물의 해당 챌린지명은 이미 존재합니다.");
+    DUPLICATE_CHALLENGE(HttpStatus.CONFLICT, "반려동물의 해당 챌린지명은 이미 존재합니다."),
+    EXPIRED_CONFIRMATION_TOKEN(HttpStatus.BAD_REQUEST, "해당 확인 코드는 만료되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
