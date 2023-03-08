@@ -39,7 +39,7 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
                         Projections.fields(ConsumptionResponseDto.class, consumption.id, consumption.pet.id.as("petId"),
                                 consumption.toy, consumption.hospital,
                                 consumption.beauty, consumption.etc, consumption.feed, consumption.day)).from(consumption)
-                .where(consumption.pet.id.in(findPetsByUser(user))).fetch();
+                .where(consumption.pet.id.in(findPetsByUser(user)), consumption.year.eq(year), consumption.month.eq(month)).fetch();
     }
 
     private List<Long> findPetsByUser(User user) {
