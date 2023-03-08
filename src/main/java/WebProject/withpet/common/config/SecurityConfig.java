@@ -1,9 +1,8 @@
 package WebProject.withpet.common.config;
 
-import WebProject.withpet.common.auth.application.JwtTokenProvider;
-import WebProject.withpet.common.auth.filter.JwtAuthenticationFilter;
-import WebProject.withpet.common.auth.filter.JwtAuthorizationFilter;
-import WebProject.withpet.users.repository.UserRepository;
+import WebProject.withpet.auth.application.JwtTokenProvider;
+import WebProject.withpet.auth.filter.JwtAuthenticationFilter;
+import WebProject.withpet.auth.filter.JwtAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,41 +25,26 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserRepository userRepository;
 
-    // TODO : 예외 핸들링 추가
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         AuthenticationManager authentication = authenticationManager(authenticationConfiguration);
-        JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(authentication,
-            jwtTokenProvider,
-            userRepository);
-        authenticationFilter.setFilterProcessesUrl("/user/login/**");
+        JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(authentication, jwtTokenProvider);
+        authenticationFilter.setFilterProcessesUrl("/user");
 
-        http.cors().configurationSource(corsConfigurationSource())
-            .and()
-            .csrf().disable()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
+        http.cors().configurationSource(corsConfigurationSource()).and().csrf().disable().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
-            .formLogin().disable()
-            .httpBasic().disable()
+                .formLogin().disable().httpBasic().disable()
 
-            .addFilter(authenticationFilter)
-            .addFilter(new JwtAuthorizationFilter(authentication, jwtTokenProvider))
-            .authorizeRequests();
+                .addFilter(authenticationFilter).addFilter(new JwtAuthorizationFilter(authentication, jwtTokenProvider))
+                .authorizeRequests();
 
-        http.authorizeRequests().antMatchers("/user/login/**","/user/signup","/articles/**","/comments").permitAll()
-            .and()
-            .headers()
-            .addHeaderWriter(new XFrameOptionsHeaderWriter(
-                XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-            .and()
-            .logout()
-            .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
-            .logoutSuccessUrl("/user")
-            .invalidateHttpSession(true);
+        http.authorizeRequests().antMatchers("/user/login/**", "/user/signup", "/articles/**", "/comments").permitAll()
+                .and().headers()
+                .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+                .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
+                .logoutSuccessUrl("/user/login").invalidateHttpSession(true);
 
         return http.build();
     }
@@ -71,9 +55,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-        AuthenticationConfiguration authenticationConfiguration
-    ) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 

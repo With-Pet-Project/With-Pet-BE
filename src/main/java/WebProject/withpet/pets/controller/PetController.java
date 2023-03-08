@@ -1,6 +1,6 @@
 package WebProject.withpet.pets.controller;
 
-import WebProject.withpet.common.auth.PrincipalDetails;
+import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.constants.ResponseMessages;
 import WebProject.withpet.common.dto.ApiResponse;

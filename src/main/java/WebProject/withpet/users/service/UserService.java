@@ -1,7 +1,11 @@
 package WebProject.withpet.users.service;
 
 import WebProject.withpet.articles.repository.ArticleRepository;
-import WebProject.withpet.common.auth.application.JwtTokenProvider;
+import WebProject.withpet.auth.PrincipalDetails;
+import WebProject.withpet.auth.application.JwtTokenProvider;
+import WebProject.withpet.auth.dto.TokenResponseDto;
+import WebProject.withpet.auth.service.ConfirmationTokenService;
+import WebProject.withpet.auth.service.RefreshTokenService;
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.exception.DuplicateException;
 import WebProject.withpet.common.exception.UserNotFoundException;
@@ -11,17 +15,17 @@ import WebProject.withpet.users.dto.SocialLoginResponseDto;
 import WebProject.withpet.users.dto.SocialUserInfoDto;
 import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.json.JSONException;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +37,8 @@ public class UserService {
     private final UserSocialService userSocialService;
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
+    private final ConfirmationTokenService confirmationTokenService;
 
     private final ArticleRepository articleRepository;
 
@@ -40,11 +46,8 @@ public class UserService {
         validateDuplicateEmail(userRequestDto.getEmail());
         validateDuplicateNickname(userRequestDto.getNickname());
 
-        User user = User.builder()
-            .nickName(userRequestDto.getNickname())
-            .email(userRequestDto.getEmail())
-            .password(passwordEncoder.encode(userRequestDto.getPassword()))
-            .build();
+        User user = User.builder().nickName(userRequestDto.getNickname()).email(userRequestDto.getEmail())
+                .password(passwordEncoder.encode(userRequestDto.getPassword())).build();
 
         userRepository.save(user);
     }
@@ -60,23 +63,15 @@ public class UserService {
         if (userRepository.findByEmail(userInfoByToken.getEmail()).isEmpty()) {
 
             //회원가입 진행 후 토큰 생성
-            userRepository.save(
-                User.builder()
-                    .email(userInfoByToken.getEmail())
-                    .password("")
-                    .nickName(userInfoByToken.getNickname())
-                    .build()
-            );
+            userRepository.save(User.builder().email(userInfoByToken.getEmail()).password("")
+                    .nickName(userInfoByToken.getNickname()).build());
 
             createdToken = jwtTokenProvider.createToken(userInfoByToken.toEntity());
 
         } else {
             createdToken = jwtTokenProvider.createToken(userInfoByToken.toEntity());
         }
-        return SocialLoginResponseDto
-            .builder()
-            .token(createdToken)
-            .build();
+        return SocialLoginResponseDto.builder().token(createdToken).build();
     }
 
 
@@ -115,6 +110,48 @@ public class UserService {
 
     public User findUserById(Long userId) {
         return userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(() -> new UserNotFoundException());
+    }
+
+
+    @Transactional
+    public TokenResponseDto login(String email, String password) {
+        PrincipalDetails principalDetails = loadUserByEmail(email);
+
+        if (!passwordEncoder.matches(password, principalDetails.getPassword())) {
+            throw new UserNotFoundException();
+        }
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails.getUsername(),
+                principalDetails.getPassword(), principalDetails.getAuthorities());
+
+        // refresh Token 생성
+        String refreshToken = jwtTokenProvider.createRefreshToken(principalDetails.getUser());
+        refreshTokenService.createOrChangeRefreshToken(refreshToken, principalDetails.getUser().getId());
+
+        String accessToken = jwtTokenProvider.createToken(principalDetails.getUser());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return new TokenResponseDto(refreshToken, accessToken);
+    }
+
+    @Transactional
+    public String generateConfirmationToken(String email, LocalDateTime requestedAt) {
+        findUserByEmail(email);
+        return confirmationTokenService.createOrChangeConfirmationToken(email, requestedAt);
+    }
+
+    @Transactional
+    public void permissionCheckByConfirmationToken(String requestEmail, String key, LocalDateTime requestedAt) {
+        confirmationTokenService.isRightKey(requestEmail, key, requestedAt);
+    }
+
+    private PrincipalDetails loadUserByEmail(String email) {
+        User user = findUserByEmail(email);
+        return new PrincipalDetails(user);
+    }
+
+    private User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     }
 }

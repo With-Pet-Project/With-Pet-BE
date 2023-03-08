@@ -4,7 +4,7 @@ import WebProject.withpet.comments.dto.CreateCommentRequestDto;
 import WebProject.withpet.comments.dto.ViewCommentListDto;
 import WebProject.withpet.comments.dto.ViewCommentListResponseDto;
 import WebProject.withpet.comments.service.CommentService;
-import WebProject.withpet.common.auth.PrincipalDetails;
+import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.dto.ApiResponse;
 import java.util.List;

@@ -1,6 +1,6 @@
 package WebProject.withpet.common.config;
 
-import WebProject.withpet.common.auth.application.JwtTokenProvider;
+import WebProject.withpet.auth.application.JwtTokenProvider;
 import WebProject.withpet.common.exception.UnauthorizedException;
 import WebProject.withpet.common.util.JwtUtil;
 import javax.servlet.http.HttpServletRequest;

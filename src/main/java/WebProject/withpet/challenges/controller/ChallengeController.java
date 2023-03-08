@@ -6,7 +6,7 @@ import WebProject.withpet.challenges.dto.DailyChallengeResponseDto;
 import WebProject.withpet.challenges.dto.WeeklyChallengeResponseDto;
 import WebProject.withpet.challenges.service.ChallengeLogService;
 import WebProject.withpet.challenges.service.ChallengeService;
-import WebProject.withpet.common.auth.PrincipalDetails;
+import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.constants.ResponseMessages;
 import WebProject.withpet.common.dto.ApiResponse;

@@ -1,6 +1,7 @@
-package WebProject.withpet.users.dto;
+package WebProject.withpet.auth.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginVo {
+    @NotBlank
     String email;
+    @NotBlank
     String password;
 
     @Builder
