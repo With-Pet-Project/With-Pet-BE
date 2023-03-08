@@ -10,6 +10,7 @@ import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.service.UserService;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
@@ -43,7 +44,7 @@ public class UserController {
 
     @PostMapping("/login/kakao")
     public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(
-        @RequestParam(name = "code") String code)
+        @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code)
         throws JSONException {
 
         ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200,
