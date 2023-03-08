@@ -1,6 +1,6 @@
-package WebProject.withpet.common.auth.application;
+package WebProject.withpet.auth.application;
 
-import WebProject.withpet.common.auth.PrincipalDetails;
+import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.common.exception.UserNotFoundException;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.repository.UserRepository;
@@ -22,27 +22,32 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
-
     public static final String HEADER_STRING = "Authorization";
     @Value("${jwt.valid-time}")
     private String tokenValidTime;
+    @Value("${jwt.refresh-valid-time}")
+    private Long refreshTokenValidTime;
     public static final String TOKEN_PREFIX = "Bearer ";
 
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
 
+
     public String createToken(User user) {
-        String jwtToken = JWT.create().withSubject(user.getEmail())
+        return JWT.create().withSubject(user.getEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis() + Long.parseLong(tokenValidTime)))
-                .withClaim("id", user.getId()).withClaim("nickname", user.getNickName())
-                .withClaim("email", user.getEmail()).sign(Algorithm.HMAC512(secretKey));
-        return jwtToken;
+                .withClaim("id", user.getId()).withClaim("email", user.getEmail()).sign(Algorithm.HMAC512(secretKey));
+    }
+
+    public String createRefreshToken(User user) {
+        return JWT.create().withSubject(user.getEmail()).withExpiresAt(
+                        new Date(System.currentTimeMillis() + Long.parseLong(String.valueOf(refreshTokenValidTime))))
+                .withClaim("id", user.getId()).withClaim("email", user.getEmail()).sign(Algorithm.HMAC512(secretKey));
     }
 
     /*
 		 Token에 담겨있는 정보를 이용해 Authentication 객체를 반환하는 메서드
 	 */
-
     public Authentication getAuthentication(String JwtToken) {
         String token = JwtToken.replace(TOKEN_PREFIX, "");
         String email = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token).getClaim("email").asString();

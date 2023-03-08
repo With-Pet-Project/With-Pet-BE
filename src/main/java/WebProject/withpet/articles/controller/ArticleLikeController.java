@@ -3,7 +3,7 @@ package WebProject.withpet.articles.controller;
 
 import WebProject.withpet.articles.dto.ArticleLikeRequestDto;
 import WebProject.withpet.articles.service.ArticleLikeService;
-import WebProject.withpet.common.auth.PrincipalDetails;
+import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ public class ArticleLikeController {
 
     @PostMapping()
     public ResponseEntity<ApiResponse<Void>> addArticleLike(
-        @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody ArticleLikeRequestDto dto) {
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @RequestBody ArticleLikeRequestDto dto) {
 
         articleLikeService.addArticleLike(principalDetails.getUser(), dto);
 
@@ -37,10 +37,10 @@ public class ArticleLikeController {
 
     @DeleteMapping()
     public ResponseEntity<ApiResponse<Void>> cancelArticleLike(
-        @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody ArticleLikeRequestDto dto) {
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @RequestBody ArticleLikeRequestDto dto) {
 
-        articleLikeService.cancelArticleLike(principalDetails.getUser(),dto);
+        articleLikeService.cancelArticleLike(principalDetails.getUser(), dto);
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_DEL_OK);
     }
