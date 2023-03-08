@@ -29,8 +29,7 @@ public class ArticleCreateValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "detailText", "INVALID_PARAMETER",
             "내용은 필수 입력값 입니다");
 
-        if (request.getTag().equals(Tag.LOST) || request.getTag().equals(Tag.HOSPITAL)
-            || request.getTag().equals(Tag.WALK)) {
+        if (Tag.isSpecTag(request.getTag())) {
 
             if (request.getPlace1() == null) {
                 errors.rejectValue("place1", "INVALID_PARAMETER", "해당 태그에서 장소1은 필수 값입니다.");
@@ -41,8 +40,7 @@ public class ArticleCreateValidator implements Validator {
 
         }
 
-        if (request.getTag().equals(Tag.GOODS) || request.getTag().equals(Tag.PLACE)
-            || request.getTag().equals(Tag.ETC)) {
+        if (!Tag.isSpecTag(request.getTag())) {
             if (request.getPlace1() != null) {
                 errors.rejectValue("place1", "INVALID_PARAMETER", "해당 태그에서는 지역1이 존재하지 않습니다.");
             }
