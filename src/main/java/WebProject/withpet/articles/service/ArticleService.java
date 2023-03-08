@@ -47,8 +47,7 @@ public class ArticleService {
     @Transactional
     public void createArticle(User user, ArticleCreateRequestDto articleCreateRequestDto) {
 
-        if (articleCreateRequestDto.getTag().equals(Tag.LOST) || articleCreateRequestDto.getTag()
-            .equals(Tag.HOSPITAL) || articleCreateRequestDto.getTag().equals(Tag.WALK)) {
+        if (Tag.isSpecTag(articleCreateRequestDto.getTag())) {
 
             SpecArticle specArticle = articleCreateRequestDto.toSpecArticleEntity(user);
             specArticleRepository.save(specArticle);
