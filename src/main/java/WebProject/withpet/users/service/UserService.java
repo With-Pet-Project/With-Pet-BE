@@ -1,5 +1,6 @@
 package WebProject.withpet.users.service;
 
+import WebProject.withpet.articles.repository.ArticleRepository;
 import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.auth.application.JwtTokenProvider;
 import WebProject.withpet.auth.dto.TokenResponseDto;
@@ -38,6 +39,8 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
     private final ConfirmationTokenService confirmationTokenService;
+
+    private final ArticleRepository articleRepository;
 
     public void register(@Valid UserRequestDto userRequestDto) {
         validateDuplicateEmail(userRequestDto.getEmail());
@@ -99,8 +102,17 @@ public class UserService {
     @Transactional
     public void deleteUser(User user) {
 
-        userRepository.deleteById(user.getId());
+        User findUser = findUserById(user.getId());
+        articleRepository.deleteByUser(findUser);
+        userRepository.delete(findUser);
     }
+
+
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+    }
+
 
     @Transactional
     public TokenResponseDto login(String email, String password) {

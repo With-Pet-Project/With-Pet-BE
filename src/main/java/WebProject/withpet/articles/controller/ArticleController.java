@@ -1,17 +1,22 @@
 package WebProject.withpet.articles.controller;
 
 
-
+import WebProject.withpet.articles.domain.Filter;
+import WebProject.withpet.articles.domain.Tag;
+import WebProject.withpet.articles.dto.ArticleCreateRequestDto;
+import WebProject.withpet.articles.dto.ArticleUpdateRequestDto;
+import WebProject.withpet.articles.dto.ViewArticleListRequestDto;
+import WebProject.withpet.articles.dto.ViewArticleListResponseDto;
 import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
 import WebProject.withpet.articles.service.ArticleService;
-import WebProject.withpet.articles.dto.ArticleCreateRequestDto;
-import WebProject.withpet.articles.validation.ArticleValidator;
+import WebProject.withpet.articles.validation.ArticleCreateValidator;
+import WebProject.withpet.articles.validation.ArticleScrollDownValidator;
 import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.constants.ResponseMessages;
 import WebProject.withpet.common.dto.ApiResponse;
-import WebProject.withpet.common.exception.ArticleCreateException;
+import WebProject.withpet.common.exception.ArticleException;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,11 +25,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,20 +43,21 @@ public class ArticleController {
 
     private final ArticleService articleService;
 
-    private final ArticleValidator articleValidator;
+    private final ArticleCreateValidator articleCreateValidator;
 
-    @PostMapping()
-    public ResponseEntity<ApiResponse<Void>> createArticle(
-        @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody ArticleCreateRequestDto request) {
+    private final ArticleScrollDownValidator articleScrollDownValidator;
+
+    @PostMapping("/article")
+    public ResponseEntity<ApiResponse<Void>> createArticle(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                                           @RequestBody ArticleCreateRequestDto request) {
 
         Errors errors = new BeanPropertyBindingResult(request, "articleCreateRequestDto");
 
         //커스텀 검증
-        articleValidator.validate(request, errors);
+        articleCreateValidator.validate(request, errors);
 
         if (errors.hasErrors()) {
-            throw new ArticleCreateException(ErrorCode.INVALID_PARAMETER, errors);
+            throw new ArticleException(ErrorCode.INVALID_PARAMETER, errors);
         } else {
             articleService.createArticle(principalDetails.getUser(), request);
         }
@@ -56,16 +65,80 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
-    //댓글 구현 후에 추가로 구현해야함
-    @GetMapping("/{articleId}")
+    @GetMapping("/articles/{articleId}")
     public ResponseEntity<ApiResponse<ViewSpecificArticleResponseDto>> viewSpecificArticle(
-        @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 합니다.") Long articleId) {
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable("articleId") @NotNull(message = "게시글 id를 Url에 담아줘야 합니다.") Long articleId) {
 
-        ApiResponse response = new ApiResponse<>(200, ResponseMessages.VIEW_MESSAGE.getContent(),
-                articleService.viewSpecificArticle(articleId));
+        ApiResponse response = null;
+
+        if (principalDetails != null) {
+            //로그인 하지 않은 유저
+            response = new ApiResponse<>(200, ResponseMessages.VIEW_MESSAGE.getContent(),
+                    articleService.viewSpecificArticle(principalDetails.getUser(), articleId));
+        } else {
+            //로그인 한 유저
+            response = new ApiResponse<>(200, ResponseMessages.VIEW_MESSAGE.getContent(),
+                    articleService.viewSpecificArticle(null, articleId));
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    //
+
+    @PatchMapping("/article/{articleId}")
+    public ResponseEntity<ApiResponse<Void>> updateArticle(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                                           @PathVariable("articleId") Long articleId,
+                                                           @RequestBody ArticleUpdateRequestDto dto) {
+
+        articleService.updateArticle(principalDetails.getUser(), articleId, dto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_UPDATE_OK);
+    }
+
+    @GetMapping("/articles")
+    public ResponseEntity<ApiResponse<ViewArticleListResponseDto>> scrollDownArticle(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @RequestParam(name = "tag", required = false) Tag tag, @RequestParam(name = "filter") Filter filter,
+            @RequestParam(name = "place1", required = false) String place1,
+            @RequestParam(name = "place2", required = false) String place2,
+            @RequestParam(name = "lastArticleId") Long lastArticleId, @RequestParam(name = "size") Integer size,
+            @RequestParam(name = "param", required = false) String param) {
+
+        ViewArticleListRequestDto dto = ViewArticleListRequestDto.builder().tag(tag).filter(filter).place1(place1)
+                .place2(place2).lastArticleId(lastArticleId).size(size).param(param).build();
+
+        //유효성 검증
+        Errors errors = new BeanPropertyBindingResult(dto, "ViewArticleListRequestDto");
+        articleScrollDownValidator.validate(dto, errors);
+
+        ViewArticleListResponseDto response = null;
+
+        if (errors.hasErrors()) {
+            throw new ArticleException(ErrorCode.INVALID_PARAMETER, errors);
+        } else {
+            if (principalDetails != null) {
+                //로그인 한 사용자
+                response = articleService.scrollDownArticle(principalDetails.getUser(), dto);
+
+            } else {
+                //로그인 하지 않은 사용자
+                response = articleService.scrollDownArticle(null, dto);
+            }
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponse<>(200, ResponseMessages.VIEW_MESSAGE.getContent(), response));
+
+        }
+
+    }
+
+    @DeleteMapping("/article/{articleId}")
+    public ResponseEntity<ApiResponse<Void>> deleteArticle(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                                           @PathVariable("articleId") Long articleId) {
+
+        articleService.deleteArticle(principalDetails.getUser(), articleId);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_DEL_OK);
+    }
+
 }

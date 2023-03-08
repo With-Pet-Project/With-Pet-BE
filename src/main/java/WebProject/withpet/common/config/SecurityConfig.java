@@ -33,7 +33,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         AuthenticationManager authentication = authenticationManager(authenticationConfiguration);
         JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(authentication, jwtTokenProvider);
-        authenticationFilter.setFilterProcessesUrl("/user");
+        authenticationFilter.setFilterProcessesUrl("/user/login/**");
 
         http.cors().configurationSource(corsConfigurationSource()).and().csrf().disable().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
@@ -44,6 +44,11 @@ public class SecurityConfig {
                 .authorizeRequests();
 
         http.authorizeRequests().antMatchers("/user/**", "/mypage/**").permitAll().and().headers()
+                .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+                .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
+                .logoutSuccessUrl("/user").invalidateHttpSession(true);
+        http.authorizeRequests().antMatchers("/user/login/**", "/user/signup", "/articles/**", "/comments").permitAll()
+                .and().headers()
                 .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
                 .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
                 .logoutSuccessUrl("/user").invalidateHttpSession(true);

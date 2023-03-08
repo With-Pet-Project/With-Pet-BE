@@ -1,18 +1,14 @@
 package WebProject.withpet.articles.repository;
 
 import static WebProject.withpet.articles.domain.QArticle.*;
-import static WebProject.withpet.articles.domain.QImage.image;
+import static WebProject.withpet.articles.domain.QArticleLike.articleLike;
 import static WebProject.withpet.comments.domain.QComment.comment;
 import static WebProject.withpet.users.domain.QUser.user;
 
-import WebProject.withpet.articles.domain.Article;
-import WebProject.withpet.articles.domain.Image;
-import WebProject.withpet.articles.domain.QArticle;
-import WebProject.withpet.articles.domain.QImage;
 import WebProject.withpet.articles.dto.MypageArticleDto;
+import WebProject.withpet.articles.dto.ViewArticleDto;
 import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
-import WebProject.withpet.articles.dto.ViewUserAndArticleResponseDto;
-import WebProject.withpet.comments.domain.QComment;
+import WebProject.withpet.comments.domain.Comment;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -37,27 +33,22 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     }
 
     @Override
-    public ViewSpecificArticleResponseDto findSpecificArticle(Long articleId) {
+    public ViewArticleDto findSpecificArticle(Long articleId) {
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
-        ViewUserAndArticleResponseDto dto = queryFactory
-            .select(Projections.constructor(ViewUserAndArticleResponseDto.class,
-                user.profileImg, user.nickName, article))
+       return queryFactory
+            .select(Projections.constructor(ViewArticleDto.class, article.id, user.profileImg,
+                user.nickName, article.title, article.createdTime,
+                article.modifiedTime, article.detailText, article.likeCnt, article.comments.size(),
+                article.tag, articleLike.user.id
+            ))
             .from(article)
             .leftJoin(article.user, user)
+            .leftJoin(article.articleLikes, articleLike)
             .where(article.id.eq(articleId))
             .fetchOne();
 
-        return ViewSpecificArticleResponseDto.builder()
-            .profileImg(dto.getProfileImg())
-            .nickName(dto.getNickName())
-            .createdTime(dto.getArticle().getCreatedTime())
-            .modifiedTime(dto.getArticle().getModifiedTime())
-            .detailText(dto.getArticle().getDetailText())
-            .likeCnt(dto.getArticle().getLikeCnt())
-            .commentCnt(dto.getArticle().getComments().size())
-            .build();
     }
 
 

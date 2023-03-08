@@ -15,6 +15,8 @@ public enum ErrorCode {
     DUPLICATE_NICK_NAME(HttpStatus.CONFLICT, "해당 닉네임은 이미 존재합니다."),
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "해당 이메일은 이미 존재합니다."),
     DUPLICATE_CHALLENGE(HttpStatus.CONFLICT, "반려동물의 해당 챌린지명은 이미 존재합니다."),
+    DUPLICATE_ARTICLE_LIKE(HttpStatus.CONFLICT, "해당 게시물을 이미 좋아요 했습니다."),
+    ARTICLE_LIKE_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "해당 게시물 좋아요를 취소하기 위해서는 게시물 좋아요가 선행되어야 합니다."),
     EXPIRED_CONFIRMATION_TOKEN(HttpStatus.BAD_REQUEST, "해당 확인 코드는 만료되었습니다.");
 
     private final HttpStatus httpStatus;

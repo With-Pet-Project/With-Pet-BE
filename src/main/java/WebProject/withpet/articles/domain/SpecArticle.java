@@ -34,4 +34,17 @@ public class SpecArticle extends Article {
         this.place1 = place1;
         this.place2 = place2;
     }
+
+    public void update(String title, String detailText,String place1, String place2) {
+
+        super.update(title,detailText);
+
+        if (place1 != null) {
+            this.place1 = place1;
+        }
+        if (place2 != null) {
+            this.place2 = place2;
+        }
+
+    }
 }

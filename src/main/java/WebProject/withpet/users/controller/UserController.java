@@ -1,6 +1,7 @@
 package WebProject.withpet.users.controller;
 
 import WebProject.withpet.auth.PrincipalDetails;
+import WebProject.withpet.auth.application.JwtTokenProvider;
 import WebProject.withpet.auth.dto.TokenResponseDto;
 import WebProject.withpet.auth.vo.LoginVo;
 import WebProject.withpet.common.constants.ResponseConstants;
@@ -33,10 +34,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 @Validated
 public class UserController {
-
     @Value("${jwt.cookie-valid-time}")
     private Long cookieValidTime;
+    private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
+
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<Void>> signUp(@Valid @RequestBody UserRequestDto user) {
@@ -44,7 +46,7 @@ public class UserController {
         return ResponseEntity.ok(ResponseConstants.RESPONSE_SAVE_OK);
     }
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<ApiResponse<String>> signIn(@Valid @RequestBody LoginVo request,
                                                       HttpServletResponse response) {
         TokenResponseDto tokenResponseDto = userService.login(request.getEmail(), request.getPassword());
@@ -58,10 +60,9 @@ public class UserController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @PostMapping("/kakao/login")
-
-    public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(@RequestParam(name = "code") String code)
-            throws JSONException {
+    @PostMapping("/login/kakao")
+    public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(
+            @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code) throws JSONException {
 
         ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200, "카카오 로그인 성공",
                 userService.socialLogin(code));
@@ -94,5 +95,3 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_DEL_OK);
     }
 }
-
-

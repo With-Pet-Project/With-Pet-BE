@@ -1,11 +1,13 @@
 package WebProject.withpet.articles.domain;
 
 
+import WebProject.withpet.articles.dto.ArticleUpdateRequestDto;
 import WebProject.withpet.comments.domain.Comment;
 import WebProject.withpet.common.domain.BaseEntity;
 import WebProject.withpet.users.domain.User;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -49,16 +51,18 @@ public class Article extends BaseEntity {
 
     private Integer likeCnt;
 
-
     private String title;
 
     private String detailText;
 
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<Image> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article", orphanRemoval = true)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
+    private List<ArticleLike> articleLikes = new ArrayList<>();
 
     @Builder
     public Article(User user, Tag tag, Integer likeCnt, String title,
@@ -78,6 +82,26 @@ public class Article extends BaseEntity {
         } else {
             return false;
         }
+    }
+
+    public void update(String title, String detailText) {
+
+        if (title != null) {
+            this.title = title;
+        }
+
+        if (detailText != null) {
+            this.detailText = detailText;
+        }
+
+    }
+
+    public void plusLikeCnt(){
+        this.likeCnt+=1;
+    }
+
+    public void minusLikeCnt(){
+        this.likeCnt-=1;
     }
 
 }

@@ -3,19 +3,20 @@ package WebProject.withpet.comments.service;
 import WebProject.withpet.articles.domain.Article;
 import WebProject.withpet.comments.domain.Comment;
 import WebProject.withpet.articles.domain.SpecArticle;
-import WebProject.withpet.articles.dto.CreateCommentRequestDto;
+import WebProject.withpet.comments.dto.CreateCommentRequestDto;
 import WebProject.withpet.articles.repository.ArticleRepository;
 import WebProject.withpet.comments.dto.ViewCommentListDto;
 import WebProject.withpet.comments.dto.ViewCommentListResponseDto;
 import WebProject.withpet.comments.repository.CommentRepository;
 import WebProject.withpet.common.exception.DataNotFoundException;
 import WebProject.withpet.common.exception.UnauthorizedException;
-import WebProject.withpet.common.exception.UserNotFoundException;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.repository.UserRepository;
+import WebProject.withpet.users.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -33,11 +34,12 @@ public class CommentService {
 
     private final UserRepository userRepository;
 
+    private final UserService userService;
+
     @Transactional
     public void createComment(Long userId, CreateCommentRequestDto dto) {
 
-        User userInConnection = userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException());
+        User userInConnection = userService.findUserById(userId);
 
         //테이블 상속 전략을 조인이 아니라 single-table으로 설계해야 하는지 논의
 
@@ -52,13 +54,13 @@ public class CommentService {
         Comment saveComment = dto.toEntity(userInConnection, article);
 
         if (dto.getCommentId() != null) {
-            commentRepository.findById(dto.getCommentId())
-                .orElseThrow(() -> new DataNotFoundException())
-                .setParentAndChildren(saveComment);
+
+            findCommentById(dto.getCommentId()).setParentAndChildren(saveComment);
             commentRepository.save(saveComment);
         } else {
             commentRepository.save(saveComment);
         }
+
     }
 
     @Transactional(readOnly = true)
@@ -98,23 +100,34 @@ public class CommentService {
     @Transactional
     public void updateComment(User user, Long commentId, String content) {
 
-       checkUserAuthorization(user, commentId);
+        checkUserAuthorization(user, commentId);
 
-        commentRepository.findById(commentId)
-            .orElseThrow(() -> new DataNotFoundException()).update(content);
+        findCommentById(commentId).update(content);
     }
 
     @Transactional
     public void deleteComment(User user, Long commentId) {
 
-       checkUserAuthorization(user, commentId);
+        checkUserAuthorization(user, commentId);
 
-        Comment findComment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new DataNotFoundException());
+        Comment findComment = findCommentById(commentId);
+        User findUser = userService.findUserById(user.getId());
+        findComment.deleteConnectionWithUser(findUser);
 
-        findComment.deleteConnectionWithUser(
-            userRepository.findById(user.getId()).orElseThrow(() -> new UserNotFoundException()));
+        List<Comment> commentsArticleHas = findComment.getArticle().getComments();
 
+        if(!findComment.getChildren().isEmpty()){
+
+            List<Comment> childrenComment = commentRepository.findAllByParent(findComment);
+
+            childrenComment.forEach(comment->{
+                commentsArticleHas.remove(comment);
+                comment.deleteConnectionWithUser(findUser);
+                commentRepository.deleteById(comment.getId());
+            });
+        }
+
+        commentsArticleHas.remove(findComment);
         commentRepository.delete(findComment);
 
     }
@@ -124,9 +137,16 @@ public class CommentService {
         Comment findComment = commentRepository.findById(commentId)
             .orElseThrow(() -> new DataNotFoundException());
 
-        if (user.getId() != findComment.getUser().getId())
+        if (user.getId() != findComment.getUser().getId()) {
             throw new UnauthorizedException();
+        }
 
+    }
+
+    public Comment findCommentById(Long commentId) {
+
+        return commentRepository.findById(commentId)
+            .orElseThrow(() -> new DataNotFoundException());
     }
 
 }

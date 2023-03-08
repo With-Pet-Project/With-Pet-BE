@@ -41,7 +41,9 @@ public class ImageService {
             .orElseThrow(() -> new DataNotFoundException());
 
         findImage.getArticle().getImages().remove(findImage);
+        awsS3Service.deleteImage(dto.getContent());
         imageRepository.delete(findImage);
     }
+
 
 }

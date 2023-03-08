@@ -1,28 +1,21 @@
 package WebProject.withpet.articles.dto;
 
 import WebProject.withpet.articles.domain.Tag;
-import WebProject.withpet.comments.dto.ViewCommentListDto;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-public class ViewSpecificArticleResponseDto {
+public class ViewArticleDto {
 
+    private Long articleId;
 
     private String profileImg;
 
     private String nickName;
 
-    private String titile;
-
-    private Tag tag;
+    private String title;
 
     private LocalDateTime createdTime;
 
@@ -34,39 +27,44 @@ public class ViewSpecificArticleResponseDto {
 
     private Integer commentCnt;
 
-
-    private List<ImageDto> images = new ArrayList<>();
-
-    private List<ViewCommentListDto> commentList = new ArrayList<>();
+    private Tag tag;
 
     private Long articleLikeUserId;
 
     private Boolean whetherLike;
 
-    @Builder
-    public ViewSpecificArticleResponseDto(String profileImg, String nickName, String title, Tag tag,
+    public ViewArticleDto(Long articleId, String profileImg, String nickName, String title,
         LocalDateTime createdTime, LocalDateTime modifiedTime, String detailText, Integer likeCnt,
-        Integer commentCnt, Long articleLikeUserId) {
+        Integer commentCnt, Tag tag, Long articleLikeUserId) {
+        this.articleId = articleId;
         this.profileImg = profileImg;
         this.nickName = nickName;
-        this.titile = title;
-        this.tag = tag;
+        this.title = title;
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
         this.detailText = detailText;
         this.likeCnt = likeCnt;
         this.commentCnt = commentCnt;
+        this.tag = tag;
         this.articleLikeUserId = articleLikeUserId;
     }
 
-    public void setCommentListAndCommentCnt(List<ViewCommentListDto> commentList,
-        Integer commentCnt) {
-        this.commentList = commentList;
-        this.commentCnt = commentCnt;
-    }
-
     public void setWhetherLike(Boolean b) {
-        this.whetherLike = b;
+        whetherLike = b;
     }
 
+    public ViewSpecificArticleResponseDto toResponseDto() {
+
+        return ViewSpecificArticleResponseDto.builder()
+            .profileImg(this.profileImg)
+            .nickName(this.nickName)
+            .title(this.title)
+            .tag(this.tag)
+            .createdTime(this.createdTime)
+            .modifiedTime(this.modifiedTime)
+            .detailText(this.detailText)
+            .likeCnt(this.likeCnt)
+            .articleLikeUserId(this.articleLikeUserId)
+            .build();
+    }
 }
