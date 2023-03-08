@@ -65,6 +65,7 @@ public class ViewArticleDto {
             .detailText(this.detailText)
             .likeCnt(this.likeCnt)
             .articleLikeUserId(this.articleLikeUserId)
+            .whetherLike(this.whetherLike)
             .build();
     }
 }

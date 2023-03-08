@@ -46,7 +46,7 @@ public class ViewSpecificArticleResponseDto {
     @Builder
     public ViewSpecificArticleResponseDto(String profileImg, String nickName, String title, Tag tag,
         LocalDateTime createdTime, LocalDateTime modifiedTime, String detailText, Integer likeCnt,
-        Integer commentCnt, Long articleLikeUserId) {
+        Integer commentCnt, Long articleLikeUserId, Boolean whetherLike) {
         this.profileImg = profileImg;
         this.nickName = nickName;
         this.titile = title;
@@ -57,6 +57,7 @@ public class ViewSpecificArticleResponseDto {
         this.likeCnt = likeCnt;
         this.commentCnt = commentCnt;
         this.articleLikeUserId = articleLikeUserId;
+        this.whetherLike=whetherLike;
     }
 
     public void setCommentListAndCommentCnt(List<ViewCommentListDto> commentList,
