@@ -18,5 +18,5 @@ public class ViewArticleListResponseDto {
     private Long lastArticleId;
 
     @Builder.Default
-    private List<ViewArticleListDto> viewArticleListDtoList = new ArrayList<>();
+    private List<ViewArticleDto> viewArticleListDto = new ArrayList<>();
 }

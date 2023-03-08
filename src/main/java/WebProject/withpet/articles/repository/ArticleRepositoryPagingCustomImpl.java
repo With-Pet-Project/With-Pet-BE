@@ -9,7 +9,7 @@ import static WebProject.withpet.users.domain.QUser.user;
 import WebProject.withpet.articles.domain.Article;
 import WebProject.withpet.articles.domain.Filter;
 import WebProject.withpet.articles.domain.Tag;
-import WebProject.withpet.articles.dto.ViewArticleListDto;
+import WebProject.withpet.articles.dto.ViewArticleDto;
 import WebProject.withpet.articles.dto.ViewArticleListRequestDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -28,13 +28,13 @@ public class ArticleRepositoryPagingCustomImpl implements ArticleRepositoryPagin
     EntityManager em;
 
   /*  @Override
-    public Slice<ViewArticleListDto> getArticlesList2(ViewArticleListRequestDto dto,
+    public Slice<ViewArticleDto> getArticlesList2(ViewArticleListRequestDto dto,
         Pageable pageable) {
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
-        List<ViewArticleListDto> response = queryFactory
-            .select(Projections.constructor(ViewArticleListDto.class,
+        List<ViewArticleDto> response = queryFactory
+            .select(Projections.constructor(ViewArticleDto.class,
                 article.id, user.profileImg,
                 user.nickName, article.createdTime, article.modifiedTime, article.detailText,
                 article.likeCnt, article.comments.size(), article.tag, articleLike.id
@@ -53,14 +53,14 @@ public class ArticleRepositoryPagingCustomImpl implements ArticleRepositoryPagin
        */
 
     @Override
-    public Slice<ViewArticleListDto> getArticleList(Article lastArticle,
+    public Slice<ViewArticleDto> getArticleList(Article lastArticle,
         ViewArticleListRequestDto dto,
         Pageable pageable) {
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
-        List<ViewArticleListDto> response = queryFactory
-            .select(Projections.constructor(ViewArticleListDto.class,
+        List<ViewArticleDto> response = queryFactory
+            .select(Projections.constructor(ViewArticleDto.class,
                 article.id, user.profileImg, user.nickName, article.title, article.createdTime,
                 article.modifiedTime, article.detailText, article.likeCnt, article.comments.size(),
                 article.tag, articleLike.user.id
@@ -80,7 +80,7 @@ public class ArticleRepositoryPagingCustomImpl implements ArticleRepositoryPagin
     }
 
 
-    private Slice<ViewArticleListDto> checkLastPage(List<ViewArticleListDto> articleList,
+    private Slice<ViewArticleDto> checkLastPage(List<ViewArticleDto> articleList,
         Pageable pageable) {
 
         Boolean hasNext = false;
