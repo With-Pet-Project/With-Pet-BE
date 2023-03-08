@@ -19,6 +19,9 @@ public class UserSocialService {
     @Value("${social-key}")
     private String adminKey;
 
+    @Value("${redirect-URI}")
+    private String redirectURI;
+
     public String getAccessToken(String code) throws JSONException {
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -31,7 +34,7 @@ public class UserSocialService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", adminKey);
-        body.add("redirect_uri", "http://localhost:3000/login/oauth/callback");
+        body.add("redirect_uri", redirectURI);
         body.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, httpHeaders);
