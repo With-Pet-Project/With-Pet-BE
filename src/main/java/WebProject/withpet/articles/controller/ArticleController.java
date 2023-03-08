@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/article")
 @Validated
 public class ArticleController {
 
