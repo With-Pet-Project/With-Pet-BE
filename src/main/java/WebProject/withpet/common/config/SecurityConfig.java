@@ -3,7 +3,6 @@ package WebProject.withpet.common.config;
 import WebProject.withpet.auth.application.JwtTokenProvider;
 import WebProject.withpet.auth.filter.JwtAuthenticationFilter;
 import WebProject.withpet.auth.filter.JwtAuthorizationFilter;
-import WebProject.withpet.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,14 +25,12 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserRepository userRepository;
 
-    // TODO : 예외 핸들링 추가
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         AuthenticationManager authentication = authenticationManager(authenticationConfiguration);
         JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(authentication, jwtTokenProvider);
-        authenticationFilter.setFilterProcessesUrl("/user/login/**");
+        authenticationFilter.setFilterProcessesUrl("/user");
 
         http.cors().configurationSource(corsConfigurationSource()).and().csrf().disable().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
@@ -43,15 +40,11 @@ public class SecurityConfig {
                 .addFilter(authenticationFilter).addFilter(new JwtAuthorizationFilter(authentication, jwtTokenProvider))
                 .authorizeRequests();
 
-        http.authorizeRequests().antMatchers("/user/**", "/mypage/**").permitAll().and().headers()
-                .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-                .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
-                .logoutSuccessUrl("/user").invalidateHttpSession(true);
         http.authorizeRequests().antMatchers("/user/login/**", "/user/signup", "/articles/**", "/comments").permitAll()
                 .and().headers()
                 .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
                 .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
-                .logoutSuccessUrl("/user").invalidateHttpSession(true);
+                .logoutSuccessUrl("/user/login").invalidateHttpSession(true);
 
         return http.build();
     }
