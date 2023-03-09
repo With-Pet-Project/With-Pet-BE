@@ -46,32 +46,35 @@ public class UserService {
         validateDuplicateEmail(userRequestDto.getEmail());
         validateDuplicateNickname(userRequestDto.getNickname());
 
-        User user = User.builder().nickName(userRequestDto.getNickname()).email(userRequestDto.getEmail())
-                .password(passwordEncoder.encode(userRequestDto.getPassword())).build();
+        User user = User.builder().nickName(userRequestDto.getNickname())
+            .email(userRequestDto.getEmail())
+            .password(passwordEncoder.encode(userRequestDto.getPassword())).build();
 
         userRepository.save(user);
     }
 
     @Transactional
-    public SocialLoginResponseDto socialLogin(String code) throws JSONException {
+    public TokenResponseDto socialLogin(String code) throws JSONException {
 
         String accessToken = userSocialService.getAccessToken(code);
         SocialUserInfoDto userInfoByToken = userSocialService.getUserInfoByToken(accessToken);
 
-        String createdToken;
+        TokenResponseDto response;
+        User createUser;
 
+        //회원가입
         if (userRepository.findByEmail(userInfoByToken.getEmail()).isEmpty()) {
+            createUser = User.builder().email(userInfoByToken.getEmail()).password("")
+                .nickName(userInfoByToken.getNickname()).build();
+            userRepository.save(createUser);
 
-            //회원가입 진행 후 토큰 생성
-            userRepository.save(User.builder().email(userInfoByToken.getEmail()).password("")
-                    .nickName(userInfoByToken.getNickname()).build());
-
-            createdToken = jwtTokenProvider.createToken(userInfoByToken.toEntity());
-
+            response = login(createUser.getEmail(), createUser.getPassword());
         } else {
-            createdToken = jwtTokenProvider.createToken(userInfoByToken.toEntity());
+            User findUser = findUserByEmail(userInfoByToken.getEmail());
+            response = login(findUser.getEmail(), findUser.getPassword());
         }
-        return SocialLoginResponseDto.builder().token(createdToken).build();
+
+        return response;
     }
 
 
@@ -94,9 +97,13 @@ public class UserService {
     }
 
     @Transactional
-    public void changePassword(User user, ChangePasswordDto changePasswordDto) {
+    public void changePassword(User user, ChangePasswordDto dto) {
 
-        user.changeUserPassword(changePasswordDto.getPassword());
+        if (user != null) {
+            findUserById(user.getId()).changeUserPassword(dto.getPassword());
+        } else {
+            findUserByEmail(dto.getEmail()).changeUserPassword(dto.getPassword());
+        }
     }
 
     @Transactional
@@ -110,7 +117,7 @@ public class UserService {
 
     public User findUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException());
+            .orElseThrow(() -> new UserNotFoundException());
     }
 
 
@@ -122,12 +129,14 @@ public class UserService {
             throw new UserNotFoundException();
         }
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails.getUsername(),
-                principalDetails.getPassword(), principalDetails.getAuthorities());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+            principalDetails.getUsername(),
+            principalDetails.getPassword(), principalDetails.getAuthorities());
 
         // refresh Token 생성
         String refreshToken = jwtTokenProvider.createRefreshToken(principalDetails.getUser());
-        refreshTokenService.createOrChangeRefreshToken(refreshToken, principalDetails.getUser().getId());
+        refreshTokenService.createOrChangeRefreshToken(refreshToken,
+            principalDetails.getUser().getId());
 
         String accessToken = jwtTokenProvider.createToken(principalDetails.getUser());
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -142,7 +151,8 @@ public class UserService {
     }
 
     @Transactional
-    public void permissionCheckByConfirmationToken(String requestEmail, String key, LocalDateTime requestedAt) {
+    public void permissionCheckByConfirmationToken(String requestEmail, String key,
+        LocalDateTime requestedAt) {
         confirmationTokenService.isRightKey(requestEmail, key, requestedAt);
     }
 
