@@ -5,8 +5,10 @@ import WebProject.withpet.pets.domain.Diary;
 import WebProject.withpet.pets.domain.DiaryRepository;
 import WebProject.withpet.pets.domain.Pet;
 import WebProject.withpet.pets.dto.DiaryRequestDto;
+import WebProject.withpet.pets.dto.DiaryResponseDto;
 import WebProject.withpet.pets.dto.DiaryUpdateDto;
 import WebProject.withpet.users.domain.User;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,12 @@ public class DiaryService {
     public void deleteDiary(Long diaryId, Long petId, User user) {
         petService.accessPet(user, petId);
         diaryRepository.delete(findDiaryById(diaryId));
+    }
+
+    @Transactional(readOnly = true)
+    public List<DiaryResponseDto> getMonthlyDiaries(Long petId, User user, int year, int month) {
+        Pet pet = petService.accessPet(user, petId);
+        return diaryRepository.getMonthlyDiaries(pet, year, month);
     }
 
     private Diary findDiaryById(Long id) {
