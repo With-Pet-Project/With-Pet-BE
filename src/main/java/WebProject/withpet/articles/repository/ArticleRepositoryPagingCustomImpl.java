@@ -63,11 +63,9 @@ public class ArticleRepositoryPagingCustomImpl implements ArticleRepositoryPagin
             .select(Projections.constructor(ViewArticleDto.class,
                 article.id, user.profileImg, user.nickName, article.title, article.createdTime,
                 article.modifiedTime, article.detailText, article.likeCnt, article.comments.size(),
-                article.tag, articleLike.user.id
-            ))
+                article.tag))
             .from(article)
             .leftJoin(article.user, user)
-            .leftJoin(article.articleLikes, articleLike)
             .leftJoin(specArticle).on(article.id.eq(specArticle.id))
             .where(tagEq(dto.getTag(), dto.getPlace1(), dto.getPlace2()),
                 lastIdGtOrLt(lastArticle, dto), paramContain(dto.getParam()))
