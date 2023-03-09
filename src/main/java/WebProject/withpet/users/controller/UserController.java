@@ -48,24 +48,37 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<String>> signIn(@Valid @RequestBody LoginVo request,
-                                                      HttpServletResponse response) {
-        TokenResponseDto tokenResponseDto = userService.login(request.getEmail(), request.getPassword());
+        HttpServletResponse response) {
+        TokenResponseDto tokenResponseDto = userService.login(request.getEmail(),
+            request.getPassword());
 
         Cookie cookie = new Cookie("refresh-token", tokenResponseDto.getRefreshToken());
         cookie.setMaxAge(Math.toIntExact(cookieValidTime));
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
 
-        ApiResponse<String> apiResponse = new ApiResponse<>(200, "로그인 되었습니다.", tokenResponseDto.getAccessToken());
+        ApiResponse<String> apiResponse = new ApiResponse<>(200, "로그인 되었습니다.",
+            tokenResponseDto.getAccessToken());
         return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("/login/kakao")
     public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(
-            @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code) throws JSONException {
+        @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code,
+        HttpServletResponse response)
+        throws JSONException {
 
-        ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200, "카카오 로그인 성공",
-                userService.socialLogin(code));
+        TokenResponseDto tokenResponseDto = userService.socialLogin(code);
+
+        Cookie cookie = new Cookie("refresh-token", tokenResponseDto.getAccessToken());
+        cookie.setMaxAge(Math.toIntExact(cookieValidTime));
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+
+
+        ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200,
+            "카카오 로그인 성공",
+            SocialLoginResponseDto.builder().token(tokenResponseDto.getAccessToken()).build());
 
         return ResponseEntity.status(HttpStatus.OK).body(socialLongResponse);
 
