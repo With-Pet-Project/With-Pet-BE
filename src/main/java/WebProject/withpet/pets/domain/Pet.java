@@ -52,6 +52,9 @@ public class Pet {
     @OneToMany(mappedBy = "pet", orphanRemoval = true)
     private List<Consumption> consumptions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "pet", orphanRemoval = true)
+    private List<Diary> diaries = new ArrayList<>();
+
     @Builder
     public Pet(
             User user,
