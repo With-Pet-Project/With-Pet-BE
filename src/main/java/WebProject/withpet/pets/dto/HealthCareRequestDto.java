@@ -15,7 +15,6 @@ public class HealthCareRequestDto {
     private double weight;
     private double drinkAmount;
     private double feedAmount;
-    private String diary;
 
     @NotNull
     private int year;
@@ -27,17 +26,7 @@ public class HealthCareRequestDto {
     private int day;
 
     public HealthCare toEntity(Pet pet) {
-        return HealthCare.builder()
-                .pet(pet)
-                .walkDistance(walkDistance)
-                .weight(weight)
-                .drinkAmount(drinkAmount)
-                .feedAmount(feedAmount)
-                .diary(diary)
-                .year(year)
-                .month(month)
-                .week(week)
-                .day(day)
-                .build();
+        return HealthCare.builder().pet(pet).walkDistance(walkDistance).weight(weight).drinkAmount(drinkAmount)
+                .feedAmount(feedAmount).year(year).month(month).week(week).day(day).build();
     }
 }

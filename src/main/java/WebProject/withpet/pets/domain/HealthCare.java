@@ -41,8 +41,6 @@ public class HealthCare extends BaseEntity {
     @Column(name = "feed_amount")
     private double feedAmount;
 
-    private String diary;
-
     private int year;
     private int month;
     private int week;
@@ -54,6 +52,5 @@ public class HealthCare extends BaseEntity {
         weight = updateHealthCare.weight;
         drinkAmount = updateHealthCare.drinkAmount;
         feedAmount = updateHealthCare.feedAmount;
-        diary = updateHealthCare.diary;
     }
 }

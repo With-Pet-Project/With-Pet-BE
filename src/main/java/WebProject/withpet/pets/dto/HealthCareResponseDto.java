@@ -15,7 +15,6 @@ public class HealthCareResponseDto {
     private double weight;
     private double drinkAmount;
     private double feedAmount;
-    private String diary;
 
     private int year;
     private int month;
