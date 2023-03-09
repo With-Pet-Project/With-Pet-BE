@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 @Validated
 public class UserController {
+
     @Value("${jwt.cookie-valid-time}")
     private Long cookieValidTime;
     private final JwtTokenProvider jwtTokenProvider;
@@ -86,22 +87,29 @@ public class UserController {
 
     @GetMapping("/duplicate-check")
     public ResponseEntity<ApiResponse<Void>> duplicateCheck(
-            @RequestParam("nickName") @NotBlank(message = "닉네임을 입력하시오") String nickName) {
+        @RequestParam("nickName") @NotBlank(message = "닉네임을 입력하시오") String nickName) {
         userService.validateDuplicateNickname(nickName);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(200, "사용 가능한 닉네임입니다"));
     }
 
     @PostMapping("/password")
-    public ResponseEntity<ApiResponse<Void>> changePassword(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                                            @RequestBody @Valid ChangePasswordDto changePasswordDto) {
+    public ResponseEntity<ApiResponse<Void>> changePassword(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @RequestBody @Valid ChangePasswordDto changePasswordDto) {
 
-        userService.changePassword(principalDetails.getUser(), changePasswordDto);
+        if (principalDetails != null) {
+            //로그인 x한 사용자
+            userService.changePassword(principalDetails.getUser(), changePasswordDto);
+        } else {
+            userService.changePassword(null, changePasswordDto);
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_UPDATE_OK);
     }
 
     @DeleteMapping()
-    public ResponseEntity<ApiResponse<Void>> deleteUser(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser(
+        @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         userService.deleteUser(principalDetails.getUser());
 
