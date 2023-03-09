@@ -32,4 +32,13 @@ public class Diary {
     private int month;
     private int week;
     private int day;
+
+    public void update(Diary updatedDiary) {
+        pet = updatedDiary.pet;
+        content = updatedDiary.content;
+        year = updatedDiary.year;
+        month = updatedDiary.month;
+        week = updatedDiary.week;
+        day = updatedDiary.day;
+    }
 }
