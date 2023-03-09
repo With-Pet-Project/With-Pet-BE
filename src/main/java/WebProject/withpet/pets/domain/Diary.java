@@ -8,10 +8,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "diaries")
 public class Diary {
     @Id
@@ -23,4 +27,9 @@ public class Diary {
     private Pet pet;
 
     private String content;
+
+    private int year;
+    private int month;
+    private int week;
+    private int day;
 }
