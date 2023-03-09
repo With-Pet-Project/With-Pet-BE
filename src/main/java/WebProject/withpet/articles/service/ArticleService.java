@@ -125,7 +125,7 @@ public class ArticleService {
             Pageable.ofSize(dto.getSize()));
 
         if (response.isEmpty()) {
-            throw new DataNotFoundException();
+            return ViewArticleListResponseDto.returnEmpty();
         }
 
         List<ViewArticleDto> responseDto = response.getContent();
