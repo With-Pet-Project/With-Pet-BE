@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 @Validated
 public class UserController {
+
     @Value("${jwt.cookie-valid-time}")
     private Long cookieValidTime;
     private final JwtTokenProvider jwtTokenProvider;
@@ -48,24 +49,37 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<String>> signIn(@Valid @RequestBody LoginVo request,
-                                                      HttpServletResponse response) {
-        TokenResponseDto tokenResponseDto = userService.login(request.getEmail(), request.getPassword());
+        HttpServletResponse response) {
+        TokenResponseDto tokenResponseDto = userService.login(request.getEmail(),
+            request.getPassword());
 
         Cookie cookie = new Cookie("refresh-token", tokenResponseDto.getRefreshToken());
         cookie.setMaxAge(Math.toIntExact(cookieValidTime));
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
 
-        ApiResponse<String> apiResponse = new ApiResponse<>(200, "로그인 되었습니다.", tokenResponseDto.getAccessToken());
+        ApiResponse<String> apiResponse = new ApiResponse<>(200, "로그인 되었습니다.",
+            tokenResponseDto.getAccessToken());
         return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("/login/kakao")
     public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(
-            @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code) throws JSONException {
+        @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code,
+        HttpServletResponse response)
+        throws JSONException {
 
-        ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200, "카카오 로그인 성공",
-                userService.socialLogin(code));
+        TokenResponseDto tokenResponseDto = userService.socialLogin(code);
+
+        Cookie cookie = new Cookie("refresh-token", tokenResponseDto.getAccessToken());
+        cookie.setMaxAge(Math.toIntExact(cookieValidTime));
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+
+
+        ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200,
+            "카카오 로그인 성공",
+            SocialLoginResponseDto.builder().token(tokenResponseDto.getAccessToken()).build());
 
         return ResponseEntity.status(HttpStatus.OK).body(socialLongResponse);
 
@@ -73,22 +87,29 @@ public class UserController {
 
     @GetMapping("/duplicate-check")
     public ResponseEntity<ApiResponse<Void>> duplicateCheck(
-            @RequestParam("nickName") @NotBlank(message = "닉네임을 입력하시오") String nickName) {
+        @RequestParam("nickName") @NotBlank(message = "닉네임을 입력하시오") String nickName) {
         userService.validateDuplicateNickname(nickName);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(200, "사용 가능한 닉네임입니다"));
     }
 
     @PostMapping("/password")
-    public ResponseEntity<ApiResponse<Void>> changePassword(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                                            @RequestBody @Valid ChangePasswordDto changePasswordDto) {
+    public ResponseEntity<ApiResponse<Void>> changePassword(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @RequestBody @Valid ChangePasswordDto changePasswordDto) {
 
-        userService.changePassword(principalDetails.getUser(), changePasswordDto);
+        if (principalDetails != null) {
+            //로그인 x한 사용자
+            userService.changePassword(principalDetails.getUser(), changePasswordDto);
+        } else {
+            userService.changePassword(null, changePasswordDto);
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_UPDATE_OK);
     }
 
     @DeleteMapping()
-    public ResponseEntity<ApiResponse<Void>> deleteUser(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser(
+        @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         userService.deleteUser(principalDetails.getUser());
 
