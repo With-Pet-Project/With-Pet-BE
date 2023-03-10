@@ -1,7 +1,5 @@
 package WebProject.withpet.pets.domain;
 
-import WebProject.withpet.common.domain.BaseEntity;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,12 +14,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "health_cares")
-@Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class HealthCare extends BaseEntity {
+@Builder
+@Getter
+@Table(name = "diaries")
+public class Diary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,27 +28,19 @@ public class HealthCare extends BaseEntity {
     @JoinColumn(name = "pet_id")
     private Pet pet;
 
-    @Column(name = "walk_distance")
-    private double walkDistance;
-
-    private double weight;
-
-    @Column(name = "drink_amount")
-    private double drinkAmount;
-
-    @Column(name = "feed_amount")
-    private double feedAmount;
+    private String content;
 
     private int year;
     private int month;
     private int week;
     private int day;
 
-    public void update(HealthCare updateHealthCare) {
-        pet = updateHealthCare.pet;
-        walkDistance = updateHealthCare.walkDistance;
-        weight = updateHealthCare.weight;
-        drinkAmount = updateHealthCare.drinkAmount;
-        feedAmount = updateHealthCare.feedAmount;
+    public void update(Diary updatedDiary) {
+        pet = updatedDiary.pet;
+        content = updatedDiary.content;
+        year = updatedDiary.year;
+        month = updatedDiary.month;
+        week = updatedDiary.week;
+        day = updatedDiary.day;
     }
 }

@@ -22,8 +22,8 @@ public class HealthCareRepositoryImpl implements HealthCareRepositoryCustom {
 
         return queryFactory.select(
                         Projections.fields(HealthCareResponseDto.class, healthCare.id, healthCare.walkDistance,
-                                healthCare.weight, healthCare.drinkAmount, healthCare.feedAmount, healthCare.diary,
-                                healthCare.year, healthCare.month, healthCare.week, healthCare.day)).from(healthCare)
+                                healthCare.weight, healthCare.drinkAmount, healthCare.feedAmount, healthCare.year,
+                                healthCare.month, healthCare.week, healthCare.day)).from(healthCare)
                 .where(healthCare.pet.eq(pet), healthCare.year.eq(year), healthCare.month.eq(month)).fetch();
     }
 }
