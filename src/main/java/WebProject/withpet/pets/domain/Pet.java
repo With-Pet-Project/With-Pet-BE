@@ -5,6 +5,7 @@ import WebProject.withpet.users.domain.User;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -43,22 +44,17 @@ public class Pet {
     @DateTimeFormat(pattern = "yyyy-MM-DD")
     private LocalDate birthday;
 
-    @OneToMany(mappedBy = "pet", orphanRemoval = true)
+    @OneToMany(mappedBy = "pet", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Challenge> challenges = new ArrayList<>();
 
-    @OneToMany(mappedBy = "pet", orphanRemoval = true)
+    @OneToMany(mappedBy = "pet", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<HealthCare> healthCares = new ArrayList<>();
 
-    @OneToMany(mappedBy = "pet", orphanRemoval = true)
+    @OneToMany(mappedBy = "pet", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Consumption> consumptions = new ArrayList<>();
 
     @Builder
-    public Pet(
-            User user,
-            String name,
-            double initWeight,
-            LocalDate birthday
-    ) {
+    public Pet(User user, String name, double initWeight, LocalDate birthday) {
         this.user = user;
         this.name = name;
         this.initWeight = initWeight;
