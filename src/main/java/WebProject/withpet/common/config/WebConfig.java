@@ -17,17 +17,14 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JwtAuthInterceptor(jwtTokenProvider))
 
-            .addPathPatterns("/pet/**", "/mypage/**", "/{petId}/challenge/**", "/article/**",
-                "/image/**", "/comment/**", "/article_like/**", "/user/duplicate",
-                "/user/password");
+                .addPathPatterns("/pet/**", "/mypage/**", "/{petId}/challenge/**", "/article/**", "/image/**",
+                        "/comment/**", "/article_like/**", "/user/duplicate", "/user/password");
 
 
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-            .allowedOrigins("*", "http://localhost:3000", "https://with-pet-fe.vercel.app")
-            .allowedHeaders("*").allowedMethods("*");
+        registry.addMapping("/**").allowedOrigins("*").allowedHeaders("*").allowedMethods("*").allowCredentials(false);
     }
 }
