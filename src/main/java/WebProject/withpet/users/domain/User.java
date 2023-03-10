@@ -1,6 +1,7 @@
 package WebProject.withpet.users.domain;
 
 import WebProject.withpet.comments.domain.Comment;
+import WebProject.withpet.pets.domain.Pet;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -40,16 +41,19 @@ public class User {
     @ElementCollection(fetch = FetchType.LAZY)
     private List<String> roles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pet> pets = new ArrayList<>();
 
     @Builder
     public User(
-        String profileImg,
-        String nickName,
-        String email,
-        String password,
-        String provider
+            String profileImg,
+            String nickName,
+            String email,
+            String password,
+            String provider
     ) {
         this.profileImg = profileImg;
         this.nickName = nickName;
@@ -70,8 +74,8 @@ public class User {
         this.password = password;
     }
 
-    public void updateUserprofileImg(String image){
-        this.profileImg=image;
+    public void updateUserprofileImg(String image) {
+        this.profileImg = image;
     }
 
 }
