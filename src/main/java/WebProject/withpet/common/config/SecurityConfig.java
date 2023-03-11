@@ -44,7 +44,7 @@ public class SecurityConfig {
 
         http.authorizeRequests()
                 .antMatchers("/user/login/**", "/user/signup", "/articles/**", "/comments",
-                        "/user/password").permitAll()
+                        "/user/password","/health-check").permitAll()
                 .and().headers()
                 .addHeaderWriter(new XFrameOptionsHeaderWriter(
                         XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
