@@ -20,7 +20,7 @@ public class ArticleUpdateRequestDto {
 
     private String place1;
 
-    private String placce2;
+    private String place2;
 
     private String detailText;
 
