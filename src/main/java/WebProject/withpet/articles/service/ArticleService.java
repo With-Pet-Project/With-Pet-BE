@@ -98,7 +98,9 @@ public class ArticleService {
 
         if (findArticle.isSpecArticle()) {
             findSpecArticleById(articleId).update(dto.getTitle(), dto.getDetailText(),
-                dto.getPlace1(), dto.getPlacce2());
+                dto.getPlace1(), dto.getPlace2());
+        } else{
+            findArticle.update(dto.getTitle(),dto.getDetailText());
         }
 
         if (!dto.getImages().isEmpty()) {
