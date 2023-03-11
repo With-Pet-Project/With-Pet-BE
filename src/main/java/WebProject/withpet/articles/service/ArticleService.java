@@ -2,6 +2,7 @@ package WebProject.withpet.articles.service;
 
 
 import WebProject.withpet.articles.domain.Article;
+import WebProject.withpet.articles.domain.ArticleLike;
 import WebProject.withpet.articles.domain.Image;
 import WebProject.withpet.articles.domain.SpecArticle;
 import WebProject.withpet.articles.domain.Tag;
@@ -12,6 +13,7 @@ import WebProject.withpet.articles.dto.ViewArticleDto;
 import WebProject.withpet.articles.dto.ViewArticleListRequestDto;
 import WebProject.withpet.articles.dto.ViewArticleListResponseDto;
 import WebProject.withpet.articles.dto.ViewSpecificArticleResponseDto;
+import WebProject.withpet.articles.repository.ArticleLikeRepository;
 import WebProject.withpet.articles.repository.ArticleRepository;
 import WebProject.withpet.articles.repository.ImageRepository;
 import WebProject.withpet.comments.dto.ViewCommentListDto;
@@ -44,6 +46,8 @@ public class ArticleService {
 
     private final ImageService imageService;
 
+    private final ArticleLikeRepository articleLikeRepository;
+
     @Transactional
     public void createArticle(User user, ArticleCreateRequestDto articleCreateRequestDto) {
 
@@ -72,7 +76,6 @@ public class ArticleService {
             articleId);
 
         whetherUserLikeArticle(user, dto);
-
         ViewSpecificArticleResponseDto responseDto = dto.toResponseDto();
 
         imageRepository.findAllByArticleId(articleId).forEach(image -> {
@@ -125,7 +128,7 @@ public class ArticleService {
             Pageable.ofSize(dto.getSize()));
 
         if (response.isEmpty()) {
-            throw new DataNotFoundException();
+            return ViewArticleListResponseDto.returnEmpty();
         }
 
         List<ViewArticleDto> responseDto = response.getContent();
@@ -196,7 +199,9 @@ public class ArticleService {
     public void whetherUserLikeArticle(User user, ViewArticleDto dto) {
 
         if (user != null) {
-            if (user.getId() == dto.getArticleLikeUserId()) {
+            ArticleLike findArticleLike = articleLikeRepository.findByUserAndArticleId(user,
+                dto.getArticleId());
+            if (findArticleLike != null) {
                 dto.setWhetherLike(true);
             } else {
                 dto.setWhetherLike(false);

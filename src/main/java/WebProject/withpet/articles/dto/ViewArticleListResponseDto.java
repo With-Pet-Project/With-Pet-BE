@@ -19,4 +19,11 @@ public class ViewArticleListResponseDto {
 
     @Builder.Default
     private List<ViewArticleDto> viewArticleListDto = new ArrayList<>();
+
+    public static ViewArticleListResponseDto returnEmpty(){
+        return ViewArticleListResponseDto.builder()
+            .hasNext(false)
+            .lastArticleId(null)
+            .build();
+    }
 }
