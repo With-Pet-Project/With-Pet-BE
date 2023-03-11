@@ -52,7 +52,7 @@ public class Challenge extends BaseEntity {
     @Column(name = "target_cnt")
     private int targetCnt;
 
-    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "challenge", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<ChallengeLog> logs = new ArrayList<>();
 
     public void update(Challenge updateChallenge) {

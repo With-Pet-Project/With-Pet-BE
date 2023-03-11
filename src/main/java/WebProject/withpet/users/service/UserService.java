@@ -64,14 +64,14 @@ public class UserService {
 
         //회원가입
         if (userRepository.findByEmail(userInfoByToken.getEmail()).isEmpty()) {
-            createUser = User.builder().email(userInfoByToken.getEmail()).password("")
+            createUser = User.builder().email(userInfoByToken.getEmail()).password("1")
                 .nickName(userInfoByToken.getNickname()).build();
             userRepository.save(createUser);
 
-            response = login(createUser.getEmail(), createUser.getPassword());
+            response = getTokenInSocialLogin(createUser.getEmail(), createUser.getPassword());
         } else {
             User findUser = findUserByEmail(userInfoByToken.getEmail());
-            response = login(findUser.getEmail(), findUser.getPassword());
+            response = getTokenInSocialLogin(findUser.getEmail(), findUser.getPassword());
         }
 
         return response;
@@ -128,6 +128,25 @@ public class UserService {
         if (!passwordEncoder.matches(password, principalDetails.getPassword())) {
             throw new UserNotFoundException();
         }
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+            principalDetails.getUsername(),
+            principalDetails.getPassword(), principalDetails.getAuthorities());
+
+        // refresh Token 생성
+        String refreshToken = jwtTokenProvider.createRefreshToken(principalDetails.getUser());
+        refreshTokenService.createOrChangeRefreshToken(refreshToken,
+            principalDetails.getUser().getId());
+
+        String accessToken = jwtTokenProvider.createToken(principalDetails.getUser());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return new TokenResponseDto(refreshToken, accessToken);
+    }
+
+    @Transactional
+    public TokenResponseDto getTokenInSocialLogin(String email, String password) {
+        PrincipalDetails principalDetails = loadUserByEmail(email);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
             principalDetails.getUsername(),

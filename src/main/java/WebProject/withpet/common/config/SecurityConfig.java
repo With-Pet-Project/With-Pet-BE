@@ -30,26 +30,26 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         AuthenticationManager authentication = authenticationManager(authenticationConfiguration);
         JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(authentication,
-            jwtTokenProvider);
+                jwtTokenProvider);
 
         http.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
-            .formLogin().disable().httpBasic().disable()
+                .formLogin().disable().httpBasic().disable()
 
-            .addFilter(authenticationFilter)
-            .addFilter(new JwtAuthorizationFilter(authentication, jwtTokenProvider))
-            .authorizeRequests();
+                .addFilter(authenticationFilter)
+                .addFilter(new JwtAuthorizationFilter(authentication, jwtTokenProvider))
+                .authorizeRequests();
 
         http.authorizeRequests()
-            .antMatchers("/user/login/**", "/user/signup", "/articles/**", "/comments",
-                "/user/password").permitAll()
-            .and().headers()
-            .addHeaderWriter(new XFrameOptionsHeaderWriter(
-                XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-            .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
-            .logoutSuccessUrl("/user/login").invalidateHttpSession(true);
+                .antMatchers("/user/login/**", "/user/signup", "/articles/**", "/comments",
+                        "/user/password").permitAll()
+                .and().headers()
+                .addHeaderWriter(new XFrameOptionsHeaderWriter(
+                        XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+                .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
+                .logoutSuccessUrl("/user/login").invalidateHttpSession(true);
 
         return http.build();
     }
@@ -61,8 +61,8 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-        AuthenticationConfiguration authenticationConfiguration)
-        throws Exception {
+            AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -70,7 +70,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOriginPattern("https://with-pet-fe.vercel.app");
+        configuration.addAllowedOriginPattern("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
