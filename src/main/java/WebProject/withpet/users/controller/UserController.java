@@ -62,11 +62,11 @@ public class UserController {
     @PostMapping("/login/kakao")
     public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(
             @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code,
-            HttpServletResponse response) throws JSONException, UnsupportedEncodingException {
+            @Valid @RequestBody SocialLoginRequestDto dto, HttpServletResponse response)
+            throws JSONException, UnsupportedEncodingException {
 
-        TokenResponseDto tokenResponseDto = userService.socialLogin(code);
+        TokenResponseDto tokenResponseDto = userService.socialLogin(code, dto);
         response.addCookie(createCookie(tokenResponseDto));
-
 
         ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200, "카카오 로그인 성공",
                 SocialLoginResponseDto.builder().token(tokenResponseDto.getAccessToken()).build());
