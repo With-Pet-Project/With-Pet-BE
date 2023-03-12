@@ -1,7 +1,5 @@
 package WebProject.withpet.users.controller;
 
-import static WebProject.withpet.auth.application.JwtTokenProvider.TOKEN_PREFIX;
-
 import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.auth.application.JwtTokenProvider;
 import WebProject.withpet.auth.dto.TokenResponseDto;
@@ -12,6 +10,7 @@ import WebProject.withpet.users.dto.ChangePasswordDto;
 import WebProject.withpet.users.dto.SocialLoginResponseDto;
 import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.service.UserService;
+import java.io.UnsupportedEncodingException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -50,37 +49,24 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<String>> signIn(@Valid @RequestBody LoginVo request,
-                                                      HttpServletResponse response) {
-        TokenResponseDto tokenResponseDto = userService.login(request.getEmail(),
-                request.getPassword());
+    public ResponseEntity<ApiResponse<String>> signIn(@Valid @RequestBody LoginVo request, HttpServletResponse response)
+            throws UnsupportedEncodingException {
+        TokenResponseDto tokenResponseDto = userService.login(request.getEmail(), request.getPassword());
+        response.addCookie(createCookie(tokenResponseDto));
 
-        Cookie cookie = new Cookie("refresh-token", TOKEN_PREFIX + tokenResponseDto.getRefreshToken());
-        cookie.setMaxAge(Math.toIntExact(cookieValidTime));
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
-
-        ApiResponse<String> apiResponse = new ApiResponse<>(200, "로그인 되었습니다.",
-                tokenResponseDto.getAccessToken());
+        ApiResponse<String> apiResponse = new ApiResponse<>(200, "로그인 되었습니다.", tokenResponseDto.getAccessToken());
         return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("/login/kakao")
     public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(
             @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code,
-            HttpServletResponse response)
-            throws JSONException {
+            HttpServletResponse response) throws JSONException, UnsupportedEncodingException {
 
         TokenResponseDto tokenResponseDto = userService.socialLogin(code);
+        response.addCookie(createCookie(tokenResponseDto));
 
-        Cookie cookie = new Cookie(JwtTokenProvider.REFRESH_TOKEN_HEADER_STRING,
-                TOKEN_PREFIX + tokenResponseDto.getAccessToken());
-        cookie.setMaxAge(Math.toIntExact(cookieValidTime));
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
-
-        ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200,
-                "카카오 로그인 성공",
+        ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200, "카카오 로그인 성공",
                 SocialLoginResponseDto.builder().token(tokenResponseDto.getAccessToken()).build());
 
         return ResponseEntity.status(HttpStatus.OK).body(socialLongResponse);
@@ -95,9 +81,8 @@ public class UserController {
     }
 
     @PostMapping("/password")
-    public ResponseEntity<ApiResponse<Void>> changePassword(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody @Valid ChangePasswordDto changePasswordDto) {
+    public ResponseEntity<ApiResponse<Void>> changePassword(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                                            @RequestBody @Valid ChangePasswordDto changePasswordDto) {
 
         if (principalDetails != null) {
             //로그인 x한 사용자
@@ -110,11 +95,18 @@ public class UserController {
     }
 
     @DeleteMapping()
-    public ResponseEntity<ApiResponse<Void>> deleteUser(
-            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         userService.deleteUser(principalDetails.getUser());
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_DEL_OK);
+    }
+
+    private Cookie createCookie(TokenResponseDto tokenResponseDto) throws UnsupportedEncodingException {
+        Cookie cookie = new Cookie(JwtTokenProvider.REFRESH_TOKEN_HEADER_STRING, tokenResponseDto.getRefreshToken());
+        cookie.setMaxAge(Math.toIntExact(cookieValidTime));
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        return cookie;
     }
 }
