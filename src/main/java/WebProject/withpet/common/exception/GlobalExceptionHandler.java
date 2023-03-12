@@ -2,6 +2,7 @@ package WebProject.withpet.common.exception;
 
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.dto.ApiErrorResponse;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
@@ -17,7 +18,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataNotFoundException.class)
     protected ResponseEntity<ApiErrorResponse> handleDataNotFoundException(
-        DataNotFoundException e) {
+            DataNotFoundException e) {
         log.error("handleDataNotFoundException", e);
 
         return ApiErrorResponse.toResponseEntity(e.getErrorCode());
@@ -25,7 +26,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
     protected ResponseEntity<ApiErrorResponse> handleUnauthorizedException(
-        UnauthorizedException e) {
+            UnauthorizedException e) {
         log.error("handleUnauthorizedException", e);
 
         return ApiErrorResponse.toResponseEntity(e.getErrorCode());
@@ -33,7 +34,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     protected ResponseEntity<ApiErrorResponse> handleUserNotFoundException(
-        UserNotFoundException e) {
+            UserNotFoundException e) {
         log.error("handleUserNotFoundException", e);
 
         return ApiErrorResponse.toResponseEntity(e.getErrorCode());
@@ -49,18 +50,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValidException(
-        MethodArgumentNotValidException e) {
+            MethodArgumentNotValidException e) {
         log.error("handleMethodArgumentNotValidException", e);
         return ApiErrorResponse.toResponseEntityWithErrors(ErrorCode.INVALID_PARAMETER,
-            e.getBindingResult());
+                e.getBindingResult());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(
-        ConstraintViolationException e) {
+            ConstraintViolationException e) {
         log.error("handleConstraintViolationException", e);
         return ApiErrorResponse.toResponseEntityWithConstraints(ErrorCode.INVALID_PARAMETER,
-            e.getConstraintViolations());
+                e.getConstraintViolations());
     }
 
     @ExceptionHandler(DuplicateException.class)
@@ -71,22 +72,28 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiErrorResponse> handleMissingServletRequestParameterException(
-        MissingServletRequestParameterException e) {
+            MissingServletRequestParameterException e) {
         log.error("handleMissingServletRequestParameterException", e);
         return ApiErrorResponse.toResponseEntityWithRequestParameterException(
-            ErrorCode.INVALID_PARAMETER, e);
+                ErrorCode.INVALID_PARAMETER, e);
     }
 
     @ExceptionHandler(ArticleException.class)
     public ResponseEntity<ApiErrorResponse> handleArticleCreateException(ArticleException e) {
         log.error("handleArticleCreateException", e);
         return ApiErrorResponse.toResponseEntityWithErrors(e.getErrorCode(),
-            e.getErrors());
+                e.getErrors());
     }
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiErrorResponse> handleCustomException(CustomException e) {
         log.error("handleCustomException", e);
+        return ApiErrorResponse.toResponseEntity(e.getErrorCode());
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidRefreshTokenException(InvalidRefreshTokenException e) {
+        log.error("handleInvalidRefreshTokenException", e);
         return ApiErrorResponse.toResponseEntity(e.getErrorCode());
     }
 }
