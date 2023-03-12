@@ -96,4 +96,10 @@ public class GlobalExceptionHandler {
         log.error("handleInvalidRefreshTokenException", e);
         return ApiErrorResponse.toResponseEntity(e.getErrorCode());
     }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<ApiErrorResponse> handleTokenExpiredException(TokenExpiredException e) {
+        log.error("handleTokenExpiredException", e);
+        return ApiErrorResponse.toResponseEntity(ErrorCode.EXPIRED_TOKEN);
+    }
 }
