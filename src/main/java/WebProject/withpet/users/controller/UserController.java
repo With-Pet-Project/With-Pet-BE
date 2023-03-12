@@ -1,5 +1,7 @@
 package WebProject.withpet.users.controller;
 
+import static WebProject.withpet.auth.application.JwtTokenProvider.TOKEN_PREFIX;
+
 import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.auth.application.JwtTokenProvider;
 import WebProject.withpet.auth.dto.TokenResponseDto;
@@ -49,37 +51,37 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<String>> signIn(@Valid @RequestBody LoginVo request,
-        HttpServletResponse response) {
+                                                      HttpServletResponse response) {
         TokenResponseDto tokenResponseDto = userService.login(request.getEmail(),
-            request.getPassword());
+                request.getPassword());
 
-        Cookie cookie = new Cookie("refresh-token", tokenResponseDto.getRefreshToken());
+        Cookie cookie = new Cookie("refresh-token", TOKEN_PREFIX + tokenResponseDto.getRefreshToken());
         cookie.setMaxAge(Math.toIntExact(cookieValidTime));
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
 
         ApiResponse<String> apiResponse = new ApiResponse<>(200, "로그인 되었습니다.",
-            tokenResponseDto.getAccessToken());
+                tokenResponseDto.getAccessToken());
         return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("/login/kakao")
     public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(
-        @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code,
-        HttpServletResponse response)
-        throws JSONException {
+            @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code,
+            HttpServletResponse response)
+            throws JSONException {
 
         TokenResponseDto tokenResponseDto = userService.socialLogin(code);
 
-        Cookie cookie = new Cookie("refresh-token", tokenResponseDto.getAccessToken());
+        Cookie cookie = new Cookie(JwtTokenProvider.REFRESH_TOKEN_HEADER_STRING,
+                TOKEN_PREFIX + tokenResponseDto.getAccessToken());
         cookie.setMaxAge(Math.toIntExact(cookieValidTime));
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
 
-
         ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200,
-            "카카오 로그인 성공",
-            SocialLoginResponseDto.builder().token(tokenResponseDto.getAccessToken()).build());
+                "카카오 로그인 성공",
+                SocialLoginResponseDto.builder().token(tokenResponseDto.getAccessToken()).build());
 
         return ResponseEntity.status(HttpStatus.OK).body(socialLongResponse);
 
@@ -87,15 +89,15 @@ public class UserController {
 
     @GetMapping("/duplicate-check")
     public ResponseEntity<ApiResponse<Void>> duplicateCheck(
-        @RequestParam("nickName") @NotBlank(message = "닉네임을 입력하시오") String nickName) {
+            @RequestParam("nickName") @NotBlank(message = "닉네임을 입력하시오") String nickName) {
         userService.validateDuplicateNickname(nickName);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(200, "사용 가능한 닉네임입니다"));
     }
 
     @PostMapping("/password")
     public ResponseEntity<ApiResponse<Void>> changePassword(
-        @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody @Valid ChangePasswordDto changePasswordDto) {
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @RequestBody @Valid ChangePasswordDto changePasswordDto) {
 
         if (principalDetails != null) {
             //로그인 x한 사용자
@@ -109,7 +111,7 @@ public class UserController {
 
     @DeleteMapping()
     public ResponseEntity<ApiResponse<Void>> deleteUser(
-        @AuthenticationPrincipal PrincipalDetails principalDetails) {
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         userService.deleteUser(principalDetails.getUser());
 
