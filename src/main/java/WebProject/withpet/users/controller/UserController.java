@@ -7,6 +7,7 @@ import WebProject.withpet.auth.vo.LoginVo;
 import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.dto.ApiResponse;
 import WebProject.withpet.users.dto.ChangePasswordDto;
+import WebProject.withpet.users.dto.SocialLoginRequestDto;
 import WebProject.withpet.users.dto.SocialLoginResponseDto;
 import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.service.UserService;
@@ -65,6 +66,7 @@ public class UserController {
 
         TokenResponseDto tokenResponseDto = userService.socialLogin(code);
         response.addCookie(createCookie(tokenResponseDto));
+
 
         ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200, "카카오 로그인 성공",
                 SocialLoginResponseDto.builder().token(tokenResponseDto.getAccessToken()).build());

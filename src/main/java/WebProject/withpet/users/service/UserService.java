@@ -11,6 +11,8 @@ import WebProject.withpet.common.exception.DuplicateException;
 import WebProject.withpet.common.exception.UserNotFoundException;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.dto.ChangePasswordDto;
+import WebProject.withpet.users.dto.SocialLoginRequestDto;
+import WebProject.withpet.users.dto.SocialLoginResponseDto;
 import WebProject.withpet.users.dto.SocialUserInfoDto;
 import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.repository.UserRepository;
@@ -52,9 +54,9 @@ public class UserService {
     }
 
     @Transactional
-    public TokenResponseDto socialLogin(String code) throws JSONException {
+    public TokenResponseDto socialLogin(String code, SocialLoginRequestDto dto) throws JSONException {
 
-        String accessToken = userSocialService.getAccessToken(code);
+        String accessToken = userSocialService.getAccessToken(code,dto.getRedirectURI());
         SocialUserInfoDto userInfoByToken = userSocialService.getUserInfoByToken(accessToken);
 
         TokenResponseDto response;
