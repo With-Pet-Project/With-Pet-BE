@@ -1,4 +1,4 @@
-package WebProject.withpet.common.util;
+package WebProject.withpet.auth.util;
 
 import WebProject.withpet.auth.application.JwtTokenProvider;
 import com.auth0.jwt.JWT;
