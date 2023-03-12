@@ -19,10 +19,7 @@ public class UserSocialService {
     @Value("${social-key}")
     private String adminKey;
 
-    @Value("${redirect-URI}")
-    private String redirectURI;
-
-    public String getAccessToken(String code) throws JSONException {
+    public String getAccessToken(String code, String URI) throws JSONException {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         RestTemplate restTemplate = new RestTemplate();
@@ -34,7 +31,7 @@ public class UserSocialService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", adminKey);
-        body.add("redirect_uri", redirectURI);
+        body.add("redirect_uri", URI);
         body.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, httpHeaders);

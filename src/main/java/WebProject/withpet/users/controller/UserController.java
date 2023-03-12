@@ -7,6 +7,7 @@ import WebProject.withpet.auth.vo.LoginVo;
 import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.dto.ApiResponse;
 import WebProject.withpet.users.dto.ChangePasswordDto;
+import WebProject.withpet.users.dto.SocialLoginRequestDto;
 import WebProject.withpet.users.dto.SocialLoginResponseDto;
 import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.service.UserService;
@@ -66,10 +67,11 @@ public class UserController {
     @PostMapping("/login/kakao")
     public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(
         @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code,
+        @Valid @RequestBody SocialLoginRequestDto dto,
         HttpServletResponse response)
         throws JSONException {
 
-        TokenResponseDto tokenResponseDto = userService.socialLogin(code);
+        TokenResponseDto tokenResponseDto = userService.socialLogin(code,dto);
 
         Cookie cookie = new Cookie("refresh-token", tokenResponseDto.getAccessToken());
         cookie.setMaxAge(Math.toIntExact(cookieValidTime));
