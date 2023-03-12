@@ -22,7 +22,8 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
-    public static final String HEADER_STRING = "Authorization";
+    public static final String ACCESS_TOKEN_HEADER_STRING = "Authorization";
+    public static final String REFRESH_TOKEN_HEADER_STRING = "RefreshToken";
     @Value("${jwt.valid-time}")
     private String tokenValidTime;
     @Value("${jwt.refresh-valid-time}")
