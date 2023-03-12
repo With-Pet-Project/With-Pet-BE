@@ -1,7 +1,7 @@
 package WebProject.withpet.auth.filter;
 
 import WebProject.withpet.auth.application.JwtTokenProvider;
-import WebProject.withpet.common.util.JwtUtil;
+import WebProject.withpet.auth.util.JwtUtil;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -32,7 +32,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        String header = request.getHeader(JwtTokenProvider.HEADER_STRING);
+        String header = request.getHeader(JwtTokenProvider.ACCESS_TOKEN_HEADER_STRING);
         if (header == null || !header.startsWith(JwtTokenProvider.TOKEN_PREFIX)) {
             chain.doFilter(request, response);
             return;

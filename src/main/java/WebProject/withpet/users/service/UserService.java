@@ -47,9 +47,8 @@ public class UserService {
         validateDuplicateEmail(userRequestDto.getEmail());
         validateDuplicateNickname(userRequestDto.getNickname());
 
-        User user = User.builder().nickName(userRequestDto.getNickname())
-            .email(userRequestDto.getEmail())
-            .password(passwordEncoder.encode(userRequestDto.getPassword())).build();
+        User user = User.builder().nickName(userRequestDto.getNickname()).email(userRequestDto.getEmail())
+                .password(passwordEncoder.encode(userRequestDto.getPassword())).build();
 
         userRepository.save(user);
     }
@@ -66,7 +65,7 @@ public class UserService {
         //회원가입
         if (userRepository.findByEmail(userInfoByToken.getEmail()).isEmpty()) {
             createUser = User.builder().email(userInfoByToken.getEmail()).password("1")
-                .nickName(userInfoByToken.getNickname()).build();
+                    .nickName(userInfoByToken.getNickname()).build();
             userRepository.save(createUser);
 
             response = getTokenInSocialLogin(createUser.getEmail(), createUser.getPassword());
@@ -117,8 +116,7 @@ public class UserService {
 
 
     public User findUserById(Long userId) {
-        return userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException());
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
     }
 
 
@@ -130,14 +128,12 @@ public class UserService {
             throw new UserNotFoundException();
         }
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-            principalDetails.getUsername(),
-            principalDetails.getPassword(), principalDetails.getAuthorities());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails.getUsername(),
+                principalDetails.getPassword(), principalDetails.getAuthorities());
 
         // refresh Token 생성
         String refreshToken = jwtTokenProvider.createRefreshToken(principalDetails.getUser());
-        refreshTokenService.createOrChangeRefreshToken(refreshToken,
-            principalDetails.getUser().getId());
+        refreshTokenService.createOrChangeRefreshToken(refreshToken, principalDetails.getUser().getId());
 
         String accessToken = jwtTokenProvider.createToken(principalDetails.getUser());
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -149,14 +145,12 @@ public class UserService {
     public TokenResponseDto getTokenInSocialLogin(String email, String password) {
         PrincipalDetails principalDetails = loadUserByEmail(email);
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-            principalDetails.getUsername(),
-            principalDetails.getPassword(), principalDetails.getAuthorities());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails.getUsername(),
+                principalDetails.getPassword(), principalDetails.getAuthorities());
 
         // refresh Token 생성
         String refreshToken = jwtTokenProvider.createRefreshToken(principalDetails.getUser());
-        refreshTokenService.createOrChangeRefreshToken(refreshToken,
-            principalDetails.getUser().getId());
+        refreshTokenService.createOrChangeRefreshToken(refreshToken, principalDetails.getUser().getId());
 
         String accessToken = jwtTokenProvider.createToken(principalDetails.getUser());
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -171,8 +165,7 @@ public class UserService {
     }
 
     @Transactional
-    public void permissionCheckByConfirmationToken(String requestEmail, String key,
-        LocalDateTime requestedAt) {
+    public void permissionCheckByConfirmationToken(String requestEmail, String key, LocalDateTime requestedAt) {
         confirmationTokenService.isRightKey(requestEmail, key, requestedAt);
     }
 

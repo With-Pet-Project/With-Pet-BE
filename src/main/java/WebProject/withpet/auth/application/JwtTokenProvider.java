@@ -1,6 +1,8 @@
 package WebProject.withpet.auth.application;
 
 import WebProject.withpet.auth.PrincipalDetails;
+import WebProject.withpet.auth.service.RefreshTokenService;
+import WebProject.withpet.common.exception.InvalidRefreshTokenException;
 import WebProject.withpet.common.exception.UserNotFoundException;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.repository.UserRepository;
@@ -13,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,15 +23,15 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
-    public static final String HEADER_STRING = "Authorization";
+    public static final String ACCESS_TOKEN_HEADER_STRING = "Authorization";
+    public static final String REFRESH_TOKEN_HEADER_STRING = "RefreshToken";
     @Value("${jwt.valid-time}")
     private String tokenValidTime;
     @Value("${jwt.refresh-valid-time}")
     private Long refreshTokenValidTime;
     public static final String TOKEN_PREFIX = "Bearer ";
-
-    private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
+    private final RefreshTokenService refreshTokenService;
 
 
     public String createToken(User user) {
@@ -48,8 +49,8 @@ public class JwtTokenProvider {
     /*
 		 Token에 담겨있는 정보를 이용해 Authentication 객체를 반환하는 메서드
 	 */
-    public Authentication getAuthentication(String JwtToken) {
-        String token = JwtToken.replace(TOKEN_PREFIX, "");
+    public Authentication getAuthentication(String jwtToken) {
+        String token = jwtToken.replace(TOKEN_PREFIX, "");
         String email = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token).getClaim("email").asString();
 
         if (email != null) {
@@ -68,5 +69,13 @@ public class JwtTokenProvider {
 
     public String getSecretKey() {
         return secretKey;
+    }
+
+    public String getNewAccessToken(String token) throws Exception {
+        Long userId = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token).getClaim("id").asLong();
+        if (refreshTokenService.isValidToken(token, userId)) {
+            return createToken(userRepository.findById(userId).get());
+        }
+        throw new InvalidRefreshTokenException();
     }
 }

@@ -2,7 +2,7 @@ package WebProject.withpet.common.config;
 
 import WebProject.withpet.auth.application.JwtTokenProvider;
 import WebProject.withpet.common.exception.UnauthorizedException;
-import WebProject.withpet.common.util.JwtUtil;
+import WebProject.withpet.auth.util.JwtUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        String header = request.getHeader(JwtTokenProvider.HEADER_STRING);
+        String header = request.getHeader(JwtTokenProvider.ACCESS_TOKEN_HEADER_STRING);
 
         if (header == null) {
             throw new UnauthorizedException();
