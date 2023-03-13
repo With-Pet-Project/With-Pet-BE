@@ -26,7 +26,7 @@ public class JwtTokenProvider {
     public static final String ACCESS_TOKEN_HEADER_STRING = "Authorization";
     public static final String REFRESH_TOKEN_HEADER_STRING = "RefreshToken";
     @Value("${jwt.valid-time}")
-    private String tokenValidTime;
+    private Long tokenValidTime;
     @Value("${jwt.refresh-valid-time}")
     private Long refreshTokenValidTime;
     public static final String TOKEN_PREFIX = "Bearer ";
@@ -36,8 +36,8 @@ public class JwtTokenProvider {
 
     public String createToken(User user) {
         return JWT.create().withSubject(user.getEmail())
-                .withExpiresAt(new Date(System.currentTimeMillis() + Long.parseLong(tokenValidTime)))
-                .withClaim("id", user.getId()).withClaim("email", user.getEmail()).sign(Algorithm.HMAC512(secretKey));
+                .withExpiresAt(new Date(System.currentTimeMillis() + tokenValidTime)).withClaim("id", user.getId())
+                .withClaim("email", user.getEmail()).sign(Algorithm.HMAC512(secretKey));
     }
 
     public String createRefreshToken(User user) {
