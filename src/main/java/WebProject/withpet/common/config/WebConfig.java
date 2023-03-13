@@ -25,6 +25,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("*").allowedHeaders("*").allowedMethods("*").allowCredentials(true);
+        registry.addMapping("/**")
+                .allowedOrigins("https://localhost:3000", "http://localhost:3000", "https://with-pet-fe.vercel.app")
+                .allowedHeaders("*").allowedMethods("*").allowCredentials(true);
     }
 }
