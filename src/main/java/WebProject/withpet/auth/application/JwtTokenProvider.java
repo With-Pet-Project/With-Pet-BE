@@ -26,9 +26,9 @@ public class JwtTokenProvider {
     public static final String ACCESS_TOKEN_HEADER_STRING = "Authorization";
     public static final String REFRESH_TOKEN_HEADER_STRING = "RefreshToken";
     @Value("${jwt.valid-time}")
-    private Long tokenValidTime;
+    private long tokenValidTime;
     @Value("${jwt.refresh-valid-time}")
-    private Long refreshTokenValidTime;
+    private long refreshTokenValidTime;
     public static final String TOKEN_PREFIX = "Bearer ";
     private final UserRepository userRepository;
     private final RefreshTokenService refreshTokenService;
