@@ -12,7 +12,6 @@ import WebProject.withpet.users.dto.SocialLoginResponseDto;
 import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.service.UserService;
 import java.io.UnsupportedEncodingException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -20,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -53,7 +53,7 @@ public class UserController {
     public ResponseEntity<ApiResponse<String>> signIn(@Valid @RequestBody LoginVo request, HttpServletResponse response)
             throws UnsupportedEncodingException {
         TokenResponseDto tokenResponseDto = userService.login(request.getEmail(), request.getPassword());
-        response.addCookie(createCookie(tokenResponseDto));
+        response.addHeader("Set-Cookie", createCookie(tokenResponseDto).toString());
 
         ApiResponse<String> apiResponse = new ApiResponse<>(200, "로그인 되었습니다.", tokenResponseDto.getAccessToken());
         return ResponseEntity.ok(apiResponse);
@@ -66,7 +66,7 @@ public class UserController {
             throws JSONException, UnsupportedEncodingException {
 
         TokenResponseDto tokenResponseDto = userService.socialLogin(code, dto);
-        response.addCookie(createCookie(tokenResponseDto));
+        response.addHeader("Set-Cookie", createCookie(tokenResponseDto).toString());
 
         ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200, "카카오 로그인 성공",
                 SocialLoginResponseDto.builder().token(tokenResponseDto.getAccessToken()).build());
@@ -104,11 +104,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_DEL_OK);
     }
 
-    private Cookie createCookie(TokenResponseDto tokenResponseDto) throws UnsupportedEncodingException {
-        Cookie cookie = new Cookie(JwtTokenProvider.REFRESH_TOKEN_HEADER_STRING, tokenResponseDto.getRefreshToken());
-        cookie.setMaxAge(Math.toIntExact(cookieValidTime));
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        return cookie;
+    private ResponseCookie createCookie(TokenResponseDto tokenResponseDto) throws UnsupportedEncodingException {
+        return ResponseCookie.from(JwtTokenProvider.REFRESH_TOKEN_HEADER_STRING, tokenResponseDto.getRefreshToken())
+                .path("/").sameSite("None").secure(true).maxAge(Math.toIntExact(cookieValidTime)).httpOnly(true)
+                .build();
     }
 }
