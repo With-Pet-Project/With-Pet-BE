@@ -12,5 +12,6 @@ public class MypageArticleDto {
 
     private Long articleId;
     private LocalDateTime createdTime;
+    private String title;
     private String content;
 }

@@ -26,7 +26,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     public List<MypageArticleDto> findMypageArticelsByUserId(Long userId) {
 
         List<MypageArticleDto> result = em.createQuery(
-                "select new WebProject.withpet.articles.dto.MypageArticleDto(a.id, a.createdTime, a.detailText) "
+                "select new WebProject.withpet.articles.dto.MypageArticleDto(a.id, a.createdTime,a.title, a.detailText) "
                     + "from Article a where a.user.id = :userId", MypageArticleDto.class)
             .setParameter("userId", userId)
             .getResultList();
