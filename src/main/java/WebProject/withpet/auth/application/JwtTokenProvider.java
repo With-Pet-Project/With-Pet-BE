@@ -25,6 +25,7 @@ public class JwtTokenProvider {
     private String secretKey;
     public static final String ACCESS_TOKEN_HEADER_STRING = "Authorization";
     public static final String REFRESH_TOKEN_HEADER_STRING = "RefreshToken";
+    private static final String EXPIRE_DATE_STRING = "expireDate";
     @Value("${jwt.valid-time}")
     private long TOKEN_VALID_TIME;
     @Value("${jwt.refresh-valid-time}")
@@ -42,8 +43,9 @@ public class JwtTokenProvider {
 
     public String createRefreshToken(User user) {
         Date expireDate = new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALID_TIME);
+        System.out.println("========" + expireDate.toString());
         return JWT.create().withSubject(user.getEmail()).withExpiresAt(expireDate).withClaim("id", user.getId())
-                .withClaim("email", user.getEmail()).withClaim("expireDate", expireDate)
+                .withClaim("email", user.getEmail()).withClaim(EXPIRE_DATE_STRING, expireDate)
                 .sign(Algorithm.HMAC512(secretKey));
     }
 
@@ -52,7 +54,6 @@ public class JwtTokenProvider {
 	 */
     public Authentication getAuthentication(String jwtToken) {
         String token = jwtToken.replace(TOKEN_PREFIX, "");
-        JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token).getClaim("email").asString();
         String email = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token).getClaim("email").asString();
 
         if (email != null) {
@@ -79,5 +80,9 @@ public class JwtTokenProvider {
             return createToken(userRepository.findById(userId).get());
         }
         throw new InvalidRefreshTokenException();
+    }
+
+    public Date getExpireDate(String token) {
+        return JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token).getClaim(EXPIRE_DATE_STRING).asDate();
     }
 }
