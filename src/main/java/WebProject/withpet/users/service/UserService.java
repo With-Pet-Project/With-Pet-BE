@@ -100,9 +100,9 @@ public class UserService {
     public void changePassword(User user, ChangePasswordDto dto) {
 
         if (user != null) {
-            findUserById(user.getId()).changeUserPassword(dto.getPassword());
+            findUserById(user.getId()).changeUserPassword(passwordEncoder.encode(dto.getPassword()));
         } else {
-            findUserByEmail(dto.getEmail()).changeUserPassword(dto.getPassword());
+            findUserByEmail(dto.getEmail()).changeUserPassword(passwordEncoder.encode(dto.getPassword()));
         }
     }
 
