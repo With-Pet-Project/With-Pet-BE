@@ -27,7 +27,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
         List<MypageArticleDto> result = em.createQuery(
                 "select new WebProject.withpet.articles.dto.MypageArticleDto(a.id, a.createdTime,a.title, a.detailText) "
-                    + "from Article a where a.user.id = :userId", MypageArticleDto.class)
+                    + "from Article a where a.user.id = :userId order by a.createdTime desc", MypageArticleDto.class)
             .setParameter("userId", userId)
             .getResultList();
 
