@@ -135,7 +135,7 @@ public class UserService {
         String refreshToken = jwtTokenProvider.createRefreshToken(principalDetails.getUser());
         refreshTokenService.createOrChangeRefreshToken(refreshToken, principalDetails.getUser().getId());
 
-        String accessToken = jwtTokenProvider.createToken(principalDetails.getUser());
+        String accessToken = jwtTokenProvider.createAccessToken(principalDetails.getUser());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return new TokenResponseDto(refreshToken, accessToken);
@@ -152,7 +152,7 @@ public class UserService {
         String refreshToken = jwtTokenProvider.createRefreshToken(principalDetails.getUser());
         refreshTokenService.createOrChangeRefreshToken(refreshToken, principalDetails.getUser().getId());
 
-        String accessToken = jwtTokenProvider.createToken(principalDetails.getUser());
+        String accessToken = jwtTokenProvider.createAccessToken(principalDetails.getUser());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return new TokenResponseDto(refreshToken, accessToken);

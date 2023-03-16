@@ -34,8 +34,7 @@ public class JwtTokenProvider {
     private final UserRepository userRepository;
     private final RefreshTokenService refreshTokenService;
 
-
-    public String createToken(User user) {
+    public String createAccessToken(User user) {
         return JWT.create().withSubject(user.getEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_VALID_TIME)).withClaim("id", user.getId())
                 .withClaim("email", user.getEmail()).sign(Algorithm.HMAC512(secretKey));
@@ -43,7 +42,6 @@ public class JwtTokenProvider {
 
     public String createRefreshToken(User user) {
         Date expireDate = new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALID_TIME);
-        System.out.println("========" + expireDate.toString());
         return JWT.create().withSubject(user.getEmail()).withExpiresAt(expireDate).withClaim("id", user.getId())
                 .withClaim("email", user.getEmail()).withClaim(EXPIRE_DATE_STRING, expireDate)
                 .sign(Algorithm.HMAC512(secretKey));
