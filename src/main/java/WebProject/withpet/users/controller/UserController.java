@@ -1,8 +1,8 @@
 package WebProject.withpet.users.controller;
 
 import WebProject.withpet.auth.PrincipalDetails;
-import WebProject.withpet.auth.application.JwtTokenProvider;
 import WebProject.withpet.auth.dto.TokenResponseDto;
+import WebProject.withpet.auth.util.JwtUtil;
 import WebProject.withpet.auth.vo.LoginVo;
 import WebProject.withpet.common.constants.ResponseConstants;
 import WebProject.withpet.common.dto.ApiResponse;
@@ -17,9 +17,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -37,14 +35,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 @Validated
 public class UserController {
-
-    @Value("${jwt.cookie-valid-time}")
-    private Long cookieValidTime;
-    private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
-
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
+
     public ResponseEntity<ApiResponse<Void>> signUp(@Valid @RequestBody UserRequestDto user) {
         userService.register(user);
         return ResponseEntity.ok(ResponseConstants.RESPONSE_SAVE_OK);
@@ -54,7 +49,7 @@ public class UserController {
     public ResponseEntity<ApiResponse<String>> signIn(@Valid @RequestBody LoginVo request, HttpServletResponse response)
             throws UnsupportedEncodingException {
         TokenResponseDto tokenResponseDto = userService.login(request.getEmail(), request.getPassword());
-        response.addHeader("Set-Cookie", createCookie(tokenResponseDto).toString());
+        response.addHeader("Set-Cookie", jwtUtil.createCookie(tokenResponseDto.getRefreshToken()).toString());
 
         ApiResponse<String> apiResponse = new ApiResponse<>(200, "로그인 되었습니다.", tokenResponseDto.getAccessToken());
         return ResponseEntity.ok(apiResponse);
@@ -64,10 +59,10 @@ public class UserController {
     public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(
             @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code,
             @Valid @RequestBody SocialLoginRequestDto dto, HttpServletResponse response)
-            throws JSONException, UnsupportedEncodingException {
+            throws JSONException {
 
         TokenResponseDto tokenResponseDto = userService.socialLogin(code, dto);
-        response.addHeader("Set-Cookie", createCookie(tokenResponseDto).toString());
+        response.addHeader("Set-Cookie", jwtUtil.createCookie(tokenResponseDto.getRefreshToken()).toString());
 
         ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200, "카카오 로그인 성공",
                 SocialLoginResponseDto.builder().token(tokenResponseDto.getAccessToken()).build());
@@ -103,11 +98,5 @@ public class UserController {
         userService.deleteUser(principalDetails.getUser());
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseConstants.RESPONSE_DEL_OK);
-    }
-
-    private ResponseCookie createCookie(TokenResponseDto tokenResponseDto) throws UnsupportedEncodingException {
-        return ResponseCookie.from(JwtTokenProvider.REFRESH_TOKEN_HEADER_STRING, tokenResponseDto.getRefreshToken())
-                .path("/").sameSite("None").secure(true).maxAge(Math.toIntExact(cookieValidTime)).httpOnly(true)
-                .build();
     }
 }
