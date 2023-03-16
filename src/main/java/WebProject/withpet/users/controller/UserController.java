@@ -1,5 +1,7 @@
 package WebProject.withpet.users.controller;
 
+import static WebProject.withpet.auth.util.JwtUtil.COOKIE_NAME;
+
 import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.auth.dto.TokenResponseDto;
 import WebProject.withpet.auth.util.JwtUtil;
@@ -49,7 +51,7 @@ public class UserController {
     public ResponseEntity<ApiResponse<String>> signIn(@Valid @RequestBody LoginVo request, HttpServletResponse response)
             throws UnsupportedEncodingException {
         TokenResponseDto tokenResponseDto = userService.login(request.getEmail(), request.getPassword());
-        response.addHeader("Set-Cookie", jwtUtil.createCookie(tokenResponseDto.getRefreshToken()).toString());
+        response.addHeader(COOKIE_NAME, jwtUtil.createCookie(tokenResponseDto.getRefreshToken()).toString());
 
         ApiResponse<String> apiResponse = new ApiResponse<>(200, "로그인 되었습니다.", tokenResponseDto.getAccessToken());
         return ResponseEntity.ok(apiResponse);
@@ -58,11 +60,10 @@ public class UserController {
     @PostMapping("/login/kakao")
     public ResponseEntity<ApiResponse<SocialLoginResponseDto>> socialLogin(
             @RequestParam(name = "code") @NotBlank(message = "인가 코드 값은 필수입니다.") String code,
-            @Valid @RequestBody SocialLoginRequestDto dto, HttpServletResponse response)
-            throws JSONException {
+            @Valid @RequestBody SocialLoginRequestDto dto, HttpServletResponse response) throws JSONException {
 
         TokenResponseDto tokenResponseDto = userService.socialLogin(code, dto);
-        response.addHeader("Set-Cookie", jwtUtil.createCookie(tokenResponseDto.getRefreshToken()).toString());
+        response.addHeader(COOKIE_NAME, jwtUtil.createCookie(tokenResponseDto.getRefreshToken()).toString());
 
         ApiResponse<SocialLoginResponseDto> socialLongResponse = new ApiResponse<>(200, "카카오 로그인 성공",
                 SocialLoginResponseDto.builder().token(tokenResponseDto.getAccessToken()).build());
