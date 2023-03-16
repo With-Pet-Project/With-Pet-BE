@@ -1,8 +1,6 @@
 package WebProject.withpet.auth.application;
 
 import WebProject.withpet.auth.PrincipalDetails;
-import WebProject.withpet.auth.service.RefreshTokenService;
-import WebProject.withpet.common.exception.InvalidRefreshTokenException;
 import WebProject.withpet.common.exception.UserNotFoundException;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.repository.UserRepository;
@@ -23,16 +21,15 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
-    public static final String ACCESS_TOKEN_HEADER_STRING = "Authorization";
-    public static final String REFRESH_TOKEN_HEADER_STRING = "RefreshToken";
-    private static final String EXPIRE_DATE_STRING = "expireDate";
     @Value("${jwt.valid-time}")
     private long TOKEN_VALID_TIME;
     @Value("${jwt.refresh-valid-time}")
     private long REFRESH_TOKEN_VALID_TIME;
+    public static final String ACCESS_TOKEN_HEADER_STRING = "Authorization";
+    public static final String REFRESH_TOKEN_HEADER_STRING = "RefreshToken";
+    public static final String EXPIRE_DATE_STRING = "expireDate";
     public static final String TOKEN_PREFIX = "Bearer ";
     private final UserRepository userRepository;
-    private final RefreshTokenService refreshTokenService;
 
     public String createAccessToken(User user) {
         return JWT.create().withSubject(user.getEmail())
@@ -70,17 +67,5 @@ public class JwtTokenProvider {
 
     public String getSecretKey() {
         return secretKey;
-    }
-
-    public String getNewAccessToken(String token) throws Exception {
-        Long userId = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token).getClaim("id").asLong();
-        if (refreshTokenService.isValidToken(token, userId)) {
-            return createToken(userRepository.findById(userId).get());
-        }
-        throw new InvalidRefreshTokenException();
-    }
-
-    public Date getExpireDate(String token) {
-        return JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token).getClaim(EXPIRE_DATE_STRING).asDate();
     }
 }
