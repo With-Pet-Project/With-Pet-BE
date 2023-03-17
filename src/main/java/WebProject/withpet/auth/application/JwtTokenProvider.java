@@ -1,8 +1,6 @@
 package WebProject.withpet.auth.application;
 
 import WebProject.withpet.auth.PrincipalDetails;
-import WebProject.withpet.auth.service.RefreshTokenService;
-import WebProject.withpet.common.exception.InvalidRefreshTokenException;
 import WebProject.withpet.common.exception.UserNotFoundException;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.repository.UserRepository;
@@ -23,27 +21,27 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
-    public static final String ACCESS_TOKEN_HEADER_STRING = "Authorization";
-    public static final String REFRESH_TOKEN_HEADER_STRING = "RefreshToken";
     @Value("${jwt.valid-time}")
     private long TOKEN_VALID_TIME;
     @Value("${jwt.refresh-valid-time}")
     private long REFRESH_TOKEN_VALID_TIME;
+    public static final String ACCESS_TOKEN_HEADER_STRING = "Authorization";
+    public static final String REFRESH_TOKEN_HEADER_STRING = "RefreshToken";
+    public static final String EXPIRE_DATE_STRING = "expireDate";
     public static final String TOKEN_PREFIX = "Bearer ";
     private final UserRepository userRepository;
-    private final RefreshTokenService refreshTokenService;
 
-
-    public String createToken(User user) {
+    public String createAccessToken(User user) {
         return JWT.create().withSubject(user.getEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_VALID_TIME)).withClaim("id", user.getId())
                 .withClaim("email", user.getEmail()).sign(Algorithm.HMAC512(secretKey));
     }
 
     public String createRefreshToken(User user) {
-        return JWT.create().withSubject(user.getEmail())
-                .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALID_TIME))
-                .withClaim("id", user.getId()).withClaim("email", user.getEmail()).sign(Algorithm.HMAC512(secretKey));
+        Date expireDate = new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALID_TIME);
+        return JWT.create().withSubject(user.getEmail()).withExpiresAt(expireDate).withClaim("id", user.getId())
+                .withClaim("email", user.getEmail()).withClaim(EXPIRE_DATE_STRING, expireDate)
+                .sign(Algorithm.HMAC512(secretKey));
     }
 
     /*
@@ -69,13 +67,5 @@ public class JwtTokenProvider {
 
     public String getSecretKey() {
         return secretKey;
-    }
-
-    public String getNewAccessToken(String token) throws Exception {
-        Long userId = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token).getClaim("id").asLong();
-        if (refreshTokenService.isValidToken(token, userId)) {
-            return createToken(userRepository.findById(userId).get());
-        }
-        throw new InvalidRefreshTokenException();
     }
 }

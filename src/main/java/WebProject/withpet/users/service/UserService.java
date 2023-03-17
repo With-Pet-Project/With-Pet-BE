@@ -5,14 +5,13 @@ import WebProject.withpet.auth.PrincipalDetails;
 import WebProject.withpet.auth.application.JwtTokenProvider;
 import WebProject.withpet.auth.dto.TokenResponseDto;
 import WebProject.withpet.auth.service.ConfirmationTokenService;
-import WebProject.withpet.auth.service.RefreshTokenService;
+import WebProject.withpet.auth.service.TokenService;
 import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.exception.DuplicateException;
 import WebProject.withpet.common.exception.UserNotFoundException;
 import WebProject.withpet.users.domain.User;
 import WebProject.withpet.users.dto.ChangePasswordDto;
 import WebProject.withpet.users.dto.SocialLoginRequestDto;
-import WebProject.withpet.users.dto.SocialLoginResponseDto;
 import WebProject.withpet.users.dto.SocialUserInfoDto;
 import WebProject.withpet.users.dto.UserRequestDto;
 import WebProject.withpet.users.repository.UserRepository;
@@ -38,7 +37,7 @@ public class UserService {
     private final UserSocialService userSocialService;
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final RefreshTokenService refreshTokenService;
+    private final TokenService tokenService;
     private final ConfirmationTokenService confirmationTokenService;
 
     private final ArticleRepository articleRepository;
@@ -56,7 +55,7 @@ public class UserService {
     @Transactional
     public TokenResponseDto socialLogin(String code, SocialLoginRequestDto dto) throws JSONException {
 
-        String accessToken = userSocialService.getAccessToken(code,dto.getRedirectURI());
+        String accessToken = userSocialService.getAccessToken(code, dto.getRedirectURI());
         SocialUserInfoDto userInfoByToken = userSocialService.getUserInfoByToken(accessToken);
 
         TokenResponseDto response;
@@ -133,9 +132,9 @@ public class UserService {
 
         // refresh Token 생성
         String refreshToken = jwtTokenProvider.createRefreshToken(principalDetails.getUser());
-        refreshTokenService.createOrChangeRefreshToken(refreshToken, principalDetails.getUser().getId());
+        tokenService.createOrChangeRefreshToken(refreshToken, principalDetails.getUser().getId());
 
-        String accessToken = jwtTokenProvider.createToken(principalDetails.getUser());
+        String accessToken = jwtTokenProvider.createAccessToken(principalDetails.getUser());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return new TokenResponseDto(refreshToken, accessToken);
@@ -150,9 +149,9 @@ public class UserService {
 
         // refresh Token 생성
         String refreshToken = jwtTokenProvider.createRefreshToken(principalDetails.getUser());
-        refreshTokenService.createOrChangeRefreshToken(refreshToken, principalDetails.getUser().getId());
+        tokenService.createOrChangeRefreshToken(refreshToken, principalDetails.getUser().getId());
 
-        String accessToken = jwtTokenProvider.createToken(principalDetails.getUser());
+        String accessToken = jwtTokenProvider.createAccessToken(principalDetails.getUser());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return new TokenResponseDto(refreshToken, accessToken);
