@@ -1,7 +1,6 @@
 package WebProject.withpet.common.config;
 
 import WebProject.withpet.auth.application.JwtTokenProvider;
-import WebProject.withpet.auth.filter.JwtAuthenticationFilter;
 import WebProject.withpet.auth.filter.JwtAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,16 +28,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         AuthenticationManager authentication = authenticationManager(authenticationConfiguration);
-        JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(authentication,
-                jwtTokenProvider);
 
         http.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
                 .formLogin().disable().httpBasic().disable()
-
-                .addFilter(authenticationFilter)
                 .addFilter(new JwtAuthorizationFilter(authentication, jwtTokenProvider))
                 .authorizeRequests();
 
