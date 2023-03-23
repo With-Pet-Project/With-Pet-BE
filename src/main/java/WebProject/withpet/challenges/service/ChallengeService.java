@@ -18,7 +18,6 @@ import com.querydsl.core.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,12 +32,10 @@ public class ChallengeService {
     @Transactional
     public void registerChallenge(Long petId, User user, ChallengeRequestDto requestDto) {
         Pet pet = petService.accessPet(user, petId);
-
-        try {
-            challengeRepository.save(requestDto.toEntity(pet));
-        } catch (DataIntegrityViolationException e) {
+        if (isDuplicateChallenge(pet, requestDto.getTitle())) {
             throw new DuplicateException(ErrorCode.DUPLICATE_CHALLENGE);
         }
+        challengeRepository.save(requestDto.toEntity(pet));
     }
 
     @Transactional
@@ -104,5 +101,9 @@ public class ChallengeService {
     public Challenge accessChallenge(Long petId, Long challengeId, User user) {
         petService.accessPet(user, petId);
         return findChallengeById(challengeId);
+    }
+
+    private boolean isDuplicateChallenge(Pet pet, String title) {
+        return challengeRepository.isDuplicateTitleChallenge(pet, title);
     }
 }
