@@ -18,11 +18,18 @@ public class ChallengeLogRepositoryImpl implements ChallengeLogRepositoryCustom 
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
         return queryFactory.select(challengeLog.year, challengeLog.month, challengeLog.week, challengeLog.day,
-                        challengeLog.id)
-                .from(challengeLog)
-                .where(challengeLog.challenge.id.eq(challengeId),
-                        challengeLog.year.eq(year), challengeLog.month.eq(month),
-                        challengeLog.week.eq(week))
-                .fetch();
+                        challengeLog.id).from(challengeLog)
+                .where(challengeLog.challenge.id.eq(challengeId), challengeLog.year.eq(year),
+                        challengeLog.month.eq(month), challengeLog.week.eq(week)).fetch();
+    }
+
+    @Override
+    public boolean isDuplicateChallengeLog(Challenge challenge, int year, int month, int week, int day) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        return queryFactory.from(challengeLog)
+                .where(challengeLog.challenge.eq(challenge), challengeLog.year.eq(year), challengeLog.month.eq(month),
+                        challengeLog.week.eq(week), challengeLog.day.eq(day)).fetchFirst()
+                != null;
     }
 }

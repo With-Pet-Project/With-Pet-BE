@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface ChallengeLogRepositoryCustom {
     List<Tuple> getLogs(Long challengeId, int year, int month, int week);
 
+    boolean isDuplicateChallengeLog(Challenge challenge, int year, int month, int week, int day);
+
 }
