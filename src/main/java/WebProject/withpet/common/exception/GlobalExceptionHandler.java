@@ -102,4 +102,10 @@ public class GlobalExceptionHandler {
         log.error("handleTokenExpiredException", e);
         return ApiErrorResponse.toResponseEntity(ErrorCode.EXPIRED_TOKEN);
     }
+
+    @ExceptionHandler(DuplicateDateException.class)
+    public ResponseEntity<ApiErrorResponse> handleDuplicateDateException(DuplicateDateException e) {
+        log.error("handleDuplicateDateException", e);
+        return ApiErrorResponse.toResponseEntity(ErrorCode.DUPLICATE_DATE);
+    }
 }
