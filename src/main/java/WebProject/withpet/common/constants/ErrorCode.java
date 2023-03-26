@@ -19,7 +19,8 @@ public enum ErrorCode {
     ARTICLE_LIKE_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "해당 게시물 좋아요를 취소하기 위해서는 게시물 좋아요가 선행되어야 합니다."),
     EXPIRED_CONFIRMATION_TOKEN(HttpStatus.BAD_REQUEST, "해당 확인 코드는 만료되었습니다."),
     EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, "해당 토큰은 만료되었습니다."),
-    EXPIRED_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "해당 리프레시 토큰은 만료되었습니다.");
+    EXPIRED_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "해당 리프레시 토큰은 만료되었습니다."),
+    DUPLICATE_DATE(HttpStatus.CONFLICT, "해당 날짜의 데이터가 이미 존재합니다.");
 
 
     private final HttpStatus httpStatus;
