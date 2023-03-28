@@ -26,4 +26,12 @@ public class HealthCareRepositoryImpl implements HealthCareRepositoryCustom {
                                 healthCare.month, healthCare.week, healthCare.day)).from(healthCare)
                 .where(healthCare.pet.eq(pet), healthCare.year.eq(year), healthCare.month.eq(month)).fetch();
     }
+
+    @Override
+    public boolean isDuplicateDateHealthCare(Pet pet, int year, int month, int week, int day) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+        return queryFactory.from(healthCare)
+                .where(healthCare.pet.eq(pet), healthCare.year.eq(year), healthCare.month.eq(month),
+                        healthCare.week.eq(week), healthCare.day.eq(day)).fetchFirst() != null;
+    }
 }
