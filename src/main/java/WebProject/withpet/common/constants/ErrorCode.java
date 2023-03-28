@@ -20,7 +20,8 @@ public enum ErrorCode {
     EXPIRED_CONFIRMATION_TOKEN(HttpStatus.BAD_REQUEST, "해당 확인 코드는 만료되었습니다."),
     EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, "해당 토큰은 만료되었습니다."),
     EXPIRED_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "해당 리프레시 토큰은 만료되었습니다."),
-    DUPLICATE_DATE(HttpStatus.CONFLICT, "해당 날짜의 데이터가 이미 존재합니다.");
+    DUPLICATE_DATE(HttpStatus.CONFLICT, "해당 날짜의 데이터가 이미 존재합니다."),
+    DUPLICATE_PET(HttpStatus.CONFLICT, "해당 이름을 가진 반려동물이 이미 존재합니다.");
 
 
     private final HttpStatus httpStatus;
