@@ -1,6 +1,8 @@
 package WebProject.withpet.pets.service;
 
+import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.exception.DataNotFoundException;
+import WebProject.withpet.common.exception.DuplicateDateException;
 import WebProject.withpet.pets.domain.Consumption;
 import WebProject.withpet.pets.domain.ConsumptionRepository;
 import WebProject.withpet.pets.domain.Pet;
@@ -23,6 +25,9 @@ public class ConsumptionService {
     @Transactional
     public void saveConsumption(Long petId, User user, ConsumptionRequestDto request) {
         Pet pet = petService.accessPet(user, petId);
+        if (isDuplicateConsumption(pet, request)) {
+            throw new DuplicateDateException(ErrorCode.DUPLICATE_DATE);
+        }
         consumptionRepository.save(request.toEntity(user, pet));
     }
 
@@ -63,5 +68,10 @@ public class ConsumptionService {
     public Consumption accessConsumption(Long petId, Long consumptionId, User user) {
         petService.accessPet(user, petId);
         return findConsumptionById(consumptionId);
+    }
+
+    private boolean isDuplicateConsumption(Pet pet, ConsumptionRequestDto requestDto) {
+        return consumptionRepository.isDuplicateDateConsumption(pet, requestDto.getYear(), requestDto.getMonth(),
+                requestDto.getWeek(), requestDto.getDay());
     }
 }
