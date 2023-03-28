@@ -1,6 +1,8 @@
 package WebProject.withpet.pets.service;
 
+import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.exception.DataNotFoundException;
+import WebProject.withpet.common.exception.DuplicateDateException;
 import WebProject.withpet.pets.domain.Diary;
 import WebProject.withpet.pets.domain.DiaryRepository;
 import WebProject.withpet.pets.domain.Pet;
@@ -23,6 +25,9 @@ public class DiaryService {
     @Transactional
     public void registerDiary(Long petId, User user, DiaryRequestDto requestDto) {
         Pet pet = petService.accessPet(user, petId);
+        if (isDuplicateDiary(pet, requestDto)) {
+            throw new DuplicateDateException(ErrorCode.DUPLICATE_DATE);
+        }
         diaryRepository.save(requestDto.toEntity(pet));
     }
 
@@ -50,5 +55,10 @@ public class DiaryService {
 
     private Diary findDiaryById(Long id) {
         return diaryRepository.findById(id).orElseThrow(DataNotFoundException::new);
+    }
+
+    private boolean isDuplicateDiary(Pet pet, DiaryRequestDto requestDto) {
+        return diaryRepository.isDuplicateDateDiary(pet, requestDto.getYear(), requestDto.getMonth(),
+                requestDto.getWeek(), requestDto.getDay());
     }
 }
