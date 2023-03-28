@@ -1,6 +1,8 @@
 package WebProject.withpet.pets.service;
 
+import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.exception.DataNotFoundException;
+import WebProject.withpet.common.exception.DuplicateDateException;
 import WebProject.withpet.pets.domain.HealthCare;
 import WebProject.withpet.pets.domain.HealthCareRepository;
 import WebProject.withpet.pets.domain.Pet;
@@ -21,6 +23,9 @@ public class HealthCareService {
     @Transactional
     public void registerHealthCare(Long petId, User user, HealthCareRequestDto request) {
         Pet pet = petService.accessPet(user, petId);
+        if (isDuplicateHealthCare(pet, request)) {
+            throw new DuplicateDateException(ErrorCode.DUPLICATE_DATE);
+        }
         healthCareRepository.save(request.toEntity(pet));
     }
 
@@ -44,5 +49,10 @@ public class HealthCareService {
 
     private HealthCare findHealthCareById(Long id) {
         return healthCareRepository.findById(id).orElseThrow(DataNotFoundException::new);
+    }
+
+    private boolean isDuplicateHealthCare(Pet pet, HealthCareRequestDto requestDto) {
+        return healthCareRepository.isDuplicateDateHealthCare(pet, requestDto.getYear(), requestDto.getMonth(),
+                requestDto.getWeek(), requestDto.getDay());
     }
 }
