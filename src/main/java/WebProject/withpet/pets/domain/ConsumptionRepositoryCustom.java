@@ -10,4 +10,6 @@ public interface ConsumptionRepositoryCustom {
     List<ConsumptionResponseDto> findMonthlyConsumptionsByPet(Pet pet, int year, int month);
 
     List<ConsumptionResponseDto> findMonthlyConsumptionsByUser(User user, int year, int month);
+
+    boolean isDuplicateDateConsumption(Pet pet, int year, int month, int week, int day);
 }

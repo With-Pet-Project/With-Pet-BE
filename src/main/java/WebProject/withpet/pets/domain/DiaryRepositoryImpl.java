@@ -24,4 +24,13 @@ public class DiaryRepositoryImpl implements DiaryRepositoryCustom {
                                 diary.year, diary.month, diary.week, diary.day)).from(diary)
                 .where(diary.pet.eq(pet), diary.year.eq(year), diary.month.eq(month)).fetch();
     }
+
+    @Override
+    public boolean isDuplicateDateDiary(Pet pet, int year, int month, int week, int day) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+        return queryFactory.from(diary)
+                .where(diary.pet.eq(pet), diary.year.eq(year), diary.month.eq(month),
+                        diary.week.eq(week), diary.day.eq(day)).fetchFirst()
+                != null;
+    }
 }

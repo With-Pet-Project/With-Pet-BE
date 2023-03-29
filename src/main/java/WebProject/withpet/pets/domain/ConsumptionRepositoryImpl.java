@@ -39,7 +39,16 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
                         Projections.fields(ConsumptionResponseDto.class, consumption.id, consumption.pet.id.as("petId"),
                                 consumption.toy, consumption.hospital,
                                 consumption.beauty, consumption.etc, consumption.feed, consumption.day)).from(consumption)
-                .where(consumption.pet.id.in(findPetsByUser(user)), consumption.year.eq(year), consumption.month.eq(month)).fetch();
+                .where(consumption.pet.id.in(findPetsByUser(user)), consumption.year.eq(year),
+                        consumption.month.eq(month)).fetch();
+    }
+
+    public boolean isDuplicateDateConsumption(Pet pet, int year, int month, int week, int day) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+        return queryFactory.from(consumption)
+                .where(consumption.pet.eq(pet), consumption.year.eq(year), consumption.month.eq(month),
+                        consumption.week.eq(week), consumption.day.eq(day)).fetchFirst()
+                != null;
     }
 
     private List<Long> findPetsByUser(User user) {

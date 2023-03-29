@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DiaryRepositoryCustom {
     List<DiaryResponseDto> getMonthlyDiaries(Pet pet, int year, int month);
+
+    boolean isDuplicateDateDiary(Pet pet, int year, int month, int week, int day);
 }

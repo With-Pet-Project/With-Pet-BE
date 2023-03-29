@@ -1,6 +1,8 @@
 package WebProject.withpet.pets.service;
 
+import WebProject.withpet.common.constants.ErrorCode;
 import WebProject.withpet.common.exception.DataNotFoundException;
+import WebProject.withpet.common.exception.DuplicateException;
 import WebProject.withpet.common.exception.UnauthorizedException;
 import WebProject.withpet.pets.domain.Pet;
 import WebProject.withpet.pets.domain.PetRepository;
@@ -23,6 +25,9 @@ public class PetService {
 
     @Transactional
     public void registerPet(final PetRequestDto petRequest, final User user) {
+        if (isDuplicatePet(user, petRequest.getName())) {
+            throw new DuplicateException(ErrorCode.DUPLICATE_PET);
+        }
         petRepository.save(petRequest.toEntity(user));
     }
 
@@ -40,8 +45,7 @@ public class PetService {
 
     @Transactional(readOnly = true)
     public List<PetResponseDto> findPets(User user) {
-        return petRepository.findAllByUser(user)
-                .stream().map(PetResponseDto::new).collect(Collectors.toList());
+        return petRepository.findAllByUser(user).stream().map(PetResponseDto::new).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -64,5 +68,9 @@ public class PetService {
         Pet pet = findPetById(id);
         checkPermission(user, pet);
         return pet;
+    }
+
+    private boolean isDuplicatePet(User user, String petName) {
+        return petRepository.isDuplicateNamePet(user, petName);
     }
 }
