@@ -34,7 +34,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 comment.id, user.profileImg, user.nickName, comment.createdTime,
                 comment.modifiedTime, comment.content))
             .from(comment)
-            .leftJoin(comment.user, user)
+            .innerJoin(comment.user, user)
             .where(comment.article.id.eq(articleId), comment.id.gt(lastCommentId),
                 comment.parent.isNull())
             .orderBy(comment.id.asc())
